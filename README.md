@@ -1,0 +1,2 @@
+# avisynth
+AviSynthスクリプトと自動エンコードバッチファイル
