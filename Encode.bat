@@ -62,7 +62,7 @@ echo.
 echo ======================================================================
 echo x264で映像エンコード
 echo ======================================================================
-%x264_path% %x264% -o %output_enc% %input_avs%
+REM %x264_path% %x264% -o %output_enc% %input_avs%
 REM %
 echo.
 
@@ -93,11 +93,11 @@ echo.
 echo ======================================================================
 echo 一時ファイル削除
 echo ======================================================================
-del /f /q %output_mp4%
+del /f /q %output_enc%
 del /f /q %output_wav%
 del /f /q %output_aac%
 del /f /q %output_m4a%
-if not exist %output_mp4% echo %output_mp4%
+if not exist %output_enc% echo %output_enc%
 if not exist %output_wav% echo %output_wav%
 if not exist %output_aac% echo %output_aac%
 if not exist %output_m4a% echo %output_m4a%
