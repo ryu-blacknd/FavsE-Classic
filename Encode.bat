@@ -1,7 +1,7 @@
 @echo off
 
 REM -----------------------------------------------------------------------
-REM x264パラメータ (クォリティ = アニメ19～20, 実写21～23 程度)
+REM x264パラメータ (クォリティ = アニメ19～21, 実写21～23 程度)
 REM -----------------------------------------------------------------------
 REM set quality=20
 set quality=23
@@ -12,10 +12,10 @@ set aspect=1:1
 REM set aspect=32:27
 REM set aspect=8:9
 REM -----------------------------------------------------------------------
-REM x264パラメータ (ソースタイプ = 実写, アニメ)
+REM x264パラメータ (ソースタイプ = アニメ, 実写)
 REM -----------------------------------------------------------------------
-set source_type=--psy-rd 0.6:0 --trellis 1
 REM set source_type=--psy-rd 0.2:0 --trellis 2
+set source_type=--psy-rd 0.6:0 --trellis 1
 
 REM -----------------------------------------------------------------------
 set x264=--crf %quality% --sar %aspect% --level 4.1 --qpmin 10 --qcomp 0.8 --scenecut 50 --min-keyint 1 --direct auto --weightp 1 --bframes 4 --b-adapt 2 --b-pyramid normal --ref 4 --rc-lookahead 50 --qpstep 4 --aq-mode 2 --aq-strength 0.80 --me umh --subme 9 %source_type% --no-fast-pskip --no-dct-decimate --thread-input
