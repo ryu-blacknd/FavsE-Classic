@@ -34,7 +34,7 @@ echo ### AviSourceでの読み込み ###>> %avs_file%
 echo #AviSource(avsource)>> %avs_file%
 echo.>> %avs_file%
 
-echo ### 字幕処理(idx+sub形式の字幕ファイルを指定) ###>> %avs_file%
+echo ### 字幕処理(idx+sub形式の字幕ファイルを拡張子なしで指定) ###>> %avs_file%
 echo #VobSub("")>> %avs_file%
 echo.>> %avs_file%
 
