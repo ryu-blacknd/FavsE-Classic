@@ -20,10 +20,9 @@ echo Import("%files_dir%MT.avsi")>> %avs_file%
 echo.>> %avs_file%
 
 echo ### LSMASHSourceでの読み込み ###>> %avs_file%
-echo #LWLibavVideoSource(avsource, dr=true, repeat=true, dominance=1, fpsnum=30000, fpsden=1001)>> %avs_file%
-echo LWLibavVideoSource(avsource, dr=true, repeat=true, dominance=1).AssumeFPS(30000, 1001)>> %avs_file%
+echo #LWLibavVideoSource(avsource)>> %avs_file%
+echo LWLibavVideoSource(avsource, fpsnum=30000, fpsden=1001)>> %avs_file%
 echo AudioDub(last, LWLibavAudioSource(avsource, av_sync=true, layout="stereo"))>> %avs_file%
-echo if (height() == 1088) { Crop(0, 0, 0, -8) }>> %avs_file%
 echo.>> %avs_file%
 
 echo ### DirectShowSourceでの読み込み ###>> %avs_file%
@@ -40,6 +39,10 @@ echo.>> %avs_file%
 
 echo ### カット編集 ###>> %avs_file%
 echo #Trim(0, 0)>> %avs_file%
+echo.>> %avs_file%
+
+echo ### 回転 ###>> %avs_file%
+echo #Turn180()>> %avs_file%
 echo.>> %avs_file%
 
 echo ### 放送局ロゴファイル指定(ロゴ除去を行う場合のみコメントアウト) ###>> %avs_file%
@@ -79,11 +82,13 @@ echo ### クロップ ###>> %avs_file%
 echo #Crop(8, 0, -8, 0)>> %avs_file%
 echo.>> %avs_file%
 
-echo ### 塗りつぶし(ロゴファイルが無い場合) ###>> %avs_file%
-echo #Letterbox(116, 0)>> %avs_file%
+echo ### 塗りつぶし ###>> %avs_file%
+echo #Letterbox(0, 0)>> %avs_file%
 echo.>> %avs_file%
 
+echo ### フィールドオーダー固定(逆テレシネやインターレース解除に必須) ###>> %avs_file%
 echo AssumeTFF()>> %avs_file%
+echo #AssumeBFF()>> %avs_file%
 echo.>> %avs_file%
 
 echo ### 逆テレシネ + インターレース解除 ###>> %avs_file%
@@ -94,12 +99,12 @@ echo ### 逆テレシネのみ ###>> %avs_file%
 echo #TDecimate(mode=1, hybrid=0)>> %avs_file%
 echo.>> %avs_file%
 
-echo ### インターレース解除のみ(後者は軽い) ###>> %avs_file%
-echo #TDeint(order=1, edeint=nnedi3, emask=TMM2())>> %avs_file%
-echo #TDeint(order=1, edeint=nnedi3)>> %avs_file%
+echo ### インターレース解除のみ(後者はBOB化しない) ###>> %avs_file%
+echo #TDeint(mode=1, edeint=nnedi3(field=-2), emask=TMM2(mode=1))>> %avs_file%
+echo #TDeint(edeint=nnedi3, emask=TMM2())>> %avs_file%
 echo.>> %avs_file%
 
-echo ### リサイズ(x264側でアスペクト比を指定してもよい) ###>> %avs_file%
+echo ### リサイズ(サイズを変更せずx264側でアスペクト比を指定する方法もある) ###>> %avs_file%
 echo Spline36Resize(1280, 720)>> %avs_file%
 echo #Spline36Resize(854, 480)>> %avs_file%
 echo #Spline36Resize(640, 480)>> %avs_file%
