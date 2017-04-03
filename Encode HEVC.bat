@@ -1,25 +1,25 @@
 @echo off
 
 REM -----------------------------------------------------------------------
-REM x264パラメータ (クォリティ = アニメ19～21, 実写21～23 程度)
+REM NVEncCパラメータ
 REM -----------------------------------------------------------------------
-set quality=19
-REM set quality=23
+REM set bitrate=2000
+REM set maxbitrate=18000
+REM -------------------------------
+set bitrate=3000
+set maxbitrate=26000
+REM -------------------------------
+REM set bitrate=12000
+REM set maxbitrate=45000
 REM -----------------------------------------------------------------------
-REM x264パラメータ (アスペクト比 = 1:1 or リサイズ済み, 16:9, 4:3)
+REM NVEncCパラメータ (アスペクト比 = 1:1 or リサイズ済み, 16:9, 4:3)
 REM -----------------------------------------------------------------------
-REM set aspect=1:1
-set aspect=32:27
-REM set aspect=8:9
+REM set aspect=--sar 32:27
+set aspect=--sar 8:9
 REM -----------------------------------------------------------------------
-REM x264パラメータ (ソースタイプ = アニメ, 実写)
+REM NVEncCパラメータ (詳細)
 REM -----------------------------------------------------------------------
-REM set source_type=--psy-rd 0.2:0 --trellis 2
-set source_type=--psy-rd 0.6:0 --trellis 1
-REM -----------------------------------------------------------------------
-REM x264パラメータ (詳細)
-REM -----------------------------------------------------------------------
-set x264=--crf %quality% --sar %aspect% --qpmin 10 --qcomp 0.8 --scenecut 50 --min-keyint 1 --direct auto --weightp 1 --bframes 4 --b-adapt 2 --b-pyramid normal --ref 4 --rc-lookahead 50 --qpstep 4 --aq-mode 2 --aq-strength 0.80 --me umh --subme 9 %source_type% --no-fast-pskip --no-dct-decimate --thread-input
+set nvcencc=--avs -c hevc --vbrhq %bitrate% --maxbitrate %maxbitrate% %aspect% --vbr-quality 0 --ref 3 --aq --aq-temporal --aq-strength 0 --lookahead 32
 
 REM -----------------------------------------------------------------------
 REM プログラムフォルダと出力先フォルダ
@@ -30,11 +30,13 @@ set output_dir=F:\Encode\
 REM -----------------------------------------------------------------------
 REM プログラムファイル名
 REM -----------------------------------------------------------------------
-set x264_path="%program_dir%x264_x64.exe"
+REM set nvcencc_path="%program_dir%NVEncC64.exe"
+set nvcencc_path="%program_dir%NVEncC.exe"
 set wavi_path="%program_dir%wavi_x64.exe"
 set qaac_path="%program_dir%qaac64.exe"
 set muxer_path="%program_dir%muxer.exe"
 set remuxer_path="%program_dir%remuxer.exe"
+set ffmpeg_path="%program_dir%ffmpeg.exe"
 
 REM -----------------------------------------------------------------------
 REM ループ処理の開始
@@ -57,13 +59,14 @@ set output_mp4="%output_dir%%filename%.mp4"
 echo ======================================================================
 echo 処理開始: %date% %time%
 echo ======================================================================
-echo %input_avs%
+echo %filename%
 echo.
 
 echo ======================================================================
-echo x264で映像エンコード
+echo NVEncCで映像エンコード
 echo ======================================================================
-%x264_path% %x264% -o %output_enc% %input_avs%
+%nvcencc_path% %nvcencc% -i %input_avs% -o %output_enc%
+REM %ffmpeg_path% -y -i %input_avs% -an -pix_fmt yuv420p -f yuv4mpegpipe - | %nvcencc_path% --y4m %nvcencc% -i - -o %output_enc%
 echo.
 
 echo ======================================================================

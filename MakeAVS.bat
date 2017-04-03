@@ -15,7 +15,7 @@ echo %avs_file%
 echo avsource = %1>> %avs_file%
 echo.>> %avs_file%
 
-echo SetMemoryMax(2048)>> %avs_file%
+REM echo SetMemoryMax(2048)>> %avs_file%
 echo Import("%files_dir%MT.avsi")>> %avs_file%
 echo.>> %avs_file%
 
@@ -33,16 +33,13 @@ echo ### AviSourceでの読み込み ###>> %avs_file%
 echo #AviSource(avsource)>> %avs_file%
 echo.>> %avs_file%
 
-echo ### 字幕処理(idx+sub形式の字幕ファイルを拡張子なしで指定) ###>> %avs_file%
+echo ### 字幕処理(idxファイル名は張子なしで指定) ###>> %avs_file%
+echo #SupTitle("")>> %avs_file%
 echo #VobSub("")>> %avs_file%
 echo.>> %avs_file%
 
 echo ### カット編集 ###>> %avs_file%
 echo #Trim(0, 0)>> %avs_file%
-echo.>> %avs_file%
-
-echo ### 回転 ###>> %avs_file%
-echo #Turn180()>> %avs_file%
 echo.>> %avs_file%
 
 echo ### 放送局ロゴファイル指定(ロゴ除去を行う場合のみコメントアウト) ###>> %avs_file%
@@ -78,14 +75,6 @@ echo logofile = (logoname != "") ? "%logos_dir%" + logoname : "">> %avs_file%
 echo if (logofile != "") { EraseLOGO(logofile=logofile, pos_x=0, pos_y=0, depth=128, yc_y=0, yc_u=0, yc_v=0, start=0, fadein=0, fadeout=0, end=-1, interlaced=true) }>> %avs_file%
 echo.>> %avs_file%
 
-echo ### クロップ ###>> %avs_file%
-echo #Crop(8, 0, -8, 0)>> %avs_file%
-echo.>> %avs_file%
-
-echo ### 塗りつぶし ###>> %avs_file%
-echo #Letterbox(0, 0)>> %avs_file%
-echo.>> %avs_file%
-
 echo ### フィールドオーダー固定(逆テレシネやインターレース解除に必須) ###>> %avs_file%
 echo AssumeTFF()>> %avs_file%
 echo #AssumeBFF()>> %avs_file%
@@ -99,15 +88,33 @@ echo ### 逆テレシネのみ ###>> %avs_file%
 echo #TDecimate(mode=1, hybrid=0)>> %avs_file%
 echo.>> %avs_file%
 
-echo ### インターレース解除のみ(後者はBOB化しない) ###>> %avs_file%
-echo #TDeint(mode=1, edeint=nnedi3(field=-2), emask=TMM2(mode=1))>> %avs_file%
+echo ### インターレース解除のみ ###>> %avs_file%
 echo #TDeint(edeint=nnedi3, emask=TMM2())>> %avs_file%
+echo #TDeint(edeint=nnedi3)>> %avs_file%
+echo #yadifmod2(mode=0, edeint=nnedi3)>> %avs_file%
+echo.>> %avs_file%
+echo ### インターレース解除のみ(BOB化) ###>> %avs_file%
+echo #TDeint(mode=1, edeint=nnedi3(field=-2), emask=TMM2(mode=1))>> %avs_file%
+echo #TDeint(mode=1, edeint=nnedi3(field=-2))>> %avs_file%
+echo #yadifmod2(mode=1, edeint=nnedi3(field=-2))>> %avs_file%
+echo.>> %avs_file%
+
+echo ### クロップ ###>> %avs_file%
+echo #Crop(8, 0, -8, 0)>> %avs_file%
+echo.>> %avs_file%
+
+echo ### 塗りつぶし ###>> %avs_file%
+echo #Letterbox(0, 0)>> %avs_file%
 echo.>> %avs_file%
 
 echo ### リサイズ(サイズを変更せずx264側でアスペクト比を指定する方法もある) ###>> %avs_file%
 echo Spline36Resize(1280, 720)>> %avs_file%
 echo #Spline36Resize(854, 480)>> %avs_file%
 echo #Spline36Resize(640, 480)>> %avs_file%
+echo.>> %avs_file%
+
+echo ### 回転 ###>> %avs_file%
+echo #Turn180()>> %avs_file%
 echo.>> %avs_file%
 
 echo ### アップコンバート(SD->HD拡大時、別に上記リサイズでも良い) ###>> %avs_file%
