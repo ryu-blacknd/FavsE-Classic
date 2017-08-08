@@ -3,23 +3,23 @@
 REM -----------------------------------------------------------------------
 REM NVEncCパラメータ
 REM -----------------------------------------------------------------------
-REM set bitrate=2000
-REM set maxbitrate=18000
+set bitrate=2550
+set maxbitrate=16000
 REM -------------------------------
-set bitrate=3000
-set maxbitrate=26000
+REM set bitrate=3500
+REM set maxbitrate=26000
 REM -------------------------------
 REM set bitrate=12000
 REM set maxbitrate=45000
 REM -----------------------------------------------------------------------
 REM NVEncCパラメータ (アスペクト比 = 1:1 or リサイズ済み, 16:9, 4:3)
 REM -----------------------------------------------------------------------
-REM set aspect=--sar 32:27
-set aspect=--sar 8:9
+set aspect=--sar 32:27
+REM set aspect=--sar 8:9
 REM -----------------------------------------------------------------------
 REM NVEncCパラメータ (詳細)
 REM -----------------------------------------------------------------------
-set nvcencc=--avs -c hevc --vbrhq %bitrate% --maxbitrate %maxbitrate% %aspect% --vbr-quality 0 --ref 3 --aq --aq-temporal --aq-strength 0 --lookahead 32
+set nvcencc=--avs -c hevc --vbrhq %bitrate% --maxbitrate %maxbitrate% %aspect% --vbr-quality 0 --aq --aq-strength 0 --lookahead 20
 
 REM -----------------------------------------------------------------------
 REM プログラムフォルダと出力先フォルダ
@@ -31,7 +31,7 @@ REM -----------------------------------------------------------------------
 REM プログラムファイル名
 REM -----------------------------------------------------------------------
 REM set nvcencc_path="%program_dir%NVEncC64.exe"
-set nvcencc_path="%program_dir%NVEncC.exe"
+set nvcencc_path="%program_dir%NVEncC64.exe"
 set wavi_path="%program_dir%wavi_x64.exe"
 set qaac_path="%program_dir%qaac64.exe"
 set muxer_path="%program_dir%muxer.exe"
