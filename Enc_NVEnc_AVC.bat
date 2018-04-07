@@ -1,26 +1,25 @@
 @echo off
 
 REM -----------------------------------------------------------------------
-REM NVEncC オプション
+REM NVEncCのオプション
 REM -----------------------------------------------------------------------
 set NVCENC_OPTION=--avs --cqp 19:21:23 --lookahead 32 --aq --aq-temporal --aq-strength 0
 
 REM -----------------------------------------------------------------------
-REM プログラムフォルダと出力先フォルダ
+REM フォルダ名
 REM -----------------------------------------------------------------------
 set BIN_DIR=C:\DTV\bin\
+set LOGO_DIR=%BIN_DIR%join_logo_scp\logo\
 set OUTPUT_DIR=F:\Encode\
 
 REM -----------------------------------------------------------------------
-REM プログラムファイル名
+REM 実行ファイル名
 REM -----------------------------------------------------------------------
-set NVCENC="%BIN_DIR%NVEncC.exe"
-set QAAC="%BIN_DIR%qaac.exe"
-set MUXER="%BIN_DIR%muxer.exe"
-set REMUXER="%BIN_DIR%REMUXER.exe"
-set TSSPRITTER="%BIN_DIR%TsSplitter\TsSplitter.exe"
-set TS_PARSER="%BIN_DIR%ts_parser\ts_parser.exe"
-set TS2AAC="%BIN_DIR%ts2aac\ts2aac.exe"
+set NVCENC=%BIN_DIR%NVEncC.exe
+set MUXER=%BIN_DIR%muxer.exe
+set REMUXER=%BIN_DIR%REMUXER.exe
+set MEDIAINFO=%BIN_DIR%MediaInfo\MediaInfo.exe
+set DGINDEX=%BIN_DIR%DGIndex\DGIndex.exe
 
 REM -----------------------------------------------------------------------
 REM ループ処理の開始
@@ -28,36 +27,69 @@ REM -----------------------------------------------------------------------
 :loop
 if "%~n1" == "" goto end
 
-if %~x1 == .avs (
-  echo [エラー] avsファイルではなく動画ファイルをドロップしてください。
+echo ======================================================================
+echo 処理開始: %date% %time%
+echo ======================================================================
+echo %~dpn1
+if %~x1 == .ts (
+  echo.
+) else (
+  echo [エラー] 変換元のTSファイルをドロップしてください。
   echo.
   goto :end
 )
 
-set FULLNAME=%1
-set PATHNAME=%~dp1
+REM -----------------------------------------------------------------------
+REM DVDソースか判定
+REM -----------------------------------------------------------------------
+set ISDVD=0
+for /f "delims=" %%A in ('%MEDIAINFO% %1 ^| grep "Width" ^| sed -r "s/Width *: (.*) pixels/\1/" ^| sed -r "s/ //"') do set WIDTH=%%A
+if %WIDTH% == 720 set ISDVD=1
+
+REM -----------------------------------------------------------------------
+REM 変数セット
+REM -----------------------------------------------------------------------
 set FILENAME=%~n1
-set AVS="%~dpn1.avs"
+set PATH_NAME=%~dp1
+set FULLNAME=%~dpn1
+set AVS="%FULLNAME%.avs"
+
+set OUTPUT_ENC="%OUTPUT_DIR%%FILENAME%.enc.mp4"
+set OUTPUT_MP4="%OUTPUT_DIR%%FILENAME%.mp4"
+set OUTPUT_AAC="%OUTPUT_DIR%%FILENAME%.aac"
 
 REM -----------------------------------------------------------------------
-REM 出力ファイル名
+REM TS 不要データ削除
 REM -----------------------------------------------------------------------
-set output_enc="%OUTPUT_DIR%%FILENAME%.enc.mp4"
-set output_aac="%OUTPUT_DIR%%FILENAME%.aac"
-set output_m4a="%OUTPUT_DIR%%FILENAME%.m4a"
-set output_mp4="%OUTPUT_DIR%%FILENAME%.mp4"
+if not exist "%SOURCE_FULLNAME%" call %TS_SPRITTER% -EIT -ECM -EMM -SD -1SEG "%PATH_FILENAME%.ts"
 
-echo ======================================================================
-echo 処理開始: %date% %time%
-echo ======================================================================
-echo %FULLNAME%
-echo.
+REM -----------------------------------------------------------------------
+REM TS 映像・音声分離
+REM -----------------------------------------------------------------------
+if not exist "%SOURCE_FILENAME%*DELAY*.*" (
+  call %DGINDEX% -i "%SOURCE_FULLNAME%" -o "%SOURCE_FILENAME%" -ia 5 -fo 0 -yr 2 -om 2 -hide -exit
+  if exist "%SOURCE_FILENAME%.log" del /f /q "%SOURCE_FILENAME%.log"
+)
+for /f "usebackq tokens=*" %%A in (`dir /b "%SOURCE_FILENAME%*DELAY*.*"`) do set AAC_FILE=%PATH_NAME%%%A
+set D2V_FILE=%SOURCE_FILENAME%.d2v
+
+for /f "usebackq tokens=*" %%A in (`dir /b "%SOURCE_FILENAME%*DELAY*.aac"`) do set AAC_FILE=%PATH_NAME%%%A
+
+REM -----------------------------------------------------------------------
+REM TS 映像・音声分離
+REM -----------------------------------------------------------------------
+if not exist "%SOURCE_FILENAME%*DELAY*.*" (
+  call %DGINDEX% -i "%SOURCE_FULLNAME%" -o "%SOURCE_FILENAME%" -ia 5 -fo 0 -yr 2 -om 2 -hide -exit
+  if exist "%SOURCE_FILENAME%.log" del /f /q "%SOURCE_FILENAME%.log"
+)
+for /f "usebackq tokens=*" %%A in (`dir /b "%SOURCE_FILENAME%*DELAY*.*"`) do set AAC_FILE=%PATH_NAME%%%A
+set D2V_FILE=%SOURCE_FILENAME%.d2v
 
 REM -----------------------------------------------------------------------
 REM DVDソースのみアスペクト比を設定
 REM -----------------------------------------------------------------------
-for /f "delims=" %%A in ('%BIN_DIR%MediaInfo\MediaInfo.exe %FULLNAME% ^| grep "Width" ^| sed -r "s/Width *: (.*) pixels/\1/" ^| sed -r "s/ //"') do set WIDTH=%%A
-for /f "delims=" %%A in ('%BIN_DIR%MediaInfo\MediaInfo.exe %FULLNAME% ^| grep "Display aspect ratio" ^| sed -r "s/Display aspect ratio *: (.*)/\1/"') do set ASPECT=%%A
+for /f "delims=" %%A in ('%MEDIAINFO% "%SOURCE_FULLNAME%" ^| grep "Width" ^| sed -r "s/Width *: (.*) pixels/\1/" ^| sed -r "s/ //"') do set WIDTH=%%A
+for /f "delims=" %%A in ('%MEDIAINFO% "%SOURCE_FULLNAME%" ^| grep "Display aspect ratio" ^| sed -r "s/Display aspect ratio *: (.*)/\1/"') do set ASPECT=%%A
 if %WIDTH% == 720 (
   if %ASPECT% == 16:9 (
     set SAR=--sar 32:27
@@ -68,41 +100,17 @@ if %WIDTH% == 720 (
   set SAR=--sar 1:1
 )
 
-REM -----------------------------------------------------------------------
-REM TSファイル分離
-REM -----------------------------------------------------------------------
-echo dir /b "%PATHNAME%%FILENAME% *DELAY*.aac"
-for /f "usebackq tokens=*" %%A in (`dir /b "%PATHNAME%%FILENAME% *DELAY*.aac"`) do set AAC_FILE=%%A
-echo %AAC_FILE%
-pause
-if not exist %AAC_FILE% (
-  call %TS_PARSER% --mode da --delay-type 3 --rb-size 4096 --wb-size 8192 --debug 1 %FULLNAME%
-)
-call %TSSPRITTER% -EIT -ECM -EMM -SD -1SEG -SEP %FULLNAME%
-pause
-
 echo ======================================================================
 echo NVEncCで映像エンコード
 echo ======================================================================
-REM %NVCENC% %NVCENC_OPTION% %SAR% -i %AVS% -o %output_enc%
+REM call %NVCENC% %NVCENC_OPTION% %SAR% -i %AVS% -o %OUTPUT_ENC%
 echo.
 
 echo ======================================================================
-echo qaacで音声エンコード(aac)
+echo L-SMASHで結合
 echo ======================================================================
-%QAAC% -q 2 --abr 192 --ignorelength %FULLNAME% -o %output_aac%
-echo.
-
-echo ======================================================================
-echo L-SMASHで音声mux
-echo ======================================================================
-%MUXER% -i %output_aac% -o %output_m4a%
-echo.
-
-echo ======================================================================
-echo L-SMASHで映像・音声remux
-echo ======================================================================
-%REMUXER% -i %output_enc% -i %output_m4a% -o %output_mp4%
+for /f "delims=" %%A in ('dir /b "%AAC_FILE%" ^| sed -r "s/.* DELAY ([^\.]*)ms.aac/\1/"') do set DELAY=%%A
+call %MUXER% -i %OUTPUT_ENC% -i "%AAC_FILE%"?encoder-delay=%DELAY% -o %OUTPUT_MP4%
 echo.
 
 echo ======================================================================
@@ -110,15 +118,9 @@ echo 一時ファイル削除
 echo ======================================================================
 echo 不要になった一時ファイルを削除します。
 echo.
-REM pause
 
-if exist %output_mp4% del /f /q %output_enc%
-if exist %output_mp4% del /f /q %output_aac%
-if exist %output_mp4% del /f /q %output_m4a%
-
-if not exist %output_enc% echo %output_enc%
-if not exist %output_aac% echo %output_aac%
-if not exist %output_m4a% echo %output_m4a%
+REM if exist %OUTPUT_MP4% del /f /q %OUTPUT_ENC%
+if not exist %OUTPUT_ENC% echo %OUTPUT_ENC%
 echo.
 
 echo ======================================================================
