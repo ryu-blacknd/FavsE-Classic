@@ -1,6 +1,6 @@
 @echo off
 
-echo FullAuto AVS Encode 1.04
+echo FullAuto AVS Encode 1.06
 
 REM ----------------------------------------------------------------------
 REM エンコーダの指定（1:NVEncC, 0:x264）
@@ -15,15 +15,15 @@ set check_avs=0
 REM ----------------------------------------------------------------------
 REM 終了後に一時ファイルを削除するか（1:する, 0:しない）
 REM ----------------------------------------------------------------------
-set del_temp=0
+set del_temp=1
 
 REM ----------------------------------------------------------------------
 REM エンコーダのオプション（ビットレート、アスペクト比は自動設定）
 REM ----------------------------------------------------------------------
 if %use_nvenvc% == 1 (
-  set nvencc_opt=--avs --qp-init 20:23:25 --qp-min 19:22:24 --lookahead 20 --aq
+  set nvencc_opt=--avs --qp-init 19:22:24 --qp-min 18:21:23 --lookahead 20 --aq
 ) else (
-  set x264_opt=--preset slower --crf 20 --partitions p8x8,b8x8,i8x8,i4x4 --ref 5 --subme 8 --no-fast-pskip --no-dct-decimate
+  set x264_opt=--preset slower --crf 19 --partitions p8x8,b8x8,i8x8,i4x4 --ref 6 --no-fast-pskip --no-dct-decimate
 )
 
 REM ----------------------------------------------------------------------
@@ -51,14 +51,14 @@ set ts_parser=%bin_path%ts_parser\ts_parser.exe
 set join_logo_scp=%bin_path%join_logo_scp\jlse_bat.bat
 
 :loop
-if "%~1" == "" goto :end
+if "%~1" == "" goto end
 
 if %~x1 == .ts (
   echo.
 ) else (
   echo [エラー] 変換元のTSファイルをドロップしてください。
   echo.
-  goto :end
+  goto end
 )
 
 echo ======================================================================
@@ -83,10 +83,10 @@ set file_name=%~n1
 set file_fullname=%~dpn1
 set file_fullpath=%~1
 
-if %is_dvd% == 1 goto :source_dvd
+if %is_dvd% == 1 goto source_dvd
 set source_fullname=%file_fullname%_HD
 set cut_dir_name=%file_name%_HD
-goto :end_source
+goto end_source
 :source_dvd
 set source_fullname=%file_fullname%
 :end_source
@@ -145,7 +145,7 @@ echo avsファイル生成処理
 echo ----------------------------------------------------------------------
 if exist %avs% (
   echo 既にファイルが存在します。
-  goto :end_avs
+  goto end_avs
 )
 
 echo SetMemoryMax(2048)>>%avs%
@@ -165,14 +165,14 @@ for /f "delims=" %%A in ('%mediainfo% "%source_fullpath%" ^| grep "Scan order" ^
 
 if "%scan_type%" == "Progressive" (
   echo # %scan_type%>>%avs%
-  goto :end_scan
+  goto end_scan
 )
 if "%scan_order%" == "Top Field First" echo AssumeTFF()>>%avs%
 if "%scan_order%" == "Bottom Field First" echo AssumeBFF()>>%avs%
 :end_scan
 echo.>>%avs%
 
-if %is_dvd% == 1 goto :end_cm_logo_cut
+if %is_dvd% == 1 goto end_cm_logo_cut
 echo SetMTMode(1, 0)>>%avs%
 echo.>>%avs%
 
@@ -180,7 +180,7 @@ echo ### CMカット ###>>%avs%
 for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -c') do set service=%%A
 echo #サービス名：%service%>>%avs%
 set cut_fullpath="%cut_result_path%%cut_dir_name%\obs_cut.avs"
-if exist %cut_fullpath% goto :end_cm_cut
+if exist %cut_fullpath% goto end_cm_cut
 call %join_logo_scp% "%source_fullpath%"
 :end_cm_cut
 
@@ -197,26 +197,26 @@ echo SetMTMode(2, 0)>>%avs%
 echo.>>%avs%
 :end_cm_logo_cut
 
-if "%scan_type%" == "Progressive" goto :end_deint
+if "%scan_type%" == "Progressive" goto end_deint
 echo ### 逆テレシネ / インターレース処理 ###>>%avs%
 set is_ivtc=0
 
-if %is_dvd% == 0 goto :not_dvd
+if %is_dvd% == 0 goto not_dvd
 echo #TIVTC24P2()>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
 echo TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
-goto :end_deint
+goto end_deint
 
 :not_dvd
 for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -g') do set genre=%%A
 echo #ジャンル名：%genre%>>%avs%
-if "%scan_type%" == "Progressive" goto :end_deint
+if "%scan_type%" == "Progressive" goto end_deint
 echo %genre% | find "アニメ" > NUL
-if not ERRORLEVEL 1 goto :set_tivtc24p2
+if not ERRORLEVEL 1 goto set_tivtc24p2
 echo %genre% | find "映画" > NUL
-if not ERRORLEVEL 1 goto :set_tivtc24p2
-goto :set_tdeint
+if not ERRORLEVEL 1 goto set_tivtc24p2
+goto set_tdeint
 
 :set_tivtc24p2
 set is_ivtc=1
@@ -224,7 +224,7 @@ echo TIVTC24P2()>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
-goto :end_deint
+goto end_deint
 :set_tdeint
 echo #TIVTC24P2()>>%avs%
 echo TDeint(edeint=nnedi3)>>%avs%
@@ -232,7 +232,7 @@ echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
 :end_deint
 
-if %is_dvd% == 1 goto :end_resize
+if %is_dvd% == 1 goto end_resize
 echo ### リサイズ ###>>%avs%
 echo (Width() ^> 1280) ? Spline36Resize(1280, 720) : last>>%avs%
 echo.>>%avs%
@@ -245,7 +245,7 @@ REM echo.>>%avs%
 
 echo return last>>%avs%
 
-if "%scan_type%" == "Progressive" goto :end_tivtc24p2
+if "%scan_type%" == "Progressive" goto end_tivtc24p2
 echo.>>%avs%
 echo function TIVTC24P2(clip clip){>>%avs%
 echo Deinted=clip.TDeint(order=-1,field=-1,edeint=clip.nnedi3(field=-1))>>%avs%
@@ -271,18 +271,18 @@ if %check_avs% == 1 (
 REM ----------------------------------------------------------------------
 REM ビットレートを設定（NVEncCのみ）
 REM ----------------------------------------------------------------------
-if %use_nvenvc% == 0 goto :end_bitrate
+if %use_nvenvc% == 0 goto end_bitrate
 if %is_dvd% == 0 (
   echo %genre% | find "アニメ" > NUL
   if not ERRORLEVEL 1 (
     set bitrate_val=2765
     REM set bitrate_val=3456
-    goto :set_bitrate
+    goto set_bitrate
   )
   echo %genre% | find "映画" > NUL
   if not ERRORLEVEL 1 (
     set bitrate_val=3456
-    goto :set_bitrate
+    goto set_bitrate
   )
   set bitrate_val=4147
 ) else (
@@ -344,7 +344,7 @@ echo.
 echo ----------------------------------------------------------------------
 echo 一時ファイル処理
 echo ----------------------------------------------------------------------
-if %del_temp% == 0 goto :no_del_temp
+if %del_temp% == 0 goto no_del_temp
 echo 不要になった一時ファイルを削除します。
 echo.
 if exist "%file_fullname%.lwi" del /f /q "%file_fullname%.lwi"
@@ -369,7 +369,7 @@ if not exist %output_wav% echo %output_wav%
 if not exist %output_aac% echo %output_aac%
 if not exist %output_m4a% echo %output_m4a%
 echo.
-goto :end_del_temp
+goto end_del_temp
 
 :no_del_temp
 echo 一時ファイル群は残っており、次回エンコードする際には再利用（処理をスキップ）します。
@@ -385,7 +385,7 @@ echo 処理終了: %date% %time%
 echo ======================================================================
 
 shift
-goto :loop
+goto loop
 :end
 
 pause
