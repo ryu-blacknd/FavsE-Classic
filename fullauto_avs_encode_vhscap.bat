@@ -1,6 +1,6 @@
 @echo off
 
-echo FullAuto AVS Encode VHSCap 1.03
+echo FullAuto AVS Encode VHSCap 1.04
 
 REM ----------------------------------------------------------------------
 REM avs生成後に一時停止してCMカット結果を確認・編集するか（1:する, 0:しない）
@@ -101,7 +101,7 @@ echo LanczosResize(640, 480)>>%avs%
 echo.>>%avs%
 
 echo ### シャープ化 ###>>%avs%
-echo Sharpen(0.02)>>%avs%
+echo #Sharpen(0.02)>>%avs%
 echo.>>%avs%
 
 echo ### カット編集 ###>>%avs%
