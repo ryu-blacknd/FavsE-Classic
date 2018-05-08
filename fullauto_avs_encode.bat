@@ -1,6 +1,6 @@
 @echo off
 
-echo FullAuto AVS Encode 1.11
+echo FullAuto AVS Encode 1.12
 
 REM ----------------------------------------------------------------------
 REM エンコーダの指定（1:NVEncC, 0:x264）

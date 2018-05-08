@@ -1,6 +1,6 @@
 @echo off
 
-echo FullAuto AVS Encode VHSCap 1.02
+echo FullAuto AVS Encode VHSCap 1.03
 
 REM ----------------------------------------------------------------------
 REM avs生成後に一時停止してCMカット結果を確認・編集するか（1:する, 0:しない）
