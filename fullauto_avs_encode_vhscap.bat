@@ -1,33 +1,34 @@
 @echo off
 
-echo FullAuto AVS Encode VHSCap 1.00
+echo FullAuto AVS Encode VHSCap 1.02
 
 REM ----------------------------------------------------------------------
-REM avsç”Ÿæˆå¾Œã«ä¸€æ™‚åœæ­¢ã—ã¦CMã‚«ãƒƒãƒˆçµæžœã‚’ç¢ºèªãƒ»ç·¨é›†ã™ã‚‹ã‹ï¼ˆ1:ã™ã‚‹, 0:ã—ãªã„ï¼‰
+REM avs¶¬Œã‚ÉˆêŽž’âŽ~‚µ‚ÄCMƒJƒbƒgŒ‹‰Ê‚ðŠm”FE•ÒW‚·‚é‚©i1:‚·‚é, 0:‚µ‚È‚¢j
 REM ----------------------------------------------------------------------
 set check_avs=1
 
 REM ----------------------------------------------------------------------
-REM çµ‚äº†å¾Œã«ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‰Šé™¤ã™ã‚‹ã‹ï¼ˆ1:ã™ã‚‹, 0:ã—ãªã„ï¼‰
+REM I—¹Œã‚ÉˆêŽžƒtƒ@ƒCƒ‹‚ðíœ‚·‚é‚©i1:‚·‚é, 0:‚µ‚È‚¢j
 REM ----------------------------------------------------------------------
 set del_temp=1
 
 REM ----------------------------------------------------------------------
-REM ã‚¨ãƒ³ã‚³ãƒ¼ãƒ€ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³ï¼ˆãƒ“ãƒƒãƒˆãƒ¬ãƒ¼ãƒˆã€ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”ã¯è‡ªå‹•è¨­å®šï¼‰
+REM ƒGƒ“ƒR[ƒ_‚ÌƒIƒvƒVƒ‡ƒ“iƒrƒbƒgƒŒ[ƒgAƒAƒXƒyƒNƒg”ä‚ÍŽ©“®Ý’èj
 REM ----------------------------------------------------------------------
 set x264_opt=--preset slower --crf 19 --partitions p8x8,b8x8,i8x8,i4x4 --ref 6 --no-fast-pskip --no-dct-decimate
 
 REM ----------------------------------------------------------------------
-REM ãƒ•ã‚©ãƒ«ãƒ€å(å¿…è¦ã«å¿œã˜ã¦æ›¸ãæ›ãˆã¦ãã ã•ã„)
+REM ƒtƒHƒ‹ƒ_–¼(•K—v‚É‰ž‚¶‚Ä‘‚«Š·‚¦‚Ä‚­‚¾‚³‚¢)
 REM ----------------------------------------------------------------------
 set output_path=F:\Encode\
 set bin_path=C:\DTV\bin\
 
 REM ----------------------------------------------------------------------
-REM å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«ãƒ€å(å¿…è¦ã«å¿œã˜ã¦æ›¸ãæ›ãˆã¦ãã ã•ã„)
+REM ŽÀsƒtƒ@ƒCƒ‹ƒ_–¼(•K—v‚É‰ž‚¶‚Ä‘‚«Š·‚¦‚Ä‚­‚¾‚³‚¢)
 REM ----------------------------------------------------------------------
 set x264=%bin_path%x264.exe
 set avs2pipemod=%bin_path%avs2pipemod.exe
+set qaac=%bin_path%qaac.exe
 set muxer=%bin_path%muxer.exe
 set remuxer=%bin_path%remuxer.exe
 
@@ -37,7 +38,7 @@ if "%~1" == "" goto end
 if %~x1 == .avi (
   echo.
 ) else (
-  echo [ã‚¨ãƒ©ãƒ¼] å¤‰æ›å…ƒã®AVIãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒ‰ãƒ­ãƒƒãƒ—ã—ã¦ãã ã•ã„ã€‚
+  echo [ƒGƒ‰[] •ÏŠ·Œ³‚ÌAVIƒtƒ@ƒCƒ‹‚ðƒhƒƒbƒv‚µ‚Ä‚­‚¾‚³‚¢B
   echo.
   goto end
 )
@@ -45,12 +46,12 @@ if %~x1 == .avi (
 echo ======================================================================
 echo %~1
 echo ----------------------------------------------------------------------
-echo å‡¦ç†é–‹å§‹: %date% %time%
+echo ˆ—ŠJŽn: %date% %time%
 echo ======================================================================
 echo.
 
 REM ----------------------------------------------------------------------
-REM å¤‰æ•°ã‚»ãƒƒãƒˆ
+REM •Ï”ƒZƒbƒg
 REM ----------------------------------------------------------------------
 set file_path=%~dp1
 set file_name=%~n1
@@ -67,106 +68,112 @@ set output_m4a="%output_path%%file_name%.m4a"
 set output_mp4="%output_path%%file_name%.mp4"
 
 echo ----------------------------------------------------------------------
-echo avsãƒ•ã‚¡ã‚¤ãƒ«ç”Ÿæˆå‡¦ç†
+echo avsƒtƒ@ƒCƒ‹¶¬ˆ—
 echo ----------------------------------------------------------------------
 if exist %avs% (
-  echo æ—¢ã«ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ã¾ã™ã€‚
+  echo Šù‚Éƒtƒ@ƒCƒ‹‚ª‘¶Ý‚µ‚Ü‚·B
   goto end_avs
 )
 
 echo SetMemoryMax(2048)>>%avs%
 echo.>>%avs%
 
-echo ### ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿ ###>>%avs%
-echo LWLibavVideoSource("%source_fullpath%", fpsnum=30000, fpsden=1001)>>%avs%
-echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true))>>%avs%
+echo ### ƒtƒ@ƒCƒ‹“Ç‚Ýž‚Ý ###>>%avs%
+echo AVISource("%source_fullpath%")>>%avs%
 echo.>>%avs%
 
 echo SetMTMode(2, 0)>>%avs%
 echo.>>%avs%
 
-echo ### ã‚¯ãƒ­ãƒƒãƒ—ã¨å¡—ã‚Šã¤ã¶ã— ###>>%avs%
-echo Crop(8, 0, -8, -0)>>%avs%
-echo Letterbox(0, 4, 0, 0)>>%avs%
+echo ### ƒJƒbƒg•ÒW ###>>%avs%
+echo #Trim()>>%avs%
+echo.>>%avs%
 
-echo ### ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ¬ãƒ¼ã‚¹è§£é™¤ ###>>%avs%
+echo ### ƒNƒƒbƒv‚Æ“h‚è‚Â‚Ô‚µ ###>>%avs%
+echo Crop(8, 0, -8, -0)>>%avs%
+echo Letterbox(0, 8, 0, 0)>>%avs%
+echo.>>%avs%
+
+echo ### ƒCƒ“ƒ^[ƒŒ[ƒX‰ðœ ###>>%avs%
 echo AssumeTFF()>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
 echo TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
 
-echo ### ãƒªã‚µã‚¤ã‚º ###>>%avs%
-echo Spline36Resize(640, 480) : last>>%avs%
+echo ### ƒŠƒTƒCƒY ###>>%avs%
+echo Spline36Resize(640, 480)>>%avs%
+echo.>>%avs%
 
-echo ### ã‚·ãƒ£ãƒ¼ãƒ—åŒ– ###>>%avs%
+echo ### ƒVƒƒ[ƒv‰» ###>>%avs%
 echo Sharpen(0.02)>>%avs%
 echo.>>%avs%
 
 echo return last>>%avs%
 
-echo avsãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç”Ÿæˆã—ã¾ã—ãŸã€‚
+echo avsƒtƒ@ƒCƒ‹‚ð¶¬‚µ‚Ü‚µ‚½B
 
 :end_avs
 echo.
 
 if %check_avs% == 1 (
-  echo â€»avsãƒ•ã‚¡ã‚¤ãƒ«ç¢ºèªã‚ªãƒ—ã‚·ãƒ§ãƒ³ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã™ã€‚
-  echo â€»avsãƒ•ã‚¡ã‚¤ãƒ«ã‚’AvsPmodã‚„AviUtlã§ç¢ºèªãƒ»ç·¨é›†ã—ã¦ãã ã•ã„ã€‚
-  echo â€»ç¢ºèªãƒ»ç·¨é›†å®Œäº†å¾Œã¯å‡¦ç†ã‚’ç¶šè¡Œã§ãã¾ã™ã€‚
+  echo ¦avsƒtƒ@ƒCƒ‹Šm”FƒIƒvƒVƒ‡ƒ“‚ªÝ’è‚³‚ê‚Ä‚¢‚Ü‚·B
+  echo ¦avsƒtƒ@ƒCƒ‹‚ðAvsPmod‚âAviUtl‚ÅŠm”FE•ÒW‚µ‚Ä‚­‚¾‚³‚¢B
+  echo ¦Šm”FE•ÒWŠ®—¹Œã‚Íˆ—‚ð‘±s‚Å‚«‚Ü‚·B
   echo.
   pause
 )
+echo.
 
 echo ----------------------------------------------------------------------
-echo æ˜ åƒã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰
+echo ‰f‘œƒGƒ“ƒR[ƒh
 echo ----------------------------------------------------------------------
 if not exist %output_enc% (
   call %x264% %x264_opt% %sar% -o %output_enc% %avs%
 ) else (
-  echo æ—¢ã«ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ã¾ã™ã€‚
+  echo Šù‚Éƒtƒ@ƒCƒ‹‚ª‘¶Ý‚µ‚Ü‚·B
 )
 echo.
 
 echo ----------------------------------------------------------------------
-echo éŸ³å£°å‡¦ç†
+echo ‰¹ºˆ—
 echo ----------------------------------------------------------------------
 if not exist %output_wav% (
   call %avs2pipemod% -wav %avs% > %output_wav%
 ) else (
-  echo æ—¢ã«ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ã¾ã™ã€‚
+  echo Šù‚Éƒtƒ@ƒCƒ‹‚ª‘¶Ý‚µ‚Ü‚·B
 )
 if not exist %output_aac% (
   call %qaac% -q 2 --tvbr 91 %output_wav% -o %output_aac%
 ) else (
-  echo æ—¢ã«ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ã¾ã™ã€‚
+  echo Šù‚Éƒtƒ@ƒCƒ‹‚ª‘¶Ý‚µ‚Ü‚·B
 )
 echo.
 
 echo ----------------------------------------------------------------------
-echo muxerå‡¦ç†
+echo muxerˆ—
 echo ----------------------------------------------------------------------
 if not exist %output_m4a% (
   call %muxer% -i %output_aac% -o %output_m4a%
 ) else (
-  echo æ—¢ã«ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ã¾ã™ã€‚
+  echo Šù‚Éƒtƒ@ƒCƒ‹‚ª‘¶Ý‚µ‚Ü‚·B
 )
 echo.
 
 echo ----------------------------------------------------------------------
-echo remuxerå‡¦ç†
+echo remuxerˆ—
 echo ----------------------------------------------------------------------
 if not exist %output_mp4% (
   call %remuxer% -i %output_enc% -i %output_m4a% -o %output_mp4%
 ) else (
-  echo æ—¢ã«ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ã¾ã™ã€‚
+  echo Šù‚Éƒtƒ@ƒCƒ‹‚ª‘¶Ý‚µ‚Ü‚·B
 )
 echo.
 
 echo ----------------------------------------------------------------------
-echo ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«å‡¦ç†
+echo ˆêŽžƒtƒ@ƒCƒ‹ˆ—
 echo ----------------------------------------------------------------------
 if %del_temp% == 0 goto no_del_temp
-echo ä¸è¦ã«ãªã£ãŸä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‰Šé™¤ã—ã¾ã™ã€‚
+echo •s—v‚É‚È‚Á‚½ˆêŽžƒtƒ@ƒCƒ‹‚ðíœ‚µ‚Ü‚·B
 echo.
 if exist "%file_fullname%.lwi" del /f /q "%file_fullname%.lwi"
 if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi"
@@ -187,16 +194,16 @@ echo.
 goto end_del_temp
 
 :no_del_temp
-echo ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ç¾¤ã¯æ®‹ã£ã¦ãŠã‚Šã€æ¬¡å›žã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã™ã‚‹éš›ã«ã¯å†åˆ©ç”¨ï¼ˆå‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—ï¼‰ã—ã¾ã™ã€‚
-echo ç‰¹å®šã®å‡¦ç†ã‚’ã‚„ã‚Šç›´ã—ãŸã„å ´åˆã¯ã€è©²å½“éƒ¨åˆ†ã®ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‰Šé™¤ã—ã¦å†å®Ÿè¡Œã—ã¦ãã ã•ã„ã€‚
-echo ä¸è¦ã«ãªã£ãŸã‚‰ã€ã™ã¹ã¦ã®ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã¯å‰Šé™¤ã—ã¦æ§‹ã„ã¾ã›ã‚“ã€‚
+echo ˆêŽžƒtƒ@ƒCƒ‹ŒQ‚ÍŽc‚Á‚Ä‚¨‚èAŽŸ‰ñƒGƒ“ƒR[ƒh‚·‚éÛ‚É‚ÍÄ—˜—piˆ—‚ðƒXƒLƒbƒvj‚µ‚Ü‚·B
+echo “Á’è‚Ìˆ—‚ð‚â‚è’¼‚µ‚½‚¢ê‡‚ÍAŠY“–•”•ª‚ÌˆêŽžƒtƒ@ƒCƒ‹‚ðíœ‚µ‚ÄÄŽÀs‚µ‚Ä‚­‚¾‚³‚¢B
+echo •s—v‚É‚È‚Á‚½‚çA‚·‚×‚Ä‚ÌˆêŽžƒtƒ@ƒCƒ‹‚Ííœ‚µ‚Ä\‚¢‚Ü‚¹‚ñB
 echo.
 :end_del_temp
 
 echo ======================================================================
 echo %~1
 echo ----------------------------------------------------------------------
-echo å‡¦ç†çµ‚äº†: %date% %time%
+echo ˆ—I—¹: %date% %time%
 echo ======================================================================
 
 shift

@@ -1,6 +1,6 @@
 @echo off
 
-echo FullAuto AVS Encode 1.10
+echo FullAuto AVS Encode 1.11
 
 REM ----------------------------------------------------------------------
 REM エンコーダの指定（1:NVEncC, 0:x264）
@@ -279,6 +279,7 @@ if %check_avs% == 1 (
   echo.
   pause
 )
+echo.
 
 REM ----------------------------------------------------------------------
 REM ビットレートを設定（NVEncCのみ）
