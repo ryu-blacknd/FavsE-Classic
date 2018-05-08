@@ -246,7 +246,12 @@ echo.>>%avs%
 
 if %is_dvd% == 1 goto end_resize
 echo ### リサイズ ###>>%avs%
-echo (Width() ^> 1280) ? Spline36Resize(1280, 720) : last>>%avs%
+echo %genre% | find "アニメ" > NUL
+if not ERRORLEVEL 1 (
+  echo (Width() ^> 1280) ? Spline36Resize(1280, 720) : last>>%avs%
+) else (
+  echo (Width() ^> 1280) ? LanczosResize(1280, 720) : last>>%avs%
+)
 echo.>>%avs%
 
 REM echo ### シャープ化 ###>>%avs%
