@@ -16,7 +16,7 @@ REM 実写映画用
 set bitrate_movie=3456
 REM その他（TV番組等）
 set bitrate_default=4147
-REM 実写（DVDなどSD素材）
+REM SD素材（DVD等）
 set bitrate_dvd=2592
 
 REM ----------------------------------------------------------------------
