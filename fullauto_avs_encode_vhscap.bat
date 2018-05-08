@@ -90,6 +90,10 @@ echo Crop(8, 0, -8, -0)>>%avs%
 echo Letterbox(0, 8, 0, 0)>>%avs%
 echo.>>%avs%
 
+echo ### 色空間変更 ###>>%avs%
+echo ConvertToYV12()>>%avs%
+echo.>>%avs%
+
 echo ### インターレース解除 ###>>%avs%
 echo AssumeTFF()>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
