@@ -1,11 +1,23 @@
 @echo off
 
-echo FullAuto AVS Encode 1.06
+echo FullAuto AVS Encode 1.10
 
 REM ----------------------------------------------------------------------
 REM エンコーダの指定（1:NVEncC, 0:x264）
 REM ----------------------------------------------------------------------
 set use_nvenvc=0
+
+REM ----------------------------------------------------------------------
+REM ビットレートの指定（NVEncCのみ）
+REM ----------------------------------------------------------------------
+REM アニメ用
+set bitrate_anime=2765
+REM 実写映画用
+set bitrate_movie=3456
+REM その他（TV番組等）
+set bitrate_default=4147
+REM 実写（DVDなどSD素材）
+set bitrate_dvd=2592
 
 REM ----------------------------------------------------------------------
 REM avs生成後に一時停止してCMカット結果を確認・編集するか（1:する, 0:しない）
@@ -275,18 +287,17 @@ if %use_nvenvc% == 0 goto end_bitrate
 if %is_dvd% == 0 (
   echo %genre% | find "アニメ" > NUL
   if not ERRORLEVEL 1 (
-    set bitrate_val=2765
-    REM set bitrate_val=3456
+    set bitrate_val=%bitrate_anime%
     goto set_bitrate
   )
   echo %genre% | find "映画" > NUL
   if not ERRORLEVEL 1 (
-    set bitrate_val=3456
+    set bitrate_val=%bitrate_movie%
     goto set_bitrate
   )
-  set bitrate_val=4147
+  set bitrate_val=%bitrate_default%
 ) else (
-  set bitrate_val=2592
+  set bitrate_val=%bitrate_dvd%
 )
 :set_bitrate
 set bitrate=--vbrhq %bitrate_val%
