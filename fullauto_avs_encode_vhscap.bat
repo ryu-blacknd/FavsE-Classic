@@ -10,7 +10,7 @@ set check_avs=1
 REM ----------------------------------------------------------------------
 REM 終了後に一時ファイルを削除するか（1:する, 0:しない）
 REM ----------------------------------------------------------------------
-set del_temp=1
+set del_temp=0
 
 REM ----------------------------------------------------------------------
 REM エンコーダのオプション（ビットレート、アスペクト比は自動設定）
@@ -85,10 +85,6 @@ echo.>>%avs%
 echo SetMTMode(2, 0)>>%avs%
 echo.>>%avs%
 
-echo ### カット編集 ###>>%avs%
-echo #Trim()>>%avs%
-echo.>>%avs%
-
 echo ### クロップと塗りつぶし ###>>%avs%
 echo Crop(8, 0, -8, -0)>>%avs%
 echo Letterbox(0, 8, 0, 0)>>%avs%
@@ -101,11 +97,15 @@ echo TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
 
 echo ### リサイズ ###>>%avs%
-echo Spline36Resize(640, 480)>>%avs%
+echo LanczosResize(640, 480)>>%avs%
 echo.>>%avs%
 
 echo ### シャープ化 ###>>%avs%
 echo Sharpen(0.02)>>%avs%
+echo.>>%avs%
+
+echo ### カット編集 ###>>%avs%
+echo #Trim()>>%avs%
 echo.>>%avs%
 
 echo return last>>%avs%
