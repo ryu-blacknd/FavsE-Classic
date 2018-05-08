@@ -1,6 +1,6 @@
 @echo off
 
-echo FullAuto AVS Encode 1.12
+echo FullAuto AVS Encode 1.13
 
 REM ----------------------------------------------------------------------
 REM エンコーダの指定（1:NVEncC, 0:x264）
@@ -279,8 +279,8 @@ echo.
 
 if %check_avs% == 1 (
   echo ※avsファイル確認オプションが設定されています。
-  echo ※avsファイルをAvsPmodやAviUtlで確認・編集してください。
-  echo ※確認・編集完了後は処理を続行できます。
+  echo ※avsファイルを確認し、必要であれば編集してください。
+  echo ※確認・編集完了後はこのまま処理を続行できます。
   echo.
   pause
 )
