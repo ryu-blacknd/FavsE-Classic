@@ -1,9 +1,9 @@
 @echo off
 
-echo FullAuto AVS Encode 1.13
+echo FullAuto AVS Encode 1.20
 
 REM ----------------------------------------------------------------------
-REM エンコーダの指定（1:NVEncC, 0:x264）
+REM エンコーダの指定（0:x264, 1:NVEncC）
 REM ----------------------------------------------------------------------
 set use_nvenvc=0
 
@@ -20,12 +20,17 @@ REM SD素材（DVD等）
 set bitrate_dvd=2592
 
 REM ----------------------------------------------------------------------
-REM avs生成後に一時停止してCMカット結果を確認・編集するか（1:する, 0:しない）
+REM Width:1280pxを超える場合に1280x720pxに縮小するか（0:しない, 1:する）
 REM ----------------------------------------------------------------------
-set check_avs=0
+set resize=0
 
 REM ----------------------------------------------------------------------
-REM 終了後に一時ファイルを削除するか（1:する, 0:しない）
+REM avs生成後に一時停止してCMカット結果を確認・編集するか（0:しない, 1:する）
+REM ----------------------------------------------------------------------
+set check_avs=1
+
+REM ----------------------------------------------------------------------
+REM 終了後に一時ファイルを削除するか（0:しない, 1:する）
 REM ----------------------------------------------------------------------
 set del_temp=1
 
@@ -245,20 +250,16 @@ echo.>>%avs%
 :end_deint
 
 if %is_dvd% == 1 goto end_resize
+if %resize% == 0 goto end_resize
 echo ### リサイズ ###>>%avs%
-echo %genre% | find "アニメ" > NUL
-if not ERRORLEVEL 1 (
-  echo (Width() ^> 1280) ? Spline36Resize(1280, 720) : last>>%avs%
-) else (
-  echo (Width() ^> 1280) ? LanczosResize(1280, 720) : last>>%avs%
-)
+echo (Width() ^> 1280) ? Spline36Resize(1280, 720) : last>>%avs%
 echo.>>%avs%
 
-REM echo ### シャープ化 ###>>%avs%
-REM echo Sharpen(0.02)>>%avs%
-REM echo.>>%avs%
-
 :end_resize
+
+echo ### シャープ化 ###>>%avs%
+echo #Sharpen(0.02)>>%avs%
+echo.>>%avs%
 
 echo return last>>%avs%
 
