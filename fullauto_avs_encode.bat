@@ -1,6 +1,6 @@
 @echo off
 
-echo FullAuto AVS Encode 1.22
+echo FullAuto AVS Encode 1.23
 
 REM ----------------------------------------------------------------------
 REM エンコーダの指定（0:x264, 1:NVEncC）
@@ -58,6 +58,7 @@ set nvencc=%bin_path%NVEncC.exe
 set x264=%bin_path%x264.exe
 set avs2pipemod=%bin_path%avs2pipemod.exe
 set fawcl=%bin_path%fawcl.exe
+REM set qaac=%bin_path%qaac.exe
 set muxer=%bin_path%muxer.exe
 set remuxer=%bin_path%remuxer.exe
 
@@ -139,7 +140,7 @@ if %is_dvd% == 0 (
   if not exist "%source_fullpath%" (
     call %ts_spritter% -EIT -ECM -EMM -SD -1SEG "%file_fullpath%"
   ) else (
-    echo 既にファイルが存在します。
+    echo 既に処理済みのファイルが存在します。
   )
 ) else (
   echo 処理は必要ありません。
@@ -152,7 +153,7 @@ echo ----------------------------------------------------------------------
 if not exist "%source_fullname% PID *.aac" (
   call %ts_parser% --mode da --delay-type 3 --rb-size 16384 --wb-size 32768 "%source_fullpath%"
 ) else (
-  echo 既にファイルが存在します。
+  echo 既に分離された音声ファイルが存在します。
 )
 for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *.aac"`) do set aac_fullpath=%file_path%%%A
 echo.
@@ -161,7 +162,7 @@ echo ----------------------------------------------------------------------
 echo avsファイル生成処理
 echo ----------------------------------------------------------------------
 if exist %avs% (
-  echo 既にファイルが存在します。
+  echo 既にavsファイルが存在します。
   goto end_avs
 )
 
@@ -320,7 +321,7 @@ if not exist %output_enc% (
     call %x264% %x264_opt% %sar% -o %output_enc% %avs%
   )
 ) else (
-  echo 既にファイルが存在します。
+  echo 既にエンコード済みファイルが存在します。
 )
 echo.
 
@@ -330,12 +331,14 @@ echo ----------------------------------------------------------------------
 if not exist %output_wav% (
   call %avs2pipemod% -wav %avs% > %output_wav%
 ) else (
-  echo 既にファイルが存在します。
+  echo 既にwavファイルが存在します。
 )
 if not exist %output_aac% (
   call %fawcl% %output_wav% %output_aac%
+  REM call %qaac% -q 2 --tvbr 91 %output_wav% -o %output_aac%
+  REM call %qaac% -q 2 --tvbr 91 "%aac_fullpath%" -o %output_aac%
 ) else (
-  echo 既にファイルが存在します。
+  echo 既にaacファイルが存在します。
 )
 echo.
 
@@ -345,7 +348,7 @@ echo ----------------------------------------------------------------------
 if not exist %output_m4a% (
   call %muxer% -i %output_aac% -o %output_m4a%
 ) else (
-  echo 既にファイルが存在します。
+  echo 既にm4aファイルが存在します。
 )
 echo.
 
@@ -355,7 +358,7 @@ echo ----------------------------------------------------------------------
 if not exist %output_mp4% (
   call %remuxer% -i %output_enc% -i %output_m4a% -o %output_mp4%
 ) else (
-  echo 既にファイルが存在します。
+  echo 既にmp4ファイルが存在します。
 )
 echo.
 
