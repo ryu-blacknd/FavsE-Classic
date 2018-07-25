@@ -18,6 +18,16 @@ REM ----------------------------------------------------------------------
 set deint_mode=2
 
 REM ----------------------------------------------------------------------
+REM TSSplitterでの分離処理を行うか（0:行わない, 1:行う）
+REM ----------------------------------------------------------------------
+set do_ts_spritter=1
+
+REM ----------------------------------------------------------------------
+REM 自動CMカット処理を行うか（0:行わない, 1:行う）
+REM ----------------------------------------------------------------------
+set cm_cut=1
+
+REM ----------------------------------------------------------------------
 REM avs生成後に処理を一時停止するか（0:しない, 1:する）
 REM ----------------------------------------------------------------------
 set check_avs=0
@@ -107,6 +117,8 @@ set file_fullname=%~dpn1
 set file_fullpath=%~1
 
 if %is_dvd% == 1 goto source_dvd
+if %do_ts_spritter% == 0 goto source_dvd
+set source_fullname=%file_fullname%_HD
 set source_fullname=%file_fullname%_HD
 set cut_dir_name=%file_name%_HD
 goto end_source
@@ -138,6 +150,7 @@ if %width% == 720 (
   set sar=--sar 1:1
 )
 
+if %do_ts_spritter% == 0 goto end_ts_spritter
 echo ----------------------------------------------------------------------
 echo TSSplitter処理
 echo ----------------------------------------------------------------------
@@ -151,6 +164,7 @@ if %is_dvd% == 0 (
   echo 処理は必要ありません。
 )
 echo.
+:end_ts_spritter
 
 echo ----------------------------------------------------------------------
 echo  音声分離処理
@@ -199,6 +213,7 @@ if %is_dvd% == 1 goto end_cm_logo_cut
 echo SetMTMode(1, 0)>>%avs%
 echo.>>%avs%
 
+if %cm_cut% == 0 goto end_cm_cut
 echo ### CMカット ###>>%avs%
 for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -c') do set service=%%A
 echo #サービス名：%service%>>%avs%
