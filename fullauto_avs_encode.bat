@@ -15,7 +15,7 @@ set resize=1
 REM ----------------------------------------------------------------------
 REM DVDソースのインターレース解除モード（0:通常, 1:BOB化, 2:24fps化）
 REM ----------------------------------------------------------------------
-set deint_mode=2
+set deint_mode=1
 
 REM ----------------------------------------------------------------------
 REM avs生成後に処理を一時停止するか（0:しない, 1:する）
@@ -63,7 +63,7 @@ set nvencc=%bin_path%NVEncC.exe
 set x264=%bin_path%x264.exe
 set avs2pipemod=%bin_path%avs2pipemod.exe
 set fawcl=%bin_path%fawcl.exe
-REM set qaac=%bin_path%qaac.exe
+set qaac=%bin_path%qaac.exe
 set muxer=%bin_path%muxer.exe
 set remuxer=%bin_path%remuxer.exe
 
@@ -349,7 +349,6 @@ if not exist %output_wav% (
 )
 if not exist %output_aac% (
   call %fawcl% %output_wav% %output_aac%
-  REM call %qaac% -q 2 --tvbr 91 %output_wav% -o %output_aac%
   REM call %qaac% -q 2 --tvbr 91 "%aac_fullpath%" -o %output_aac%
 ) else (
   echo 既にaacファイルが存在します。
