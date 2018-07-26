@@ -1,6 +1,6 @@
 @echo off
 
-echo FullAuto AVS Encode 1.24
+echo FullAuto AVS Encode 1.26
 
 REM ----------------------------------------------------------------------
 REM エンコーダの指定（0:x264, 1:NVEncC）
@@ -213,10 +213,13 @@ if %is_dvd% == 1 goto end_cm_logo_cut
 echo SetMTMode(1, 0)>>%avs%
 echo.>>%avs%
 
-if %cm_cut% == 0 goto end_cm_cut
-echo ### CMカット ###>>%avs%
+echo ### サービス情報取得 ###>>%avs%
 for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -c') do set service=%%A
 echo #サービス名：%service%>>%avs%
+echo.>>%avs%
+
+if %cm_cut% == 0 goto end_do_cm_cut
+echo ### 自動CMカット ###>>%avs%
 set cut_fullpath="%cut_result_path%%cut_dir_name%\obs_cut.avs"
 if exist %cut_fullpath% goto end_cm_cut
 call %join_logo_scp% "%source_fullpath%"
@@ -226,6 +229,7 @@ sleep 2
 for /f "usebackq tokens=*" %%A in (%cut_fullpath%) do set trim_line=%%A
 echo %trim_line%>>%avs%
 echo.>>%avs%
+:end_do_cm_cut
 
 echo ### ロゴ除去 ###>>%avs%
 echo EraseLOGO("%logo_path%%service%.lgd", pos_x=0, pos_y=0, depth=128, yc_y=0, yc_u=0, yc_v=0, start=0, fadein=0, fadeout=0, end=-1, interlaced=true)>>%avs%
