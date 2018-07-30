@@ -1,6 +1,6 @@
 @echo off
 
-echo FullAuto AVS Encode 1.27
+echo FullAuto AVS Encode 1.28
 
 REM ----------------------------------------------------------------------
 REM エンコーダの指定（0:x264, 1:NVEncC）
@@ -412,7 +412,9 @@ if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi"
 if exist "%aac_fullpath%.lwi" del /f /q "%aac_fullpath%.lwi"
 if exist %avs% del /f /q %avs%
 if exist "%aac_fullpath%" del /f /q "%aac_fullpath%"
-if %hd_flag% == 1 if exist "%source_fullpath%" del /f /q "%source_fullpath%"
+if %hd_flag% == 1 (
+  if exist "%source_fullpath%" del /f /q "%source_fullpath%"
+)
 if exist %output_enc% del /f /q %output_enc%
 if exist %output_wav% del /f /q %output_wav%
 if exist %output_aac% del /f /q %output_aac%
@@ -423,7 +425,9 @@ if not exist "%source_fullpath%.lwi" echo "%source_fullpath%.lwi"
 if not exist "%aac_fullpath%.lwi" echo "%aac_fullpath%.lwi"
 if not exist %avs% echo %avs%
 if not exist "%aac_fullpath%" echo "%aac_fullpath%"
-if %hd_flag% == 1 if not exist "%source_fullpath%" echo "%source_fullpath%"
+if %hd_flag% == 1 (
+  if not exist "%source_fullpath%" echo "%source_fullpath%"
+)
 if not exist %output_enc% echo %output_enc%
 if not exist %output_wav% echo %output_wav%
 if not exist %output_aac% echo %output_aac%
