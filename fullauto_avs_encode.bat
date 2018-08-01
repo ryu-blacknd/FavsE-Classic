@@ -1,6 +1,6 @@
 @echo off
 
-echo FullAuto AVS Encode 1.29
+echo FullAuto AVS Encode 1.30
 
 REM ----------------------------------------------------------------------
 REM エンコーダの指定（0:x264, 1:NVEncC）
@@ -409,8 +409,8 @@ echo 一時ファイルを削除します。
 echo.
 
 set hd_flag=0
-if %is_dvd% == 0 set %hd_flag%=1
-if %do_ts_spritter% ==0 set %hd_flag%=0
+if %is_dvd% == 0 set hd_flag=1
+if %do_ts_spritter% ==0 set hd_flag=0
 
 if exist "%file_fullname%.lwi" del /f /q "%file_fullname%.lwi"
 if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi"
