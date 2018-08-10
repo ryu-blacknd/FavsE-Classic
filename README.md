@@ -63,6 +63,8 @@ avsの入力に対応しているバイナリです。ダウンロード後、�
 - [L-Smash](http://pop.4-bit.jp/?page_id=7920)
 `muxer.exe`と`remuxer.exe`のみ必要です。
 
+GIt for Windowsに含まれるgrepコマンドが必要なので、`C:\Program Files\Git\usr\bin`にPATHを通しておいてください。
+
 ### 入力ファイル
 
 MPEG2-TS（拡張子.ts）で、音声はAACである必要があります。
