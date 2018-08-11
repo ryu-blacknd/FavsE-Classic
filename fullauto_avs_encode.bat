@@ -3,9 +3,14 @@
 echo FullAuto AVS Encode 1.40
 
 REM ----------------------------------------------------------------------
-REM エンコーダの指定（0:x264, 1:QSV, 2:NVEnc）
+REM 映像エンコーダの指定（0:x264, 1:QSV, 2:NVEnc）
 REM ----------------------------------------------------------------------
-set encoder=1
+set video_encoder=0
+
+REM ----------------------------------------------------------------------
+REM 音声エンコードの指定（0:FAW, 1:qaac）
+REM ----------------------------------------------------------------------
+set audio_encoder=1
 
 REM ----------------------------------------------------------------------
 REM Width:1280pxを超える場合に1280x720pxに縮小するか（0:しない, 1:する）
@@ -40,11 +45,11 @@ set del_temp=1
 REM ----------------------------------------------------------------------
 REM エンコーダのオプション（ビットレート、アスペクト比は自動設定）
 REM ----------------------------------------------------------------------
-if %encoder% == 0 (
+if %video_encoder% == 0 (
   set x264_opt=--preset slow --crf 20 --b-adapt 2 --me umh --subme 9
-) else if %encoder% == 1 (
+) else if %video_encoder% == 1 (
   set qsvencc_opt=-c h264 -u 2 --la-icq 36 --la-depth 80 --la-quality slow --bframes 3 --weightb --weightp
-) else if %encoder% == 2 (
+) else if %video_encoder% == 2 (
   set nvencc_opt=--avs -c h264 --cqp 20:23:25 --qp-init 20:23:25 --lookahead 32 --gop-len auto --weightp --aq-temporal --aq-strength 7
 ) else (
   echo.
@@ -70,7 +75,8 @@ set nvencc=%bin_path%NVEncC.exe
 
 set avs2pipemod=%bin_path%avs2pipemod.exe
 set fawcl=%bin_path%fawcl.exe
-REM set qaac=%bin_path%qaac.exe
+set wavi=%bin_path%wavi.exe
+set qaac=%bin_path%qaac.exe
 set muxer=%bin_path%muxer.exe
 set remuxer=%bin_path%remuxer.exe
 
@@ -163,6 +169,7 @@ if %is_dvd% == 0 (
 echo.
 :end_tsspritter
 
+if %audio_encoder% == 1 goto end_audio_split
 echo ----------------------------------------------------------------------
 echo  音声分離処理
 echo ----------------------------------------------------------------------
@@ -173,6 +180,7 @@ if not exist "%source_fullname% PID *.aac" (
 )
 for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *.aac"`) do set aac_fullpath=%file_path%%%A
 echo.
+:end_audio_split
 
 echo ----------------------------------------------------------------------
 echo avsファイル生成処理
@@ -187,7 +195,11 @@ echo.>>%avs%
 
 echo ### ファイル読み込み ###>>%avs%
 echo LWLibavVideoSource("%source_fullpath%", fpsnum=30000, fpsden=1001)>>%avs%
-echo AudioDub(last, AACFaw("%aac_fullpath%"))>>%avs%
+if %audio_encoder% == 0 (
+  echo AudioDub(last, AACFaw("%aac_fullpath%"))>>%avs%
+) else (
+  echo AudioDub(last, LWLibavAudioSource("%aac_fullpath%", stream_index=1, av_sync=true, layout="stereo"))>>%avs%
+)
 echo.>>%avs%
 
 echo SetMTMode(2, 0)>>%avs%
@@ -319,14 +331,14 @@ if %check_avs% == 1 (
 echo.
 
 echo ----------------------------------------------------------------------
-echo 映像エンコード
+echo 映像処理
 echo ----------------------------------------------------------------------
 if not exist %output_enc% (
-  if %encoder% == 0 (
+  if %video_encoder% == 0 (
     call %x264% %x264_opt% %sar% -o %output_enc% %avs%
-  ) else if %encoder% == 1 (
+  ) else if %video_encoder% == 1 (
     call %qsvencc% %qsvencc_opt% %sar% -i %avs% -o %output_enc%
-  ) else if %encoder% == 2 (
+  ) else if %video_encoder% == 2 (
     call %nvencc% %nvencc_opt% %sar% -i %avs% -o %output_enc%
   )
 ) else (
@@ -337,17 +349,22 @@ echo.
 echo ----------------------------------------------------------------------
 echo 音声処理
 echo ----------------------------------------------------------------------
-if not exist %output_wav% (
-  call %avs2pipemod% -wav %avs% > %output_wav%
+if %audio_encoder% == 0 (
+  if not exist %output_wav% (
+    call %avs2pipemod% -wav %avs% > %output_wav%
+  ) else (
+    echo 既にwavファイルが存在します。
+  )
+  if not exist %output_aac% (
+    call %fawcl% %output_wav% %output_aac%
+    REM call %qaac% -q 2 --tvbr 91 %output_wav% -o %output_aac%
+    REM call %qaac% -q 2 --tvbr 91 "%aac_fullpath%" -o %output_aac%
+  ) else (
+    echo 既にaacファイルが存在します。
+  )
 ) else (
-  echo 既にwavファイルが存在します。
-)
-if not exist %output_aac% (
-  call %fawcl% %output_wav% %output_aac%
-  REM call %qaac% -q 2 --tvbr 91 %output_wav% -o %output_aac%
-  REM call %qaac% -q 2 --tvbr 91 "%aac_fullpath%" -o %output_aac%
-) else (
-  echo 既にaacファイルが存在します。
+  call %wavi% %avs% %output_wav%
+  call %qaac% -V 90 -o %output_wav% %output_aac%
 )
 echo.
 
