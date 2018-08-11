@@ -1,6 +1,6 @@
 @echo off
 
-echo FullAuto AVS Encode 1.41
+echo FullAuto AVS Encode 1.42
 
 REM ----------------------------------------------------------------------
 REM 映像エンコーダの指定（0:x264, 1:QSV, 2:NVEnc）
@@ -169,7 +169,7 @@ if %is_dvd% == 0 (
 echo.
 :end_tsspritter
 
-if %audio_encoder% == 1 goto end_audio_split
+if not %audio_encoder% == 0 goto end_audio_split
 echo ----------------------------------------------------------------------
 echo  音声分離処理
 echo ----------------------------------------------------------------------
@@ -195,11 +195,9 @@ echo.>>%avs%
 
 echo ### ファイル読み込み ###>>%avs%
 echo LWLibavVideoSource("%source_fullpath%", fpsnum=30000, fpsden=1001)>>%avs%
-if %audio_encoder% == 0 (
-  echo AudioDub(last, AACFaw("%aac_fullpath%"))>>%avs%
-) else (
-  echo AudioDub(last, LWLibavAudioSource("%aac_fullpath%", stream_index=1, av_sync=true, layout="stereo"))>>%avs%
-)
+echo 0
+if %audio_encoder% == 0 echo AudioDub(last, AACFaw("%aac_fullpath%"))>>%avs%
+if %audio_encoder% == 1 echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
 echo.>>%avs%
 
 echo SetMTMode(2, 0)>>%avs%
@@ -357,14 +355,12 @@ if %audio_encoder% == 0 (
   )
   if not exist %output_aac% (
     call %fawcl% %output_wav% %output_aac%
-    REM call %qaac% -q 2 --tvbr 91 %output_wav% -o %output_aac%
-    REM call %qaac% -q 2 --tvbr 91 "%aac_fullpath%" -o %output_aac%
   ) else (
     echo 既にaacファイルが存在します。
   )
 ) else (
   call %wavi% %avs% %output_wav%
-  call %qaac% -V 90 -o %output_wav% %output_aac%
+  call %qaac% -q 2 --tvbr 91 -o %output_wav% %output_aac%
 )
 echo.
 
