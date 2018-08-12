@@ -1,6 +1,6 @@
 @echo off
 
-echo FullAuto AVS Encode 1.50
+echo FullAuto AVS Encode 1.51
 
 REM ----------------------------------------------------------------------
 REM 映像エンコーダの指定（0:x264, 1:QSV, 2:NVEnc, 3:NVEnc_HEVC）
@@ -16,11 +16,6 @@ REM ----------------------------------------------------------------------
 REM avs生成後に処理を一時停止するか（0:しない, 1:する）※内容を編集してから続行可能
 REM ----------------------------------------------------------------------
 set check_avs=0
-
-REM ----------------------------------------------------------------------
-REM TSSplitterでの分離処理を行うか（0:行わない, 1:行う）
-REM ----------------------------------------------------------------------
-set do_tsspritter=1
 
 REM ----------------------------------------------------------------------
 REM 自動CMカット処理を行うか（0:行わない, 1:行う）
@@ -120,7 +115,7 @@ set file_fullname=%~dpn1
 set file_fullpath=%~1
 
 if %is_dvd% == 1 goto source_dvd
-if %do_tsspritter% == 0 goto source_dvd
+if %cm_cut% == 0 goto source_dvd
 set source_fullname=%file_fullname%_HD
 set source_fullname=%file_fullname%_HD
 set cut_dir_name=%file_name%_HD
@@ -153,7 +148,7 @@ if %width% == 720 (
   set sar=--sar 1:1
 )
 
-if %do_tsspritter% == 0 goto end_tsspritter
+if %cm_cut% == 0 goto end_tsspritter
 echo ----------------------------------------------------------------------
 echo TSSplitter処理
 echo ----------------------------------------------------------------------
@@ -403,7 +398,7 @@ echo.
 
 set hd_flag=0
 if %is_dvd% == 0 set hd_flag=1
-if %do_tsspritter% ==0 set hd_flag=0
+if %cm_cut% ==0 set hd_flag=0
 
 if exist "%file_fullname%.lwi" del /f /q "%file_fullname%.lwi"
 if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi"
