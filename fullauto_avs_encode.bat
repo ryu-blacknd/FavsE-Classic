@@ -1,6 +1,6 @@
 @echo off
 
-echo FullAuto AVS Encode 1.42
+echo FullAuto AVS Encode 1.44
 
 REM ----------------------------------------------------------------------
 REM 映像エンコーダの指定（0:x264, 1:QSV, 2:NVEnc）
@@ -11,16 +11,6 @@ REM ----------------------------------------------------------------------
 REM 音声エンコードの指定（0:FAW, 1:qaac）
 REM ----------------------------------------------------------------------
 set audio_encoder=0
-
-REM ----------------------------------------------------------------------
-REM Width:1280pxを超える場合に1280x720pxに縮小するか（0:しない, 1:する）
-REM ----------------------------------------------------------------------
-set resize=1
-
-REM ----------------------------------------------------------------------
-REM DVDソースのインターレース解除モード（0:通常, 1:BOB化, 2:24fps化）
-REM ----------------------------------------------------------------------
-set deint_mode=1
 
 REM ----------------------------------------------------------------------
 REM TSSplitterでの分離処理を行うか（0:行わない, 1:行う）
@@ -35,7 +25,17 @@ set cm_cut=1
 REM ----------------------------------------------------------------------
 REM avs生成後に処理を一時停止するか（0:しない, 1:する）※GUIでカット編集する等できます
 REM ----------------------------------------------------------------------
-set check_avs=0
+set check_avs0
+
+REM ----------------------------------------------------------------------
+REM DVDソースのインターレース解除モード（0:通常, 1:BOB化, 2:24fps化）
+REM ----------------------------------------------------------------------
+set deint_mode=1
+
+REM ----------------------------------------------------------------------
+REM Width:1280pxを超える場合に1280x720pxに縮小するか（0:しない, 1:する）
+REM ----------------------------------------------------------------------
+set resize=1
 
 REM ----------------------------------------------------------------------
 REM 終了後に一時ファイルを削除するか（0:しない, 1:する）
@@ -48,13 +48,11 @@ REM ----------------------------------------------------------------------
 if %video_encoder% == 0 (
   set x264_opt=--preset slow --crf 20 --b-adapt 2 --me umh --subme 9
 ) else if %video_encoder% == 1 (
-  set qsvencc_opt=-c h264 -u 2 --la-icq 36 --la-depth 80 --la-quality slow --bframes 3 --weightb --weightp
+  set qsvencc_opt=-c h264 -u 2 --la-icq 41 --la-depth 60 --la-quality slow --bframes 3 --weightb --weightp
 ) else if %video_encoder% == 2 (
   set nvencc_opt=--avs -c h264 --cqp 20:23:25 --qp-init 20:23:25 --lookahead 32 --gop-len auto --weightp --aq-temporal --aq-strength 7
 ) else (
-  echo.
   echo [エラー] エンコーダーを正しく指定してください。
-  echo.
   goto end
 )
 
@@ -195,7 +193,6 @@ echo.>>%avs%
 
 echo ### ファイル読み込み ###>>%avs%
 echo LWLibavVideoSource("%source_fullpath%", fpsnum=30000, fpsden=1001)>>%avs%
-echo 0
 if %audio_encoder% == 0 echo AudioDub(last, AACFaw("%aac_fullpath%"))>>%avs%
 if %audio_encoder% == 1 echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
 echo.>>%avs%
@@ -358,9 +355,17 @@ if %audio_encoder% == 0 (
   ) else (
     echo 既にaacファイルが存在します。
   )
-) else (
-  call %wavi% %avs% %output_wav%
-  call %qaac% -q 2 --tvbr 91 -o %output_wav% %output_aac%
+) else if %audio_encoder% == 1 (
+  if not exist %output_wav% (
+    call %wavi% %avs% %output_wav%
+  ) else (
+    echo 既にwavファイルが存在します。
+  )
+  if not exist %output_aac% (
+    call %qaac% -q 2 --tvbr 91 %output_wav% -o %output_aac%
+  ) else (
+    echo 既にaacファイルが存在します。
+  )
 )
 echo.
 
