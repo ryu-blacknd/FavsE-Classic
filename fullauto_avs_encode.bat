@@ -1,11 +1,11 @@
 @echo off
 
-echo FullAuto AVS Encode 1.49
+echo FullAuto AVS Encode 1.50
 
 REM ----------------------------------------------------------------------
-REM 映像エンコーダの指定（0:x264, 1:QSV, 2:NVEnc）
+REM 映像エンコーダの指定（0:x264, 1:QSV, 2:NVEnc, 3:NVEnc_HEVC）
 REM ----------------------------------------------------------------------
-set video_encoder=0
+set video_encoder=2
 
 REM ----------------------------------------------------------------------
 REM 音声エンコードの指定（0:FAW, 1:qaac）
@@ -15,17 +15,17 @@ set audio_encoder=0
 REM ----------------------------------------------------------------------
 REM TSSplitterでの分離処理を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
-set do_tsspritter=1
+set do_tsspritter=0
 
 REM ----------------------------------------------------------------------
 REM 自動CMカット処理を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
-set cm_cut=1
+set cm_cut=0
 
 REM ----------------------------------------------------------------------
 REM avs生成後に処理を一時停止するか（0:しない, 1:する）※GUIでカット編集する等できます
 REM ----------------------------------------------------------------------
-set check_avs=0
+set check_avs=1
 
 REM ----------------------------------------------------------------------
 REM DVDソースのインターレース解除モード（0:通常, 1:BOB化, 2:24fps化）
@@ -46,11 +46,13 @@ REM ----------------------------------------------------------------------
 REM エンコーダのオプション（ビットレート、アスペクト比は自動設定）
 REM ----------------------------------------------------------------------
 if %video_encoder% == 0 (
-  set x264_opt=--preset slow --crf 20 --b-adapt 2 --me umh --subme 9
+  set x264_opt=--preset slow --crf 21 --rc-lookahead 60 --b-adapt 2 --me umh --subme 9
 ) else if %video_encoder% == 1 (
-  set qsvencc_opt=-c h264 -u 2 --la-icq 41 --la-depth 60 --la-quality slow --bframes 3 --weightb --weightp
+  set qsvencc_opt=-c h264 -u 2 --la-icq 28 --la-quality slow --bframes 3 --weightb --weightp
 ) else if %video_encoder% == 2 (
-  set nvencc_opt=--avs -c h264 --cqp 20:23:25 --qp-init 20:23:25 --lookahead 32 --gop-len auto --weightp --aq-temporal --aq-strength 7
+  set nvencc_opt=--avs -c h264 --cqp 21:23:23 --gop-len auto --weightp --aq --aq-temporal
+) else if %video_encoder% == 3 (
+  set nvencc_opt=--avs -c hevc --cqp 21:23:23 --gop-len auto --weightp --aq --aq-temporal
 ) else (
   echo [エラー] エンコーダーを正しく指定してください。
   goto end
