@@ -1,26 +1,21 @@
 @echo off
 
-echo FullAuto AVS Encode 1.32
+echo FullAuto AVS Encode 1.52
 
 REM ----------------------------------------------------------------------
-REM エンコーダの指定（0:x264, 1:NVEncC）
+REM 映像エンコーダの指定（0:x264, 1:QSV, 2:NVEnc, 3:NVEnc_HEVC）
 REM ----------------------------------------------------------------------
-set use_nvenvc=0
+set video_encoder=0
 
 REM ----------------------------------------------------------------------
-REM Width:1280pxを超える場合に1280x720pxに縮小するか（0:しない, 1:する）
+REM 音声エンコードの指定（0:FAW, 1:qaac）
 REM ----------------------------------------------------------------------
-set resize=1
+set audio_encoder=0
 
 REM ----------------------------------------------------------------------
-REM DVDソースのインターレース解除モード（0:通常, 1:BOB化, 2:24fps化）
+REM avs生成後に処理を一時停止するか（0:しない, 1:する）※内容を編集してから続行可能
 REM ----------------------------------------------------------------------
-set deint_mode=2
-
-REM ----------------------------------------------------------------------
-REM TSSplitterでの分離処理を行うか（0:行わない, 1:行う）
-REM ----------------------------------------------------------------------
-set do_ts_spritter=1
+set check_avs=0
 
 REM ----------------------------------------------------------------------
 REM 自動CMカット処理を行うか（0:行わない, 1:行う）
@@ -28,9 +23,14 @@ REM ----------------------------------------------------------------------
 set cm_cut=1
 
 REM ----------------------------------------------------------------------
-REM avs生成後に処理を一時停止するか（0:しない, 1:する）
+REM DVDソースのインターレース解除モード（0:通常, 1:BOB化, 2:24fps化）
 REM ----------------------------------------------------------------------
-set check_avs=0
+set deint_mode=1
+
+REM ----------------------------------------------------------------------
+REM Width:1280pxを超える場合に1280x720pxに縮小するか（0:しない, 1:する）
+REM ----------------------------------------------------------------------
+set resize=1
 
 REM ----------------------------------------------------------------------
 REM 終了後に一時ファイルを削除するか（0:しない, 1:する）
@@ -38,33 +38,23 @@ REM ----------------------------------------------------------------------
 set del_temp=1
 
 REM ----------------------------------------------------------------------
-REM 品質の指定（x264のみ）
-REM ----------------------------------------------------------------------
-set x264_crf=20
-
-REM ----------------------------------------------------------------------
-REM ビットレートの指定（NVEncCのみ）
-REM ----------------------------------------------------------------------
-REM アニメ用
-set bitrate_anime=2765
-REM 実写映画用
-set bitrate_movie=3456
-REM その他（TV番組等）
-set bitrate_default=4147
-REM SD素材（DVD等）
-set bitrate_dvd=2592
-
-REM ----------------------------------------------------------------------
 REM エンコーダのオプション（ビットレート、アスペクト比は自動設定）
 REM ----------------------------------------------------------------------
-if %use_nvenvc% == 1 (
-  set nvencc_opt=--avs --qp-init 20:21:22 --qp-min 19:22:24 --lookahead 20 --aq
+if %video_encoder% == 0 (
+  set x264_opt=--preset slow --crf 20 --rc-lookahead 60 --b-adapt 2 --me umh --subme 9
+) else if %video_encoder% == 1 (
+  set qsvencc_opt=-c h264 -u 2 --la-icq 25 --la-quality slow --bframes 3 --weightb --weightp
+) else if %video_encoder% == 2 (
+  set nvencc_opt=--avs -c h264 --cqp 20:23:24 --qp-init 20:23:24 --weightp --aq --aq-temporal
+) else if %video_encoder% == 3 (
+  set nvencc_opt=--avs -c hevc --cqp 20:23:24 --qp-init 20:23:24 --weightp --aq --aq-temporal
 ) else (
-  set x264_opt=--preset slower --crf %x264_crf% --partitions p8x8,b8x8,i8x8,i4x4 --ref 4 --no-fast-pskip --no-dct-decimate
+  echo [エラー] エンコーダーを正しく指定してください。
+  goto end
 )
 
 REM ----------------------------------------------------------------------
-REM フォルダ名(必要に応じて書き換えてください)
+REM フォルダ名(環境に応じて書き換えてください)
 REM ----------------------------------------------------------------------
 set output_path=F:\Encode\
 set bin_path=C:\DTV\bin\
@@ -72,19 +62,22 @@ set logo_path=%bin_path%join_logo_scp\logo\
 set cut_result_path=%bin_path%join_logo_scp\result\
 
 REM ----------------------------------------------------------------------
-REM 実行ファイルダ名(必要に応じて書き換えてください)
+REM 実行ファイルダ名(環境に応じて書き換えてください)
 REM ----------------------------------------------------------------------
-set nvencc=%bin_path%NVEncC.exe
 set x264=%bin_path%x264.exe
+set qsvencc=%bin_path%QSVEncC.exe
+set nvencc=%bin_path%NVEncC.exe
+
 set avs2pipemod=%bin_path%avs2pipemod.exe
 set fawcl=%bin_path%fawcl.exe
-REM set qaac=%bin_path%qaac.exe
+set wavi=%bin_path%wavi.exe
+set qaac=%bin_path%qaac.exe
 set muxer=%bin_path%muxer.exe
 set remuxer=%bin_path%remuxer.exe
 
 set mediainfo=%bin_path%MediaInfo\MediaInfo.exe
 set rplsinfo=%bin_path%rplsinfo.exe
-set ts_spritter=%bin_path%TsSplitter\TsSplitter.exe
+set tsspritter=%bin_path%TsSplitter\TsSplitter.exe
 set ts_parser=%bin_path%ts_parser\ts_parser.exe
 set join_logo_scp=%bin_path%join_logo_scp\jlse_bat.bat
 
@@ -122,7 +115,7 @@ set file_fullname=%~dpn1
 set file_fullpath=%~1
 
 if %is_dvd% == 1 goto source_dvd
-if %do_ts_spritter% == 0 goto source_dvd
+if %cm_cut% == 0 goto source_dvd
 set source_fullname=%file_fullname%_HD
 set source_fullname=%file_fullname%_HD
 set cut_dir_name=%file_name%_HD
@@ -155,13 +148,13 @@ if %width% == 720 (
   set sar=--sar 1:1
 )
 
-if %do_ts_spritter% == 0 goto end_ts_spritter
+if %cm_cut% == 0 goto end_tsspritter
 echo ----------------------------------------------------------------------
 echo TSSplitter処理
 echo ----------------------------------------------------------------------
 if %is_dvd% == 0 (
   if not exist "%source_fullpath%" (
-    call %ts_spritter% -EIT -ECM -EMM -SD -1SEG "%file_fullpath%"
+    call %tsspritter% -EIT -ECM -EMM -SD -1SEG "%file_fullpath%"
   ) else (
     echo 既に処理済みのファイルが存在します。
   )
@@ -169,18 +162,20 @@ if %is_dvd% == 0 (
   echo 処理は必要ありません。
 )
 echo.
-:end_ts_spritter
+:end_tsspritter
 
+if not %audio_encoder% == 0 goto end_audio_split
 echo ----------------------------------------------------------------------
 echo  音声分離処理
 echo ----------------------------------------------------------------------
 if not exist "%source_fullname% PID *.aac" (
-  call %ts_parser% --mode da --delay-type 3 --rb-size 16384 --wb-size 32768 "%source_fullpath%"
+  call %ts_parser% --mode dam --delay-type 3 --rb-size 16384 --wb-size 32768 "%source_fullpath%"
 ) else (
   echo 既に分離された音声ファイルが存在します。
 )
 for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *.aac"`) do set aac_fullpath=%file_path%%%A
 echo.
+:end_audio_split
 
 echo ----------------------------------------------------------------------
 echo avsファイル生成処理
@@ -195,7 +190,8 @@ echo.>>%avs%
 
 echo ### ファイル読み込み ###>>%avs%
 echo LWLibavVideoSource("%source_fullpath%", fpsnum=30000, fpsden=1001)>>%avs%
-echo AudioDub(last, AACFaw("%aac_fullpath%"))>>%avs%
+if %audio_encoder% == 0 echo AudioDub(last, AACFaw("%aac_fullpath%"))>>%avs%
+if %audio_encoder% == 1 echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
 echo.>>%avs%
 
 echo SetMTMode(2, 0)>>%avs%
@@ -320,43 +316,24 @@ echo.
 if %check_avs% == 1 (
   echo ※avsファイル確認オプションが設定されています。
   echo ※avsファイルを確認し、必要であれば編集してください。
-  echo ※確認・編集完了後はこのまま処理を続行できます。
+  echo ※確認・編集完了後は何かキーを押せば処理を続行できます。
   echo.
   pause
 )
 echo.
 
-REM ----------------------------------------------------------------------
-REM ビットレートを設定（NVEncCのみ）
-REM ----------------------------------------------------------------------
-if %use_nvenvc% == 0 goto end_bitrate
-if %is_dvd% == 0 (
-  echo %genre% | find "アニメ" > NUL
-  if not ERRORLEVEL 1 (
-    set bitrate_val=%bitrate_anime%
-    goto set_bitrate
-  )
-  echo %genre% | find "映画" > NUL
-  if not ERRORLEVEL 1 (
-    set bitrate_val=%bitrate_movie%
-    goto set_bitrate
-  )
-  set bitrate_val=%bitrate_default%
-) else (
-  set bitrate_val=%bitrate_dvd%
-)
-:set_bitrate
-set bitrate=--vbrhq %bitrate_val%
-:end_bitrate
-
 echo ----------------------------------------------------------------------
-echo 映像エンコード
+echo 映像処理
 echo ----------------------------------------------------------------------
 if not exist %output_enc% (
-  if %use_nvenvc% == 1 (
-    call %nvencc% %nvencc_opt% %bitrate% %sar% -i %avs% -o %output_enc%
-  ) else (
+  if %video_encoder% == 0 (
     call %x264% %x264_opt% %sar% -o %output_enc% %avs%
+  ) else if %video_encoder% == 1 (
+    call %qsvencc% %qsvencc_opt% %sar% -i %avs% -o %output_enc%
+  ) else if %video_encoder% == 2 (
+    call %nvencc% %nvencc_opt% %sar% -i %avs% -o %output_enc%
+  ) else if %video_encoder% == 3 (
+    call %nvencc% %nvencc_opt% %sar% -i %avs% -o %output_enc%
   )
 ) else (
   echo 既にエンコード済みファイルが存在します。
@@ -366,17 +343,28 @@ echo.
 echo ----------------------------------------------------------------------
 echo 音声処理
 echo ----------------------------------------------------------------------
-if not exist %output_wav% (
-  call %avs2pipemod% -wav %avs% > %output_wav%
-) else (
-  echo 既にwavファイルが存在します。
-)
-if not exist %output_aac% (
-  call %fawcl% %output_wav% %output_aac%
-  REM call %qaac% -q 2 --tvbr 91 %output_wav% -o %output_aac%
-  REM call %qaac% -q 2 --tvbr 91 "%aac_fullpath%" -o %output_aac%
-) else (
-  echo 既にaacファイルが存在します。
+if %audio_encoder% == 0 (
+  if not exist %output_wav% (
+    call %avs2pipemod% -wav %avs% > %output_wav%
+  ) else (
+    echo 既にwavファイルが存在します。
+  )
+  if not exist %output_aac% (
+    call %fawcl% %output_wav% %output_aac%
+  ) else (
+    echo 既にaacファイルが存在します。
+  )
+) else if %audio_encoder% == 1 (
+  if not exist %output_wav% (
+    call %wavi% %avs% %output_wav%
+  ) else (
+    echo 既にwavファイルが存在します。
+  )
+  if not exist %output_aac% (
+    call %qaac% -q 2 --tvbr 91 %output_wav% -o %output_aac%
+  ) else (
+    echo 既にaacファイルが存在します。
+  )
 )
 echo.
 
@@ -410,7 +398,7 @@ echo.
 
 set hd_flag=0
 if %is_dvd% == 0 set hd_flag=1
-if %do_ts_spritter% ==0 set hd_flag=0
+if %cm_cut% ==0 set hd_flag=0
 
 if exist "%file_fullname%.lwi" del /f /q "%file_fullname%.lwi"
 if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi"
@@ -448,7 +436,7 @@ echo.
 :end_del_temp
 
 echo ======================================================================
-echo %~1
+echo %output_mp4%
 echo ----------------------------------------------------------------------
 echo 処理終了: %date% %time%
 echo ======================================================================
