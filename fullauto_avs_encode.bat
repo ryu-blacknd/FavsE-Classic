@@ -1,6 +1,6 @@
 @echo off
 
-echo FullAuto AVS Encode 1.51
+echo FullAuto AVS Encode 1.52
 
 REM ----------------------------------------------------------------------
 REM 映像エンコーダの指定（0:x264, 1:QSV, 2:NVEnc, 3:NVEnc_HEVC）
@@ -45,9 +45,9 @@ if %video_encoder% == 0 (
 ) else if %video_encoder% == 1 (
   set qsvencc_opt=-c h264 -u 2 --la-icq 25 --la-quality slow --bframes 3 --weightb --weightp
 ) else if %video_encoder% == 2 (
-  set nvencc_opt=--avs -c h264 --cqp 20:23:25 --qp-init 20:23:25 --weightp --aq --aq-temporal
+  set nvencc_opt=--avs -c h264 --cqp 20:23:24 --qp-init 20:23:24 --weightp --aq --aq-temporal
 ) else if %video_encoder% == 3 (
-  set nvencc_opt=--avs -c hevc --cqp 20:23:25 --qp-init 20:23:25 --weightp --aq --aq-temporal
+  set nvencc_opt=--avs -c hevc --cqp 20:23:24 --qp-init 20:23:24 --weightp --aq --aq-temporal
 ) else (
   echo [エラー] エンコーダーを正しく指定してください。
   goto end
