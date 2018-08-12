@@ -1,9 +1,9 @@
 @echo off
 
-echo FullAuto AVS Encode 1.52
+echo AavsE (Auto AVS Encode) 1.52
 
 REM ----------------------------------------------------------------------
-REM 映像エンコーダの指定（0:x264, 1:QSV, 2:NVEnc, 3:NVEnc_HEVC）
+REM 映像エンコーダの指定（0:x264, 1:QSV, 2:NVEnc_AVC, 3:NVEnc_HEVC）
 REM ----------------------------------------------------------------------
 set video_encoder=0
 
