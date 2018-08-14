@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 1.53
+echo FavsE (FullAuto AVS Encode) 1.60
 
 REM ----------------------------------------------------------------------
 REM 映像エンコーダの指定（0:x264, 1:QSV, 2:NVEnc_AVC, 3:NVEnc_HEVC）
@@ -13,14 +13,21 @@ REM ----------------------------------------------------------------------
 set audio_encoder=0
 
 REM ----------------------------------------------------------------------
-REM avs生成後に処理を一時停止するか（0:しない, 1:する）※内容を編集してから続行可能
+REM avs生成後に処理を一時停止するか（0:しない, 1:する）※ほぼ手動CMカット用
 REM ----------------------------------------------------------------------
-set check_avs=0
+set check_avs=1
 
 REM ----------------------------------------------------------------------
 REM 自動CMカット処理を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
-set cm_cut=1
+set cm_cut=0
+
+REM ----------------------------------------------------------------------
+REM GPUでインターレース解除を行うか（0:行わない, 1:行う）※24fps化、BOB化では無効
+REM 使用するデバイスが複数ある場合は Intel, NVIDIA, Radeonから指定してください
+REM ----------------------------------------------------------------------
+set gpu_deint=1
+set %d3dvp_device%=Intel
 
 REM ----------------------------------------------------------------------
 REM DVDソースのインターレース解除モード（0:通常, 1:BOB化, 2:24fps化）
@@ -41,13 +48,13 @@ REM ----------------------------------------------------------------------
 REM エンコーダのオプション（ビットレート、アスペクト比は自動設定）
 REM ----------------------------------------------------------------------
 if %video_encoder% == 0 (
-  set x264_opt=--preset slow --crf 20 --rc-lookahead 60 --b-adapt 2 --me umh --subme 9
+  set x264_opt=--crf 20 --qcomp 0.7 --me umh --subme 9 --direct auto --ref 5 --trellis 2
 ) else if %video_encoder% == 1 (
   set qsvencc_opt=-c h264 -u 2 --la-icq 25 --la-quality slow --bframes 3 --weightb --weightp
 ) else if %video_encoder% == 2 (
-  set nvencc_opt=--avs -c h264 --cqp 20:23:24 --qp-init 20:23:24 --weightp --aq --aq-temporal
+  set nvencc_opt=--avs -c h264 --cqp 20:22:24 --qp-init 20:22:24 --weightp --aq --aq-temporal
 ) else if %video_encoder% == 3 (
-  set nvencc_opt=--avs -c hevc --cqp 20:23:24 --qp-init 20:23:24 --weightp --aq --aq-temporal
+  set nvencc_opt=--avs -c hevc --cqp 21:23:24 --qp-init 21:22:24 --weightp --aq --aq-temporal
 ) else (
   echo [エラー] エンコーダーを正しく指定してください。
   goto end
@@ -245,22 +252,13 @@ echo ### 逆テレシネ / インターレース処理 ###>>%avs%
 set is_ivtc=0
 
 if %is_dvd% == 0 goto not_dvd
-if %deint_mode% == 0 goto dvd_deint_normal
-if %deint_mode% == 1 goto dvd_deint_bob
-if %deint_mode% == 2 goto dvd_deint_24p
-:dvd_deint_normal
-echo TDeint(edeint=nnedi3)>>%avs%
-goto end_dvd_deint
-:dvd_deint_bob
-echo TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
-goto end_dvd_deint
-:dvd_deint_24p
-echo TIVTC24P2()>>%avs%
-:end_dvd_deint
-echo.>>%avs%
-goto end_deint
+if %deint_mode% == 0 goto set_tdeint
+if %deint_mode% == 1 goto set_tdeint_bob
+if %deint_mode% == 2 goto set_tivtc24p2
+if %gpu_deint% == 0 goto set_d3dvp
 
 :not_dvd
+
 for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -g') do set genre=%%A
 echo #ジャンル名：%genre%>>%avs%
 if "%scan_type%" == "Progressive" goto end_deint
@@ -268,20 +266,35 @@ echo %genre% | find "アニメ" > NUL
 if not ERRORLEVEL 1 goto set_tivtc24p2
 echo %genre% | find "映画" > NUL
 if not ERRORLEVEL 1 goto set_tivtc24p2
-goto set_tdeint
+if %gpu_deint% == 0 (
+  goto set_tdeint
+) else (
+  goto set_d3dvp
+)
 
 :set_tivtc24p2
 set is_ivtc=1
 echo TIVTC24P2()>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
+echo #D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
 echo.>>%avs%
 goto end_deint
+
 :set_tdeint
 echo #TIVTC24P2()>>%avs%
 echo TDeint(edeint=nnedi3)>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
+echo #D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
 echo.>>%avs%
+
+:set_d3dvp
+echo #TIVTC24P2()>>%avs%
+echo #TDeint(edeint=nnedi3)>>%avs%
+echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
+echo D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
+echo.>>%avs%
+
 :end_deint
 
 if %is_dvd% == 1 goto end_resize
