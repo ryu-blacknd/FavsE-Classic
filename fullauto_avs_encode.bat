@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 1.55
+echo FavsE (FullAuto AVS Encode) 1.56
 
 REM ----------------------------------------------------------------------
 REM 映像エンコーダの指定（0:x264, 1:QSV, 2:NVEnc_AVC, 3:NVEnc_HEVC）
@@ -35,12 +35,12 @@ REM ----------------------------------------------------------------------
 set deint_mode=0
 
 REM ----------------------------------------------------------------------
-REM GPUによるノイズ除去を行うか（0:行わない, 1:行う）
+REM ノイズ除去を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
 set denoize=1
 
 REM ----------------------------------------------------------------------
-REM Width:1280pxを超える場合に1280x720pxに縮小するか（0:しない, 1:する）
+REM Widthが1280pxを超える場合に1280x720pxに縮小するか（0:しない, 1:する）
 REM ----------------------------------------------------------------------
 set resize=1
 
@@ -227,7 +227,9 @@ if "%scan_order%" == "Bottom Field First" echo AssumeBFF()>>%avs%
 echo.>>%avs%
 
 if %is_dvd% == 1 goto end_cm_logo_cut
-echo SetMTMode(1, 0)>>%avs%
+echo SetMTMode(1)>>%avs%
+echo.>>%avs%
+echo ### 手動Trimはこちらへ ###>>%avs%
 echo.>>%avs%
 
 echo ### サービス情報取得 ###>>%avs%
@@ -252,7 +254,7 @@ echo ### ロゴ除去 ###>>%avs%
 echo EraseLOGO("%logo_path%%service%.lgd", pos_x=0, pos_y=0, depth=128, yc_y=0, yc_u=0, yc_v=0, start=0, fadein=0, fadeout=0, end=-1, interlaced=true)>>%avs%
 echo.>>%avs%
 
-echo SetMTMode(2, 0)>>%avs%
+echo SetMTMode(2)>>%avs%
 echo.>>%avs%
 :end_cm_logo_cut
 
@@ -286,7 +288,9 @@ set is_ivtc=1
 echo TIVTC24P2()>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
+echo #SetMTMode(6)>>%avs%
 echo #D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
+echo #SetMTMode(2)>>%avs%
 echo.>>%avs%
 goto end_deint
 
@@ -294,14 +298,18 @@ goto end_deint
 echo #TIVTC24P2()>>%avs%
 echo TDeint(edeint=nnedi3)>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
+echo #SetMTMode(6)>>%avs%
 echo #D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
+echo #SetMTMode(2)>>%avs%
 echo.>>%avs%
 
 :set_d3dvp
 echo #TIVTC24P2()>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
+echo #SetMTMode(6)>>%avs%
 echo D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
+echo #SetMTMode(2)>>%avs%
 echo.>>%avs%
 
 :end_deint
@@ -310,10 +318,10 @@ echo.>>%avs%
 
 echo ### ノイズ除去 ###>>%avs%
 if %denoize% == 0 goto not_denoize
-echo FFT3DGPU(sigma=1.7,beta=1 ,plane=0 ,bw=32 ,bh=32 ,ow=16 ,oh=16,bt=4 ,mode=1 ,degrid=1, echo interlaced=false ,wintype=2 ,precision=0,sharpen=0.125,svr=0.8,smin=6,smax=13)>>%avs%
+echo hqdn3d(3)>>%avs%
 goto end_denoize
 :not_denoize
-echo #FFT3DGPU(sigma=1.7,beta=1 ,plane=0 ,bw=32 ,bh=32 ,ow=16 ,oh=16,bt=4 ,mode=1 ,degrid=1, echo interlaced=false ,wintype=2 ,precision=0,sharpen=0.125,svr=0.8,smin=6,smax=13)>>%avs%
+echo #hqdn3d(3)>>%avs%
 
 :end_denoize
 echo.>>%avs%

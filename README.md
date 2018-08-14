@@ -53,6 +53,8 @@ PT3録画ファイルなどのMPEG2-TS（音声はAACのみ対応）なファイ
 - [nnedi3](https://forum.doom9.org/showthread.php?t=170083)
 - [TDeint](http://avisynth.nl/index.php/TDeint)
 - [TIVTC](http://avisynth.nl/index.php/TIVTC)
+- [D3DVP](https://github.com/nekopanda/D3DVP/releases)
+- [Hqdn3d](http://avisynth.nl/index.php/Hqdn3d)
 
 使用コマンドのため、以下をインストールしてください。
 
