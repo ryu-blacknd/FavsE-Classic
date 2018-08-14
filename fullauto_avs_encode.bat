@@ -35,10 +35,19 @@ REM ----------------------------------------------------------------------
 set deint_mode=0
 
 REM ----------------------------------------------------------------------
+REM GPUによるノイズ除去を行うか（0:行わない, 1:行う）
+REM ----------------------------------------------------------------------
+set denoize=1
+
+REM ----------------------------------------------------------------------
 REM Width:1280pxを超える場合に1280x720pxに縮小するか（0:しない, 1:する）
 REM ----------------------------------------------------------------------
 set resize=1
 
+REM ----------------------------------------------------------------------
+REM 若干のシャープ化を行うか（0:行わない, 1:行う）
+REM ----------------------------------------------------------------------
+set sharpen=0
 REM ----------------------------------------------------------------------
 REM 終了後に一時ファイルを削除するか（0:しない, 1:する）
 REM ----------------------------------------------------------------------
@@ -297,16 +306,32 @@ echo.>>%avs%
 
 :end_deint
 
+:end_resize
+
+echo ### ノイズ除去 ###>>%avs%
+if %denoize% == 0 goto not_denoize
+echo FFT3DGPU(sigma=1.7,beta=1 ,plane=0 ,bw=32 ,bh=32 ,ow=16 ,oh=16,bt=4 ,mode=1 ,degrid=1, echo interlaced=false ,wintype=2 ,precision=0,sharpen=0.125,svr=0.8,smin=6,smax=13)>>%avs%
+goto end_denoize
+:not_denoize
+echo #FFT3DGPU(sigma=1.7,beta=1 ,plane=0 ,bw=32 ,bh=32 ,ow=16 ,oh=16,bt=4 ,mode=1 ,degrid=1, echo interlaced=false ,wintype=2 ,precision=0,sharpen=0.125,svr=0.8,smin=6,smax=13)>>%avs%
+
+:end_denoize
+echo.>>%avs%
+
 if %is_dvd% == 1 goto end_resize
 if %resize% == 0 goto end_resize
 echo ### リサイズ ###>>%avs%
 echo (Width() ^> 1280) ? Spline36Resize(1280, 720) : last>>%avs%
 echo.>>%avs%
 
-:end_resize
-
 echo ### シャープ化 ###>>%avs%
+if %sharpen% == 0 goto not_sharpen
+echo Sharpen(0.02)>>%avs%
+goto end_sharpen
+:not_sharpen
 echo #Sharpen(0.02)>>%avs%
+
+:end_sharpen
 echo.>>%avs%
 
 echo return last>>%avs%
