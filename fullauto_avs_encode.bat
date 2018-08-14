@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 1.56
+echo FavsE (FullAuto AVS Encode) 1.57
 
 REM ----------------------------------------------------------------------
 REM 映像エンコーダの指定（0:x264, 1:QSV, 2:NVEnc_AVC, 3:NVEnc_HEVC）
@@ -23,11 +23,11 @@ REM ----------------------------------------------------------------------
 set cm_cut=0
 
 REM ----------------------------------------------------------------------
-REM GPUでインターレース解除を行うか（0:行わない, 1:行う）※24fps化、BOB化では無効
+REM GPUでインターレース解除 / 逆テレシネを行うか（0:行わない, 1:行う）
 REM 使用するデバイスが複数ある場合は Intel, NVIDIA, Radeonから指定してください
 REM ----------------------------------------------------------------------
 set gpu_deint=1
-set d3dvp_device=Intel
+set d3dvp_device=NVIDIA
 
 REM ----------------------------------------------------------------------
 REM DVDソースのインターレース解除モード（0:通常, 1:BOB化, 2:24fps化）
@@ -51,7 +51,7 @@ set sharpen=0
 REM ----------------------------------------------------------------------
 REM 終了後に一時ファイルを削除するか（0:しない, 1:する）
 REM ----------------------------------------------------------------------
-set del_temp=1
+set del_temp=0
 
 REM ----------------------------------------------------------------------
 REM エンコーダのオプション（ビットレート、アスペクト比は自動設定）
@@ -59,11 +59,11 @@ REM ----------------------------------------------------------------------
 if %video_encoder% == 0 (
   set x264_opt=--crf 20 --qcomp 0.7 --me umh --subme 9 --direct auto --ref 5 --trellis 2
 ) else if %video_encoder% == 1 (
-  set qsvencc_opt=-c h264 -u 2 --la-icq 25 --la-quality slow --bframes 3 --weightb --weightp
+  set qsvencc_opt=-c h264 -u 2 --la-icq 24 --la-quality slow --bframes 3 --weightb --weightp
 ) else if %video_encoder% == 2 (
   set nvencc_opt=--avs -c h264 --cqp 20:22:24 --qp-init 20:22:24 --weightp --aq --aq-temporal
 ) else if %video_encoder% == 3 (
-  set nvencc_opt=--avs -c hevc --cqp 21:23:24 --qp-init 21:22:24 --weightp --aq --aq-temporal
+  set nvencc_opt=--avs -c hevc --cqp 21:22:24 --qp-init 21:22:24 --weightp --aq --aq-temporal
 ) else (
   echo [エラー] エンコーダーを正しく指定してください。
   goto end
@@ -221,15 +221,17 @@ if "%scan_type%" == "Progressive" (
   echo # %scan_type%>>%avs%
   goto end_scan
 )
-if "%scan_order%" == "Top Field First" echo AssumeTFF()>>%avs%
-if "%scan_order%" == "Bottom Field First" echo AssumeBFF()>>%avs%
+if "%scan_order%" == "Top Field First" set order_ref=TOP
+if "%scan_order%" == "Bottom Field First" set order_ref=BOTTOM
+if %order_ref% == TOP echo AssumeTFF()>>%avs%
+if %order_ref% == BOTTOM echo AssumeBFF()>>%avs%
 :end_scan
 echo.>>%avs%
 
 if %is_dvd% == 1 goto end_cm_logo_cut
 echo SetMTMode(1)>>%avs%
 echo.>>%avs%
-echo ### 手動Trimはこちらへ ###>>%avs%
+echo ### ↓手動Trimはこちらへ ###>>%avs%
 echo.>>%avs%
 
 echo ### サービス情報取得 ###>>%avs%
@@ -259,69 +261,121 @@ echo.>>%avs%
 :end_cm_logo_cut
 
 if "%scan_type%" == "Progressive" goto end_deint
-echo ### 逆テレシネ / インターレース処理 ###>>%avs%
+echo ### インターレース解除 / 逆テレシネ ###>>%avs%
 set is_ivtc=0
 
 if %is_dvd% == 0 goto not_dvd
-if %deint_mode% == 0 goto set_tdeint
-if %deint_mode% == 1 goto set_tdeint_bob
-if %deint_mode% == 2 goto set_tivtc24p2
-if %gpu_deint% == 0 goto set_d3dvp
+if %deint_mode% == 0 goto set_deint
+if %deint_mode% == 1 goto set_deint_bob
+if %deint_mode% == 2 goto set_deint_it
 
 :not_dvd
-
 for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -g') do set genre=%%A
 echo #ジャンル名：%genre%>>%avs%
 if "%scan_type%" == "Progressive" goto end_deint
 echo %genre% | find "アニメ" > NUL
-if not ERRORLEVEL 1 goto set_tivtc24p2
+if not ERRORLEVEL 1 goto set_deint_it
 echo %genre% | find "映画" > NUL
-if not ERRORLEVEL 1 goto set_tivtc24p2
+if not ERRORLEVEL 1 goto set_deint_it
 if %gpu_deint% == 0 (
-  goto set_tdeint
+  goto set_deint
 ) else (
-  goto set_d3dvp
+  goto set_deint_it
 )
 
-:set_tivtc24p2
-set is_ivtc=1
-echo TIVTC24P2()>>%avs%
-echo #TDeint(edeint=nnedi3)>>%avs%
-echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
-echo #SetMTMode(6)>>%avs%
-echo #D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
-echo #SetMTMode(2)>>%avs%
-echo.>>%avs%
-goto end_deint
-
-:set_tdeint
+:set_deint
+if %gpu_deint% == 1 goto set_deint_gpu
 echo #TIVTC24P2()>>%avs%
 echo TDeint(edeint=nnedi3)>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
-echo #SetMTMode(6)>>%avs%
-echo #D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
-echo #SetMTMode(2)>>%avs%
 echo.>>%avs%
-
-:set_d3dvp
+echo #D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
+echo #GPU_Begin()>>%avs%
+echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
+echo #GPU_End()>>%avs%
+goto end_deint
+:set_deint_gpu
 echo #TIVTC24P2()>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
-echo #SetMTMode(6)>>%avs%
-echo D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
-echo #SetMTMode(2)>>%avs%
 echo.>>%avs%
+echo D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
+echo #GPU_Begin()>>%avs%
+echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
+echo #GPU_End()>>%avs%
+goto end_deint
+
+:set_deint_bob
+if %gpu_deint% == 1 goto set_deint_bob_gpu
+echo #TIVTC24P2()>>%avs%
+echo #TDeint(edeint=nnedi3)>>%avs%
+echo TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
+echo #D3DVP(mode=1, device="%d3dvp_device%")>>%avs%
+echo.>>%avs%
+echo #D3DVP(mode=1, device="%d3dvp_device%")>>%avs%
+echo #GPU_Begin()>>%avs%
+echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
+echo #GPU_End()>>%avs%
+goto end_deint
+:set_deint_bob_gpu
+echo #TIVTC24P2()>>%avs%
+echo #TDeint(edeint=nnedi3)>>%avs%
+echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
+echo.>>%avs%
+echo D3DVP(mode=1, device="%d3dvp_device%")>>%avs%
+echo #GPU_Begin()>>%avs%
+echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
+echo #GPU_End()>>%avs%
+goto end_deint
+
+:set_deint_it
+set is_ivtc=1
+if %gpu_deint% == 1 goto set_deint_it_gpu
+echo TIVTC24P2()>>%avs%
+echo #TDeint(edeint=nnedi3)>>%avs%
+echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
+echo.>>%avs%
+echo #D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
+echo #GPU_Begin()>>%avs%
+echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
+echo #GPU_End()>>%avs%
+goto end_deint
+:set_deint_it_gpu
+echo #TIVTC24P2()>>%avs%
+echo #TDeint(edeint=nnedi3)>>%avs%
+echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
+echo.>>%avs%
+echo D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
+echo GPU_Begin()>>%avs%
+echo GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
+echo GPU_End()>>%avs%
+goto end_deint
 
 :end_deint
-
-:end_resize
+echo.>>%avs%
 
 echo ### ノイズ除去 ###>>%avs%
 if %denoize% == 0 goto not_denoize
-echo hqdn3d(3)>>%avs%
+set is_anime=0
+echo %genre% | find "アニメ" > NUL
+if not ERRORLEVEL 1 set is_anime=1
+
+echo GPU_Begin()>>%avs%
+if %is_anime% == 1 goto anime_hq
+echo GPU_Convolution3d(preset="movieLQ")>>%avs%
+echo #GPU_Convolution3d(preset="animeLQ")>>%avs%
+goto end_mov_anm
+:anime_hq
+echo #GPU_Convolution3d(preset="movieLQ")>>%avs%
+echo GPU_Convolution3d(preset="animeLQ")>>%avs%
+:end_mov_anm
+echo GPU_End()>>%avs%
 goto end_denoize
 :not_denoize
-echo #hqdn3d(3)>>%avs%
+echo #GPU_Begin()>>%avs%
+echo #GPU_Convolution3d(preset="movieLQ")>>%avs%
+echo #GPU_Convolution3d(preset="animeLQ")>>%avs%
+echo #GPU_End()>>%avs%
 
 :end_denoize
 echo.>>%avs%
@@ -331,6 +385,8 @@ if %resize% == 0 goto end_resize
 echo ### リサイズ ###>>%avs%
 echo (Width() ^> 1280) ? Spline36Resize(1280, 720) : last>>%avs%
 echo.>>%avs%
+
+:end_resize
 
 echo ### シャープ化 ###>>%avs%
 if %sharpen% == 0 goto not_sharpen

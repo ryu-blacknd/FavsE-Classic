@@ -54,7 +54,7 @@ PT3録画ファイルなどのMPEG2-TS（音声はAACのみ対応）なファイ
 - [TDeint](http://avisynth.nl/index.php/TDeint)
 - [TIVTC](http://avisynth.nl/index.php/TIVTC)
 - [D3DVP](https://github.com/nekopanda/D3DVP/releases)
-- [Hqdn3d](http://avisynth.nl/index.php/Hqdn3d)
+- [_GPU25](http://www.avisynth.info/?GPU%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3)
 
 使用コマンドのため、以下をインストールしてください。
 
