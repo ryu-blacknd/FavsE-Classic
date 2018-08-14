@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 1.54
+echo FavsE (FullAuto AVS Encode) 1.55
 
 REM ----------------------------------------------------------------------
 REM ‰f‘œƒGƒ“ƒR[ƒ_‚ÌŽw’èi0:x264, 1:QSV, 2:NVEnc_AVC, 3:NVEnc_HEVCj
@@ -27,7 +27,7 @@ REM GPU‚ÅƒCƒ“ƒ^[ƒŒ[ƒX‰ðœ‚ðs‚¤‚©i0:s‚í‚È‚¢, 1:s‚¤j¦24fps‰»ABOB‰»‚Å‚Í–³Œ
 REM Žg—p‚·‚éƒfƒoƒCƒX‚ª•¡”‚ ‚éê‡‚Í Intel, NVIDIA, Radeon‚©‚çŽw’è‚µ‚Ä‚­‚¾‚³‚¢
 REM ----------------------------------------------------------------------
 set gpu_deint=1
-set %d3dvp_device%=Intel
+set d3dvp_device=Intel
 
 REM ----------------------------------------------------------------------
 REM DVDƒ\[ƒX‚ÌƒCƒ“ƒ^[ƒŒ[ƒX‰ðœƒ‚[ƒhi0:’Êí, 1:BOB‰», 2:24fps‰»j
