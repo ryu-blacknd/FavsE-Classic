@@ -1,53 +1,49 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 1.57
+echo FavsE (FullAuto AVS Encode) 1.58
 
 REM ----------------------------------------------------------------------
 REM 映像エンコーダの指定（0:x264, 1:QSV, 2:NVEnc_AVC, 3:NVEnc_HEVC）
 REM ----------------------------------------------------------------------
 set video_encoder=0
-
 REM ----------------------------------------------------------------------
-REM 音声エンコードの指定（0:FAW, 1:qaac）
+REM 音声エンコーダの指定（0:FAW, 1:qaac）
 REM ----------------------------------------------------------------------
 set audio_encoder=0
-
-REM ----------------------------------------------------------------------
-REM avs生成後に処理を一時停止するか（0:しない, 1:する）※ほぼ手動CMカット用
-REM ----------------------------------------------------------------------
-set check_avs=0
 
 REM ----------------------------------------------------------------------
 REM 自動CMカット処理を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
 set cm_cut=1
-
 REM ----------------------------------------------------------------------
-REM GPUでインターレース解除 / 逆テレシネを行うか（0:行わない, 1:行う）
-REM 使用するデバイスが複数ある場合は Intel, NVIDIA, Radeonから指定してください
+REM avs生成後に処理を一時停止するか（0:しない, 1:する）※ほぼ手動CMカット用
 REM ----------------------------------------------------------------------
-set gpu_deint=1
-set d3dvp_device=NVIDIA
+set check_avs=1
 
 REM ----------------------------------------------------------------------
 REM DVDソースのインターレース解除モード（0:通常, 1:BOB化, 2:24fps化）
 REM ----------------------------------------------------------------------
 set deint_mode=0
+REM ----------------------------------------------------------------------
+REM インターレース解除 / 逆テレシネをGPUで行うか（0:行わない, 1:行う）
+REM 使用するデバイスが複数ある場合は Intel, NVIDIA, Radeonから指定してください
+REM ----------------------------------------------------------------------
+set gpu_deint=0
+set d3dvp_device=Intel
 
 REM ----------------------------------------------------------------------
-REM ノイズ除去を行うか（0:行わない, 1:行う）
+REM GPUによるノイズ除去を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
 set denoize=0
-
 REM ----------------------------------------------------------------------
 REM Widthが1280pxを超える場合に1280x720pxに縮小するか（0:しない, 1:する）
 REM ----------------------------------------------------------------------
 set resize=1
-
 REM ----------------------------------------------------------------------
 REM 若干のシャープ化を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
 set sharpen=0
+
 REM ----------------------------------------------------------------------
 REM 終了後に一時ファイルを削除するか（0:しない, 1:する）
 REM ----------------------------------------------------------------------
@@ -221,8 +217,12 @@ if "%scan_type%" == "Progressive" (
   echo # %scan_type%>>%avs%
   goto end_scan
 )
-if "%scan_order%" == "Top Field First" set order_ref=TOP
-if "%scan_order%" == "Bottom Field First" set order_ref=BOTTOM
+if "%scan_order%" == "Bottom Field First" (
+  set order_ref=BOTTOM
+) else (
+  set order_ref=TOP
+)
+echo %order_ref%
 if %order_ref% == TOP echo AssumeTFF()>>%avs%
 if %order_ref% == BOTTOM echo AssumeBFF()>>%avs%
 :end_scan
@@ -273,15 +273,14 @@ if %deint_mode% == 2 goto set_deint_it
 for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -g') do set genre=%%A
 echo #ジャンル名：%genre%>>%avs%
 if "%scan_type%" == "Progressive" goto end_deint
+
+echo %genre% | find " を開くのに失敗しました." > NUL
+if not ERRORLEVEL 1 goto set_deint
+
 echo %genre% | find "アニメ" > NUL
 if not ERRORLEVEL 1 goto set_deint_it
 echo %genre% | find "映画" > NUL
 if not ERRORLEVEL 1 goto set_deint_it
-if %gpu_deint% == 0 (
-  goto set_deint
-) else (
-  goto set_deint_it
-)
 
 :set_deint
 if %gpu_deint% == 1 goto set_deint_gpu
