@@ -14,11 +14,11 @@ set audio_encoder=0
 REM ----------------------------------------------------------------------
 REM 自動CMカット処理を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
-set cm_cut=1
+set cm_cut=0
 REM ----------------------------------------------------------------------
 REM avs生成後に処理を一時停止するか（0:しない, 1:する）※ほぼ手動CMカット用
 REM ----------------------------------------------------------------------
-set check_avs=0
+set check_avs=1
 
 REM ----------------------------------------------------------------------
 REM DVDソースのインターレース解除モード（0:通常, 1:BOB化, 2:24fps化）
@@ -47,7 +47,7 @@ set sharpen=0
 REM ----------------------------------------------------------------------
 REM 終了後に一時ファイルを削除するか（0:しない, 1:する）
 REM ----------------------------------------------------------------------
-set del_temp=1
+set del_temp=0
 
 REM ----------------------------------------------------------------------
 REM エンコーダのオプション（ビットレート、アスペクト比は自動設定）
@@ -127,7 +127,7 @@ set file_fullname=%~dpn1
 set file_fullpath=%~1
 
 if %is_dvd% == 1 goto source_dvd
-if %cm_cut% == 0 goto source_dvd
+REM if %cm_cut% == 0 goto source_dvd *************************************
 set source_fullname=%file_fullname%_HD
 set source_fullname=%file_fullname%_HD
 set cut_dir_name=%file_name%_HD
@@ -160,7 +160,6 @@ if %width% == 720 (
   set sar=--sar 1:1
 )
 
-if %cm_cut% == 0 goto end_tsspritter
 echo ----------------------------------------------------------------------
 echo TSSplitter処理
 echo ----------------------------------------------------------------------
@@ -174,7 +173,6 @@ if %is_dvd% == 0 (
   echo 処理は必要ありません。
 )
 echo.
-:end_tsspritter
 
 if not %audio_encoder% == 0 goto end_audio_split
 echo ----------------------------------------------------------------------
@@ -499,7 +497,7 @@ echo.
 
 set hd_flag=0
 if %is_dvd% == 0 set hd_flag=1
-if %cm_cut% ==0 set hd_flag=0
+REM if %cm_cut% ==0 set hd_flag=0 ******************************************
 
 if exist "%file_fullname%.lwi" del /f /q "%file_fullname%.lwi"
 if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi"
