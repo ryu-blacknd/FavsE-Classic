@@ -1,6 +1,6 @@
 ## FavsE (FullAuto AVS Encode)
 
-読み方は「フェイブス」ですが、別に「ふぁぶせ」とかでも良いと思います。
+読み方は「フェイブス」ですが、別に「ふぁぶせ」でも良いです。
 
 制作に関すること、質問などはブログへどうぞ。
 
@@ -77,6 +77,8 @@ UNIX系コマンドである`grep`と`sed`が必要であるため、以下を�
 
 以下は、フォルダを決めてまとめておいてください（例：`C:\bin`）。こちらもPATHを通すと便利です。
 
+基本的に実行ファイルだけで良いのですが例外があります。QSVEncCやNVEncCはDLLファイルも必要で、L-Smashは実行ファイルが複数あります。join_logo_scpはちょっと複雑です（後述）。
+
 - [x264 kMod](http://komisar.gin.by/)（AviSynthスクリプトの入力に対応）
 - [QSVEncC](https://onedrive.live.com/?cid=6bdd4375ac8933c6&id=6BDD4375AC8933C6%21482&lor=shortUrl)（`QSVEncC\x86`の中身）
 - [NVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%212293&cid=6BDD4375AC8933C6)（`NVEncC\x86`の中身）
@@ -98,17 +100,19 @@ UNIX系コマンドである`grep`と`sed`が必要であるため、以下を�
 
 ### 入力ファイルの仕様
 
-MPEG2-TS（拡張子.ts）で、**音声はAAC**である必要があります。
+MPEG2-TS（拡張子.ts）で、**音声がAAC**である必要があります。
 
-PT3等で録画したファイルは条件をクリアしますので、そのままドラッグすればOKです。
+PT3等のTVチューナーで録画したファイルは条件をクリアしますので、そのままドラッグすればOKです。
 
-気をつけるのはDVDソースからゴニョったファイルの場合です。
+気をつけるのはDVD/BDソースからゴニョったファイルの場合です。
 
-例えばオススメの[TMPGEnc MPEG Smart Renderer](http://tmpgenc.pegasys-inc.com/ja/product/tmsr5.html)だと、映像無劣化かつ音声を**LPCM**や**AC-3**で出力することが多いと思います。
+例えば当サイト管理人オススメの[TMPGEnc MPEG Smart Renderer](http://tmpgenc.pegasys-inc.com/ja/product/tmsr5.html)だと、映像無劣化かつ音声を**LPCM**や**AC-3**で出力することが多いと思います。
 
 映像は問題ありませんが、音声はAC-3ではなくAAC（**MPEG2 AAC(LC)**）に変更する必要があります。
 
-> せっかくFAWを使うのに非可逆圧縮が入るのも気分的にアレですが、ビットレートを256kbpsとか384kbpsにすれば、元との違いを聞き分けられる人はそうそういないと思います。ともかくこれはDVDソースに限った話です。
+> せっかくFAWを使うのに非可逆圧縮が入るのも気分的にアレですが、ビットレートを256kbpsとか384kbpsにすれば、元との違いを聞き分けられるような人はそうそういないと思います。
+
+なお、拡張子はデフォルトだと.mpgになると思いますが.tsにしないと弾かれます。
 
 ### 使用方法
 
