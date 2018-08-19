@@ -104,7 +104,7 @@ MPEG2-TS（拡張子.ts）で、**音声がAAC**である必要があります�
 
 PT3等のTVチューナーで録画したファイルは条件をクリアしますので、そのままドラッグすればOKです。
 
-気をつけるのはDVD/BDソースからゴニョったファイルの場合です。
+気をつけるのはDVDソースからゴニョったファイルの場合です。
 
 例えば当サイト管理人オススメの[TMPGEnc MPEG Smart Renderer](http://tmpgenc.pegasys-inc.com/ja/product/tmsr5.html)だと、映像無劣化かつ音声を**LPCM**や**AC-3**で出力することが多いと思います。
 
