@@ -1,6 +1,7 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 2.00
+echo FavsE (FullAuto AVS Encode) 2.01
+echo.
 
 REM ----------------------------------------------------------------------
 REM 映像エンコーダの指定（0:x264, 1:QSV, 2:NVEnc_AVC, 3:NVEnc_HEVC）
@@ -9,20 +10,20 @@ set video_encoder=0
 REM ----------------------------------------------------------------------
 REM 音声エンコーダの指定（0:FAW, 1:qaac）
 REM ----------------------------------------------------------------------
-set audio_encoder=0
+set audio_encoder=1
 
 REM ----------------------------------------------------------------------
 REM 自動CMカットの処理を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
-set cut_cm=1
+set cut_cm=0
 REM ----------------------------------------------------------------------
 REM ロゴ除去の処理を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
-set cut_logo=1
+set cut_logo=0
 REM ----------------------------------------------------------------------
 REM avs生成後に処理を一時停止するか（0:しない, 1:する）※ほぼ手動CMカット用
 REM ----------------------------------------------------------------------
-set check_avs=0
+set check_avs=1
 
 REM ----------------------------------------------------------------------
 REM SD（主にDVDソース）のインターレース解除モード（0:通常, 1:BOB化, 2:24fps化）
@@ -51,7 +52,7 @@ set sharpen=0
 REM ----------------------------------------------------------------------
 REM 終了後に一時ファイルを削除するか（0:しない, 1:する）
 REM ----------------------------------------------------------------------
-set del_temp=1
+set del_temp=0
 
 REM ----------------------------------------------------------------------
 REM エンコーダのオプション（ビットレート、アスペクト比は自動設定）
@@ -135,7 +136,7 @@ set source_fullname=%file_fullname%
 
 :end_source
 
-set source_fullpath=%source_fullname%.%file_ext%
+set source_fullpath=%source_fullname%%file_ext%
 
 set avs="%source_fullname%.avs"
 set output_enc="%output_path%%file_name%.enc.mp4"
@@ -201,7 +202,7 @@ echo SetMemoryMax(2048)>>%avs%
 echo.>>%avs%
 
 echo ### ファイル読み込み ###>>%avs%
-echo LWLibavVideoSource("%source_fullpath%", fpsnum=30000, fpsden=1001)>>%avs%
+echo LWLibavVideoSource("%source_fullpath%", format="YUV420P8", fpsnum=30000, fpsden=1001)>>%avs%
 if %audio_encoder% == 0 echo AudioDub(last, AACFaw("%aac_fullpath%"))>>%avs%
 if %audio_encoder% == 1 echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
 echo.>>%avs%
@@ -463,7 +464,7 @@ if %audio_encoder% == 0 (
     echo 既にwavファイルが存在します。
   )
   if not exist %output_aac% (
-    call %qaac% -q 2 --tvbr 91 %output_wav% -o %output_aac%
+    call %qaac% -q 2 --tvbr 109 %output_wav% -o %output_aac%
   ) else (
     echo 既にaacファイルが存在します。
   )
@@ -498,18 +499,15 @@ if %del_temp% == 0 goto no_del_temp
 echo 一時ファイルを削除します。
 echo.
 
-set hd_flag=0
-if %is_sd% == 0 set hd_flag=1
-REM if %cut_cm% ==0 set hd_flag=0 ******************************************
+set del_hd_file=0
+if %file_ext% == .ts if %is_sd% == 0 set del_hd_file=1
 
 if exist "%file_fullname%.lwi" del /f /q "%file_fullname%.lwi"
 if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi"
 if exist "%aac_fullpath%.lwi" del /f /q "%aac_fullpath%.lwi"
 if exist %avs% del /f /q %avs%
 if exist "%aac_fullpath%" del /f /q "%aac_fullpath%"
-if %hd_flag% == 1 (
-  if exist "%source_fullpath%" del /f /q "%source_fullpath%"
-)
+if %del_hd_file% == 1 if exist "%source_fullpath%" del /f /q "%source_fullpath%"
 if exist %output_enc% del /f /q %output_enc%
 if exist %output_wav% del /f /q %output_wav%
 if exist %output_aac% del /f /q %output_aac%
@@ -520,9 +518,7 @@ if not exist "%source_fullpath%.lwi" echo "%source_fullpath%.lwi"
 if not exist "%aac_fullpath%.lwi" echo "%aac_fullpath%.lwi"
 if not exist %avs% echo %avs%
 if not exist "%aac_fullpath%" echo "%aac_fullpath%"
-if %hd_flag% == 1 (
-  if not exist "%source_fullpath%" echo "%source_fullpath%"
-)
+if %del_hd_file% == 1 if not exist "%source_fullpath%" echo "%source_fullpath%"
 if not exist %output_enc% echo %output_enc%
 if not exist %output_wav% echo %output_wav%
 if not exist %output_aac% echo %output_aac%
