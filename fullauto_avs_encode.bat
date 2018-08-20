@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 1.59
+echo FavsE (FullAuto AVS Encode) 2.00
 
 REM ----------------------------------------------------------------------
 REM 映像エンコーダの指定（0:x264, 1:QSV, 2:NVEnc_AVC, 3:NVEnc_HEVC）
@@ -12,16 +12,20 @@ REM ----------------------------------------------------------------------
 set audio_encoder=0
 
 REM ----------------------------------------------------------------------
-REM 自動CMカット処理を行うか（0:行わない, 1:行う）
+REM 自動CMカットの処理を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
-set cm_cut=1
+set cut_cm=1
+REM ----------------------------------------------------------------------
+REM ロゴ除去の処理を行うか（0:行わない, 1:行う）
+REM ----------------------------------------------------------------------
+set cut_logo=1
 REM ----------------------------------------------------------------------
 REM avs生成後に処理を一時停止するか（0:しない, 1:する）※ほぼ手動CMカット用
 REM ----------------------------------------------------------------------
 set check_avs=0
 
 REM ----------------------------------------------------------------------
-REM DVDソースのインターレース解除モード（0:通常, 1:BOB化, 2:24fps化）
+REM SD（主にDVDソース）のインターレース解除モード（0:通常, 1:BOB化, 2:24fps化）
 REM ----------------------------------------------------------------------
 set deint_mode=0
 REM ----------------------------------------------------------------------
@@ -95,14 +99,7 @@ set join_logo_scp=%bin_path%join_logo_scp\jlse_bat.bat
 
 :loop
 if "%~1" == "" goto end
-
-if %~x1 == .ts (
-  echo.
-) else (
-  echo [エラー] 変換元のTSファイルをドロップしてください。
-  echo.
-  goto end
-)
+set file_ext=%~x1
 
 echo ======================================================================
 echo %~1
@@ -112,11 +109,11 @@ echo ======================================================================
 echo.
 
 REM ----------------------------------------------------------------------
-REM DVDソースか判定
+REM SD（主にDVDソース）かをサイズ取得で判定
 REM ----------------------------------------------------------------------
-set is_dvd=0
+set is_sd=0
 for /f "delims=" %%A in ('%mediainfo% %1 ^| grep "Width" ^| sed -r "s/Width *: (.*) pixels/\1/" ^| sed -r "s/ //"') do set width=%%A
-if %width% == 720 set is_dvd=1
+if %width% == 720 set is_sd=1
 
 REM ----------------------------------------------------------------------
 REM 変数セット
@@ -126,16 +123,19 @@ set file_name=%~n1
 set file_fullname=%~dpn1
 set file_fullpath=%~1
 
-if %is_dvd% == 1 goto source_dvd
-REM if %cm_cut% == 0 goto source_dvd *************************************
-set source_fullname=%file_fullname%_HD
+if not %file_ext% == .ts goto not_hd_ts_source
+if %is_sd% == 1 goto not_hd_ts_source
+
 set source_fullname=%file_fullname%_HD
 set cut_dir_name=%file_name%_HD
 goto end_source
-:source_dvd
+
+:not_hd_ts_source
 set source_fullname=%file_fullname%
+
 :end_source
-set source_fullpath=%source_fullname%.ts
+
+set source_fullpath=%source_fullname%.%file_ext%
 
 set avs="%source_fullname%.avs"
 set output_enc="%output_path%%file_name%.enc.mp4"
@@ -145,7 +145,7 @@ set output_m4a="%output_path%%file_name%.m4a"
 set output_mp4="%output_path%%file_name%.mp4"
 
 REM ----------------------------------------------------------------------
-REM DVDソースのみアスペクト比を変更
+REM SD（主にDVDソース）のアスペクト比を設定
 REM ----------------------------------------------------------------------
 for /f "delims=" %%A in ('%mediainfo% "%file_fullpath%" ^| grep "Width" ^| sed -r "s/Width *: (.*) pixels/\1/" ^| sed -r "s/ //"') do set width=%%A
 for /f "delims=" %%A in ('%mediainfo% "%file_fullpath%" ^| grep "Display aspect ratio" ^| sed -r "s/Display aspect ratio *: (.*)/\1/"') do set aspect=%%A
@@ -160,10 +160,11 @@ if %width% == 720 (
   set sar=--sar 1:1
 )
 
+if not %file_ext% == .ts goto end_tssplitter
 echo ----------------------------------------------------------------------
 echo TSSplitter処理
 echo ----------------------------------------------------------------------
-if %is_dvd% == 0 (
+if %is_sd% == 0 (
   if not exist "%source_fullpath%" (
     call %tsspritter% -EIT -ECM -EMM -SD -1SEG "%file_fullpath%"
   ) else (
@@ -173,6 +174,7 @@ if %is_dvd% == 0 (
   echo 処理は必要ありません。
 )
 echo.
+:end_tssplitter
 
 if not %audio_encoder% == 0 goto end_audio_split
 echo ----------------------------------------------------------------------
@@ -225,7 +227,7 @@ if %order_ref% == BOTTOM echo AssumeBFF()>>%avs%
 :end_scan
 echo.>>%avs%
 
-if %is_dvd% == 1 goto end_cm_logo_cut
+if %is_sd% == 1 goto end_cm_cut_logo
 echo SetMTMode(1)>>%avs%
 echo.>>%avs%
 echo ### ↓手動Trimはこちらへ ###>>%avs%
@@ -236,37 +238,39 @@ for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -c') do set service=%%A
 echo #サービス名：%service%>>%avs%
 echo.>>%avs%
 
-if %cm_cut% == 0 goto end_do_cm_cut
+if %cut_cm% == 0 goto end_do_cut_cm
 echo ### 自動CMカット ###>>%avs%
 set cut_fullpath="%cut_result_path%%cut_dir_name%\obs_cut.avs"
-if exist %cut_fullpath% goto end_cm_cut
+if exist %cut_fullpath% goto end_cut_cm
 call %join_logo_scp% "%source_fullpath%"
-:end_cm_cut
+:end_cut_cm
 
 sleep 2
 for /f "usebackq tokens=*" %%A in (%cut_fullpath%) do set trim_line=%%A
 echo %trim_line%>>%avs%
 echo.>>%avs%
-:end_do_cm_cut
+:end_do_cut_cm
 
+if %cut_logo% == 0 goto end_cm_cut_logo
 echo ### ロゴ除去 ###>>%avs%
 echo EraseLOGO("%logo_path%%service%.lgd", pos_x=0, pos_y=0, depth=128, yc_y=0, yc_u=0, yc_v=0, start=0, fadein=0, fadeout=0, end=-1, interlaced=true)>>%avs%
 echo.>>%avs%
 
+:end_cm_cut_logo
+
 echo SetMTMode(2)>>%avs%
 echo.>>%avs%
-:end_cm_logo_cut
 
 if "%scan_type%" == "Progressive" goto end_deint
 echo ### インターレース解除 / 逆テレシネ ###>>%avs%
 set is_ivtc=0
 
-if %is_dvd% == 0 goto not_dvd
+if %is_sd% == 0 goto not_sd
 if %deint_mode% == 0 goto set_deint
 if %deint_mode% == 1 goto set_deint_bob
 if %deint_mode% == 2 goto set_deint_it
 
-:not_dvd
+:not_sd
 for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -g') do set genre=%%A
 echo #ジャンル名：%genre%>>%avs%
 if "%scan_type%" == "Progressive" goto end_deint
@@ -376,7 +380,7 @@ echo #GPU_End()>>%avs%
 :end_denoize
 echo.>>%avs%
 
-if %is_dvd% == 1 goto end_resize
+if %is_sd% == 1 goto end_resize
 if %resize% == 0 goto end_resize
 echo ### リサイズ ###>>%avs%
 echo (Width() ^> 1280) ? Spline36Resize(1280, 720) : last>>%avs%
@@ -495,8 +499,8 @@ echo 一時ファイルを削除します。
 echo.
 
 set hd_flag=0
-if %is_dvd% == 0 set hd_flag=1
-REM if %cm_cut% ==0 set hd_flag=0 ******************************************
+if %is_sd% == 0 set hd_flag=1
+REM if %cut_cm% ==0 set hd_flag=0 ******************************************
 
 if exist "%file_fullname%.lwi" del /f /q "%file_fullname%.lwi"
 if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi"
