@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 2.10
+echo FavsE (FullAuto AVS Encode) 2.11
 echo.
 
 REM ----------------------------------------------------------------------
@@ -167,6 +167,24 @@ if %width% == 720 (
   set sar=--sar 1:1
 )
 
+REM ----------------------------------------------------------------------
+REM フィールドオーダー判定
+REM ----------------------------------------------------------------------
+for /f "delims=" %%A in ('%mediainfo% "%source_fullpath%" ^| grep "Scan type" ^| sed -r "s/Scan type *: (.*)/\1/"') do set scan_type=%%A
+for /f "delims=" %%A in ('%mediainfo% "%source_fullpath%" ^| grep "Scan order" ^| sed -r "s/Scan order *: (.*)/\1/"') do set scan_order=%%A
+
+if "%scan_type%" == "Progressive" (
+  echo # %scan_type%>>%avs%
+  goto end_scan
+)
+if "%scan_order%" == "Bottom Field First" (
+  set order_ref=BOTTOM
+  set order_tb= --bff
+) else (
+  set order_ref=TOP
+  set order_tb= --tff
+)
+
 if not %file_ext% == .ts goto end_tssplitter
 echo ----------------------------------------------------------------------
 echo TSSplitter処理
@@ -214,26 +232,15 @@ if %audio_encoder% == 1 echo AudioDub(last, LWLibavAudioSource("%source_fullpath
 echo.>>%avs%
 
 echo SetMTMode(2, 0)>>%avs%
-echo AssumeFPS(30000, 1001)>>%avs%
 echo.>>%avs%
+REM echo AssumeFPS(30000, 1001)>>%avs%
+REM echo.>>%avs%
 
 echo ### クロップ ###>>%avs%
 echo #Crop(8, 0, -8, 0)>>%avs%
 echo.>>%avs%
 
 echo ### フィールドオーダー ###>>%avs%
-for /f "delims=" %%A in ('%mediainfo% "%source_fullpath%" ^| grep "Scan type" ^| sed -r "s/Scan type *: (.*)/\1/"') do set scan_type=%%A
-for /f "delims=" %%A in ('%mediainfo% "%source_fullpath%" ^| grep "Scan order" ^| sed -r "s/Scan order *: (.*)/\1/"') do set scan_order=%%A
-
-if "%scan_type%" == "Progressive" (
-  echo # %scan_type%>>%avs%
-  goto end_scan
-)
-if "%scan_order%" == "Bottom Field First" (
-  set order_ref=BOTTOM
-) else (
-  set order_ref=TOP
-)
 if %order_ref% == TOP echo AssumeTFF()>>%avs%
 if %order_ref% == BOTTOM echo AssumeBFF()>>%avs%
 :end_scan
@@ -452,14 +459,13 @@ echo 映像処理
 echo ----------------------------------------------------------------------
 if not exist %output_enc% (
   if %video_encoder% == 0 (
-    if %deint% == 0 call %x264% %x264_opt% %sar% --tff -o %output_enc% %avs%
-    if %deint% == 1 call %x264% %x264_opt% %sar% -o %output_enc% %avs%
+    call %x264% %x264_opt% %sar%%order_tb% -o %output_enc% %avs%
   ) else if %video_encoder% == 1 (
-    call %qsvencc% %qsvencc_opt% %sar% -i %avs% -o %output_enc%
+    call %qsvencc% %qsvencc_opt% %sar%%order_tb% -i %avs% -o %output_enc%
   ) else if %video_encoder% == 2 (
-    call %nvencc% %nvencc_opt% %sar% -i %avs% -o %output_enc%
+    call %nvencc% %nvencc_opt% %sar%%order_tb% -i %avs% -o %output_enc%
   ) else if %video_encoder% == 3 (
-    call %nvencc% %nvencc_opt% %sar% -i %avs% -o %output_enc%
+    call %nvencc% %nvencc_opt% %sar%%order_tb% -i %avs% -o %output_enc%
   )
 ) else (
   echo 既にエンコード済みファイルが存在します。
