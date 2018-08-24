@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 2.01
+echo FavsE (FullAuto AVS Encode) 2.10
 echo.
 
 REM ----------------------------------------------------------------------
@@ -10,12 +10,12 @@ set video_encoder=0
 REM ----------------------------------------------------------------------
 REM 音声エンコーダの指定（0:FAW, 1:qaac）
 REM ----------------------------------------------------------------------
-set audio_encoder=1
+set audio_encoder=0
 
 REM ----------------------------------------------------------------------
 REM 自動CMカットの処理を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
-set cut_cm=1
+set cut_cm=0
 REM ----------------------------------------------------------------------
 REM ロゴ除去の処理を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
@@ -26,9 +26,13 @@ REM ----------------------------------------------------------------------
 set check_avs=1
 
 REM ----------------------------------------------------------------------
+REM インターレース解除を行うか（0:インターレース保持, 1:インターレース解除）
+REM ----------------------------------------------------------------------
+set deint=0
+REM ----------------------------------------------------------------------
 REM SD（主にDVDソース）のインターレース解除モード（0:通常, 1:BOB化, 2:24fps化）
 REM ----------------------------------------------------------------------
-set deint_mode=0
+set deint_mode=1
 REM ----------------------------------------------------------------------
 REM インターレース解除 / 逆テレシネをGPUで行うか（0:行わない, 1:行う）
 REM 使用するデバイスが複数ある場合は Intel, NVIDIA, Radeonから指定してください
@@ -66,7 +70,7 @@ if %video_encoder% == 0 (
 ) else if %video_encoder% == 3 (
   set nvencc_opt=--avs -c hevc --cqp 21:22:24 --qp-init 21:22:24 --weightp --aq --aq-temporal
 ) else (
-  echo [エラー] エンコーダーを正しく指定してください。
+  echo [エラー] エンコーダを正しく指定してください。
   goto end
 )
 
@@ -154,8 +158,10 @@ for /f "delims=" %%A in ('%mediainfo% "%file_fullpath%" ^| grep "Display aspect 
 if %width% == 720 (
   if %aspect% == 16:9 (
     set sar=--sar 32:27
+    REM set sar=--sar 40:33
   ) else (
     set sar=--sar 8:9
+    REM set sar=--sar 10:11
   )
 ) else (
   set sar=--sar 1:1
@@ -202,12 +208,17 @@ echo SetMemoryMax(2048)>>%avs%
 echo.>>%avs%
 
 echo ### ファイル読み込み ###>>%avs%
-echo LWLibavVideoSource("%source_fullpath%", format="YUV420P8", fpsnum=30000, fpsden=1001)>>%avs%
+echo LWLibavVideoSource("%source_fullpath%", format="YUV420P8")>>%avs%
 if %audio_encoder% == 0 echo AudioDub(last, AACFaw("%aac_fullpath%"))>>%avs%
 if %audio_encoder% == 1 echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
 echo.>>%avs%
 
 echo SetMTMode(2, 0)>>%avs%
+echo AssumeFPS(30000, 1001)>>%avs%
+echo.>>%avs%
+
+echo ### クロップ ###>>%avs%
+echo #Crop(8, 0, -8, 0)>>%avs%
 echo.>>%avs%
 
 echo ### フィールドオーダー ###>>%avs%
@@ -262,6 +273,7 @@ echo.>>%avs%
 echo SetMTMode(2)>>%avs%
 echo.>>%avs%
 
+if %deint% == 0 goto end_deint
 if "%scan_type%" == "Progressive" goto end_deint
 echo ### インターレース解除 / 逆テレシネ ###>>%avs%
 set is_ivtc=0
@@ -381,8 +393,17 @@ echo #GPU_End()>>%avs%
 :end_denoize
 echo.>>%avs%
 
+echo ### 自動レベル補正 ###>>%avs%
+echo #ColorYUV(autogain=true, cont_u=64, cont_v=64)>>%avs%
+echo.>>%avs%
+
+echo ### アップコンバート ###>>%avs%
+echo #nnedi3_rpow2(rfactor=2, cshift="Spline36Resize")>>%avs%
+echo.>>%avs%
+
 if %is_sd% == 1 goto end_resize
 if %resize% == 0 goto end_resize
+
 echo ### リサイズ ###>>%avs%
 echo (Width() ^> 1280) ? Spline36Resize(1280, 720) : last>>%avs%
 echo.>>%avs%
@@ -401,6 +422,7 @@ echo.>>%avs%
 
 echo return last>>%avs%
 
+if %deint% == 0 goto end_tivtc24p2
 if "%scan_type%" == "Progressive" goto end_tivtc24p2
 echo.>>%avs%
 echo function TIVTC24P2(clip clip){>>%avs%
@@ -430,7 +452,8 @@ echo 映像処理
 echo ----------------------------------------------------------------------
 if not exist %output_enc% (
   if %video_encoder% == 0 (
-    call %x264% %x264_opt% %sar% -o %output_enc% %avs%
+    if %deint% == 0 call %x264% %x264_opt% %sar% --tff -o %output_enc% %avs%
+    if %deint% == 1 call %x264% %x264_opt% %sar% -o %output_enc% %avs%
   ) else if %video_encoder% == 1 (
     call %qsvencc% %qsvencc_opt% %sar% -i %avs% -o %output_enc%
   ) else if %video_encoder% == 2 (
