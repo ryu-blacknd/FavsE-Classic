@@ -49,6 +49,7 @@ FavsEの動作に必要なツールは以下の通りで、結構あります。
 
 以下のAviSynth用プラグインは`C:\Program Files(x86)\AviSynth\plugins`に置いてください。
 
+- [DGDecode](http://rationalqm.us/dgmpgdec/)※dgmpgdec158.zipで良いが、入手困難な改良版あり。dllのみ必要。
 - [L-SMASH Works](https://www.dropbox.com/sh/3i81ttxf028m1eh/AAABkQn4Y5w1k-toVhYLasmwa?dl=0)（LSMASHSourceの方が管理が楽）
 - [aacfaw](http://www.rutice.net/)（aacfaw.auiの拡張子を.dllに変更）※現在不要ですが将来はわかりません。
 - [delogo](https://github.com/makiuchi-d/delogo-avisynth/releases)
@@ -83,6 +84,7 @@ UNIX系コマンドである`grep`と`sed`が必要であるため、以下を�
 - [L-SMASH](http://pop.4-bit.jp/?page_id=7920)（`muxer.exe`と`remuxer.exe`のみ必要）
 
 - [TSSplitter](https://www.videohelp.com/software/TSSplitter)
+- DGIndex ※上記DGDecodeに含まれる。exeのみ必要。
 - [avs2pipemod](https://github.com/chikuzen/avs2pipemod/releases)
 
 - [MediaInfo CLI](https://mediaarea.net/en/MediaInfo/Download/Windows)
