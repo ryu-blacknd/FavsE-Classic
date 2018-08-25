@@ -79,12 +79,10 @@ UNIX系コマンドである`grep`と`sed`が必要であるため、以下を�
 - [NVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%212293&cid=6BDD4375AC8933C6)（`NVEncC\x86`の中身）
 
 - [fawcl](http://www2.wazoku.net/2sen/friioup/)（アップローダにある`up1009.zip`というファイル）
-- [WAVI](https://forum.doom9.org/showthread.php?t=161639)
 - [qaac](https://sites.google.com/site/qaacpage/cabinet)
 - [L-SMASH](http://pop.4-bit.jp/?page_id=7920)（`muxer.exe`と`remuxer.exe`のみ必要）
 
 - [TSSplitter](https://www.videohelp.com/software/TSSplitter)
-- [ts_parser](https://onedrive.live.com/?cid=8658EC275D9699D5&id=8658EC275D9699D5!1696)
 - [avs2pipemod](https://github.com/chikuzen/avs2pipemod/releases)
 
 - [MediaInfo CLI](https://mediaarea.net/en/MediaInfo/Download/Windows)
