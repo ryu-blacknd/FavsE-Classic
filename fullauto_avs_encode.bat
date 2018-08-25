@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 3.00
+echo FavsE (FullAuto AVS Encode) 3.01
 echo.
 
 REM ----------------------------------------------------------------------
@@ -15,7 +15,7 @@ set audio_encoder=0
 REM ----------------------------------------------------------------------
 REM 自動CMカットの処理を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
-set cut_cm=0
+set cut_cm=1
 REM ----------------------------------------------------------------------
 REM ロゴ除去の処理を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
@@ -23,16 +23,16 @@ set cut_logo=1
 REM ----------------------------------------------------------------------
 REM avs生成後に処理を一時停止するか（0:しない, 1:する）※ほぼ手動CMカット用
 REM ----------------------------------------------------------------------
-set check_avs=1
+set check_avs=0
 
 REM ----------------------------------------------------------------------
 REM インターレース解除を行うか（0:インターレース保持, 1:インターレース解除）
 REM ----------------------------------------------------------------------
-set deint=0
+set deint=1
 REM ----------------------------------------------------------------------
 REM 30pへのインターレース解除時にBOB化を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
-set deint_bob=1
+set deint_bob=0
 REM ----------------------------------------------------------------------
 REM インターレース解除 / 逆テレシネをGPUで行うか（0:行わない, 1:行う）
 REM 使用するデバイスが複数ある場合は Intel, NVIDIA, Radeonから指定してください
@@ -178,10 +178,10 @@ if "%scan_type%" == "Progressive" (
 )
 if "%scan_order%" == "Bottom Field First" (
   set order_ref=BOTTOM
-  set order_tb= --bff
+  if %deint% == 0 set order_tb= --bff
 ) else (
   set order_ref=TOP
-  set order_tb= --tff
+  if %deint% == 0 set order_tb= --tff
 )
 :end_scan_order
 
@@ -193,7 +193,7 @@ if %is_sd% == 0 (
   if not exist "%source_fullpath%" (
     call %tsspritter% -EIT -ECM -EMM -SD -1SEG "%file_fullpath%"
   ) else (
-    echo 既に処理済みのファイルが存在します。
+    echo 既に分割済みのファイルが存在します。
   )
 ) else (
   echo 処理は必要ありません。
@@ -208,55 +208,60 @@ echo ----------------------------------------------------------------------
 if not exist "%source_fullname%.d2v" (
   call %dgindex% -i "%file_fullpath%" -o "%source_fullname%" -ia 5 -fo 0 -om 2 -yr 2 -hide -exit
 ) else (
-  echo 既に処理済みのファイルが存在します。
+  echo 既に分離済みのファイルが存在します。
 )
 echo.
 :end_dgindex
-
-set avs_fullpath=%source_fullname%.
 
 if not %audio_encoder% == 0 goto end_audio_split
 echo ----------------------------------------------------------------------
 echo  音声分離処理（FAW）
 echo ----------------------------------------------------------------------
-if exist "%source_fullname% PID*.aac" (
-  call %fawcl% -s2 "%source_fullpath%"
-  for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID*.aac"`) do set aac_fullpath=%file_path%%%A
-  for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID*.aac.wav"`) do set wav_fullpath=%file_path%%%A
-) else (
-  echo 処理対象のaacファイルが存在しません。
-)
-echo.
+for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *.aac"`) do set aac_fullpath=%file_path%%%A
+if exist "%source_fullname% PID *_aac.wav" goto exist_wav
+call %fawcl% -s2 "%aac_fullpath%"
+goto end_audio_split
+
+:exist_wav
+echo 既にwavファイルが存在します。
+
 :end_audio_split
+for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *_aac.wav"`) do set wav_fullpath=%file_path%%%A
+echo.
 
 echo ----------------------------------------------------------------------
 echo avsファイル生成処理
 echo ----------------------------------------------------------------------
-if %audio_encoder% == 0 (
-  echo SetMTMode(2, 0)>>%avs%
-  echo.>>%avs%
-
-  echo ### ファイル読み込み ###>>%avs%
-  echo echo DGDecode_MPEG2Source(d2v)>>%avs%
-  echo AudioDub(last, WAVSource(wav))>>%avs%
-  REM if %audio_encoder% == 0 echo AudioDub(last, AACFaw("%aac_fullpath%"))>>%avs%
-  echo.>>%avs%
-) else (
-  echo LWLibavVideoSource("%source_fullpath%")>>%avs%
-  echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
+if exist %avs% (
+  echo 既にavsファイルが存在します。
+  goto end_avs
 )
+
+if %audio_encoder% == 1 goto qaac_faze
+echo SetMTMode(2, 0)>>%avs%
+echo.>>%avs%
+echo ### ファイル読み込み ###>>%avs%
+echo #DGDecode_MPEG2Source("%source_fullname%.d2v")>>%avs%
+echo MPEG2Source("%source_fullname%.d2v")>>%avs%
+echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
+echo.>>%avs%
+goto end_fileread
+
+:qaac_faze
+echo LWLibavVideoSource("%source_fullpath%")>>%avs%
+echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
+echo.>>%avs%
+echo SetMTMode(2, 0)>>%avs%
+echo.>>%avs%
+:end_fileread
 
 echo ### 10bitソースの場合のみ ###>>%avs%
 echo #ConvertToYV12>>%avs%
 echo.>>%avs%
 
 echo ### フィールドオーダー ###>>%avs%
-if %order_ref% == TOP (
-  echo AssumeTFF()>>%avs%
-) else if %order_ref% == BOTTOM echo AssumeBFF()>>%avs%
-) else (
-  echo #Progressive Source
-)
+if %order_ref% == TOP echo AssumeTFF()>>%avs%
+if %order_ref% == BOTTOM echo AssumeBFF()>>%avs%
 echo.>>%avs%
 
 echo ### ↓手動Trimはこちらへ ###>>%avs%
@@ -475,36 +480,35 @@ if not exist %output_enc% (
     call %nvencc% %nvencc_opt% %sar%%order_tb% -i %avs% -o %output_enc%
   )
 ) else (
-  echo 既にエンコード済みファイルが存在します。
+  echo 既にエンコード済み映像ファイルが存在します。
 )
 echo.
 
 echo ----------------------------------------------------------------------
 echo 音声処理
 echo ----------------------------------------------------------------------
-if %audio_encoder% == 0 (
-  if not exist %output_wav% (
-    call %avs2pipemod% -wav %avs% > %output_wav%
-  ) else (
-    echo 既にwavファイルが存在します。
-  )
-  if not exist %output_aac% (
-    call %fawcl% %wav_fullpath% %output_aac%
-  ) else (
-    echo 既にaacファイルが存在します。
-  )
-) else if %audio_encoder% == 1 (
-  if not exist %output_wav% (
-    call %avs2pipemod% -wav %avs% > %output_wav%
-  ) else (
-    echo 既にwavファイルが存在します。
-  )
-  if not exist %output_aac% (
-    call %qaac% -q 2 --tvbr 95 %output_wav% -o %output_aac%
-  ) else (
-    echo 既にaacファイルが存在します。
-  )
+if not exist %output_wav% (
+  call %avs2pipemod% -wav %avs% > %output_wav%
+) else (
+  echo 既にwavファイルが存在します。
 )
+if %audio_encoder% == 1 goto qaac_encode
+
+if not exist %output_aac% (
+  call %fawcl% %output_wav% %output_aac%
+) else (
+  echo 既にaacファイルが存在します。
+)
+goto end_audio_encode
+
+:qaac_encode
+if not exist %output_aac% (
+  call %qaac% -q 2 --tvbr 95 %output_wav% -o %output_aac%
+) else (
+  echo 既にエンコード済みaacファイルが存在します。
+)
+
+:end_audio_encode
 echo.
 
 echo ----------------------------------------------------------------------
@@ -513,7 +517,7 @@ echo ----------------------------------------------------------------------
 if not exist %output_m4a% (
   call %muxer% -i %output_aac% -o %output_m4a%
 ) else (
-  echo 既にm4aファイルが存在します。
+  echo 既にmuxer済みのm4aファイルが存在します。
 )
 echo.
 
@@ -523,7 +527,7 @@ echo ----------------------------------------------------------------------
 if not exist %output_mp4% (
   call %remuxer% -i %output_enc% -i %output_m4a% -o %output_mp4%
 ) else (
-  echo 既にmp4ファイルが存在します。
+  echo 既にremuxer済みのmp4ファイルが存在します。
 )
 echo.
 
