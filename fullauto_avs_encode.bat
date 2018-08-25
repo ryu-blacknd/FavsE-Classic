@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 2.11
+echo FavsE (FullAuto AVS Encode) 3.00
 echo.
 
 REM ----------------------------------------------------------------------
@@ -30,9 +30,9 @@ REM インターレース解除を行うか（0:インターレース保持, 1:インターレース解除）
 REM ----------------------------------------------------------------------
 set deint=0
 REM ----------------------------------------------------------------------
-REM SD（主にDVDソース）のインターレース解除モード（0:通常, 1:BOB化, 2:24fps化）
+REM 30pへのインターレース解除時にBOB化を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
-set deint_mode=1
+set deint_bob=1
 REM ----------------------------------------------------------------------
 REM インターレース解除 / 逆テレシネをGPUで行うか（0:行わない, 1:行う）
 REM 使用するデバイスが複数ある場合は Intel, NVIDIA, Radeonから指定してください
@@ -59,7 +59,7 @@ REM ----------------------------------------------------------------------
 set del_temp=0
 
 REM ----------------------------------------------------------------------
-REM エンコーダのオプション（ビットレート、アスペクト比は自動設定）
+REM エンコーダのオプション
 REM ----------------------------------------------------------------------
 if %video_encoder% == 0 (
   set x264_opt=--crf 20 --qcomp 0.7 --me umh --subme 9 --direct auto --ref 5 --trellis 2
@@ -91,7 +91,6 @@ set nvencc=%bin_path%NVEncC.exe
 
 set avs2pipemod=%bin_path%avs2pipemod.exe
 set fawcl=%bin_path%fawcl.exe
-set wavi=%bin_path%wavi.exe
 set qaac=%bin_path%qaac.exe
 set muxer=%bin_path%muxer.exe
 set remuxer=%bin_path%remuxer.exe
@@ -99,7 +98,7 @@ set remuxer=%bin_path%remuxer.exe
 set mediainfo=%bin_path%MediaInfo\MediaInfo.exe
 set rplsinfo=%bin_path%rplsinfo.exe
 set tsspritter=%bin_path%TsSplitter\TsSplitter.exe
-set ts_parser=%bin_path%ts_parser\ts_parser.exe
+set dgindex=%bin_path%DGIndex.exe
 set join_logo_scp=%bin_path%join_logo_scp\jlse_bat.bat
 
 :loop
@@ -134,15 +133,15 @@ if %is_sd% == 1 goto not_hd_ts_source
 set source_fullname=%file_fullname%_HD
 set cut_dir_name=%file_name%_HD
 goto end_source
-
 :not_hd_ts_source
-set source_fullname=%file_fullname%
 
+set source_fullname=%file_fullname%
 :end_source
 
 set source_fullpath=%source_fullname%%file_ext%
 
 set avs="%source_fullname%.avs"
+set avs_template="%bin_path%.template.avs"
 set output_enc="%output_path%%file_name%.enc.mp4"
 set output_wav="%output_path%%file_name%.wav"
 set output_aac="%output_path%%file_name%.aac"
@@ -155,7 +154,7 @@ REM ----------------------------------------------------------------------
 for /f "delims=" %%A in ('%mediainfo% "%file_fullpath%" ^| grep "Width" ^| sed -r "s/Width *: (.*) pixels/\1/" ^| sed -r "s/ //"') do set width=%%A
 for /f "delims=" %%A in ('%mediainfo% "%file_fullpath%" ^| grep "Display aspect ratio" ^| sed -r "s/Display aspect ratio *: (.*)/\1/"') do set aspect=%%A
 
-if %width% == 720 (
+if %is_sd% == 1 (
   if %aspect% == 16:9 (
     set sar=--sar 32:27
     REM set sar=--sar 40:33
@@ -175,7 +174,7 @@ for /f "delims=" %%A in ('%mediainfo% "%source_fullpath%" ^| grep "Scan order" ^
 
 if "%scan_type%" == "Progressive" (
   echo # %scan_type%>>%avs%
-  goto end_scan
+  goto end_scan_order
 )
 if "%scan_order%" == "Bottom Field First" (
   set order_ref=BOTTOM
@@ -184,6 +183,7 @@ if "%scan_order%" == "Bottom Field First" (
   set order_ref=TOP
   set order_tb= --tff
 )
+:end_scan_order
 
 if not %file_ext% == .ts goto end_tssplitter
 echo ----------------------------------------------------------------------
@@ -201,56 +201,72 @@ if %is_sd% == 0 (
 echo.
 :end_tssplitter
 
+if not %file_ext% == .ts goto end_dgindex
+echo ----------------------------------------------------------------------
+echo DGIndex処理
+echo ----------------------------------------------------------------------
+if not exist "%source_fullname%.d2v" (
+  call %dgindex% -i "%file_fullpath%" -o "%source_fullname%" -ia 5 -fo 0 -om 2 -yr 2 -hide -exit
+) else (
+  echo 既に処理済みのファイルが存在します。
+)
+echo.
+:end_dgindex
+
+set avs_fullpath=%source_fullname%.
+
 if not %audio_encoder% == 0 goto end_audio_split
 echo ----------------------------------------------------------------------
-echo  音声分離処理
+echo  音声分離処理（FAW）
 echo ----------------------------------------------------------------------
-if not exist "%source_fullname% PID *.aac" (
-  call %ts_parser% --mode dam --delay-type 3 --rb-size 16384 --wb-size 32768 "%source_fullpath%"
+if exist "%source_fullname% PID*.aac" (
+  call %fawcl% -s2 "%source_fullpath%"
+  for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID*.aac"`) do set aac_fullpath=%file_path%%%A
+  for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID*.aac.wav"`) do set wav_fullpath=%file_path%%%A
 ) else (
-  echo 既に分離された音声ファイルが存在します。
+  echo 処理対象のaacファイルが存在しません。
 )
-for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *.aac"`) do set aac_fullpath=%file_path%%%A
 echo.
 :end_audio_split
 
 echo ----------------------------------------------------------------------
 echo avsファイル生成処理
 echo ----------------------------------------------------------------------
-if exist %avs% (
-  echo 既にavsファイルが存在します。
-  goto end_avs
+if %audio_encoder% == 0 (
+  echo SetMTMode(2, 0)>>%avs%
+  echo.>>%avs%
+
+  echo ### ファイル読み込み ###>>%avs%
+  echo echo DGDecode_MPEG2Source(d2v)>>%avs%
+  echo AudioDub(last, WAVSource(wav))>>%avs%
+  REM if %audio_encoder% == 0 echo AudioDub(last, AACFaw("%aac_fullpath%"))>>%avs%
+  echo.>>%avs%
+) else (
+  echo LWLibavVideoSource("%source_fullpath%")>>%avs%
+  echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
 )
 
-echo SetMemoryMax(2048)>>%avs%
+echo ### 10bitソースの場合のみ ###>>%avs%
+echo #ConvertToYV12>>%avs%
 echo.>>%avs%
 
-echo ### ファイル読み込み ###>>%avs%
-echo LWLibavVideoSource("%source_fullpath%", format="YUV420P8")>>%avs%
-if %audio_encoder% == 0 echo AudioDub(last, AACFaw("%aac_fullpath%"))>>%avs%
-if %audio_encoder% == 1 echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
+echo ### フィールドオーダー ###>>%avs%
+if %order_ref% == TOP (
+  echo AssumeTFF()>>%avs%
+) else if %order_ref% == BOTTOM echo AssumeBFF()>>%avs%
+) else (
+  echo #Progressive Source
+)
 echo.>>%avs%
 
-echo SetMTMode(2, 0)>>%avs%
+echo ### ↓手動Trimはこちらへ ###>>%avs%
 echo.>>%avs%
-REM echo AssumeFPS(30000, 1001)>>%avs%
-REM echo.>>%avs%
 
 echo ### クロップ ###>>%avs%
 echo #Crop(8, 0, -8, 0)>>%avs%
 echo.>>%avs%
 
-echo ### フィールドオーダー ###>>%avs%
-if %order_ref% == TOP echo AssumeTFF()>>%avs%
-if %order_ref% == BOTTOM echo AssumeBFF()>>%avs%
-:end_scan
-echo.>>%avs%
-
 if %is_sd% == 1 goto end_cm_cut_logo
-echo SetMTMode(1)>>%avs%
-echo.>>%avs%
-echo ### ↓手動Trimはこちらへ ###>>%avs%
-echo.>>%avs%
 
 echo ### サービス情報取得 ###>>%avs%
 for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -c') do set service=%%A
@@ -274,11 +290,7 @@ if %cut_logo% == 0 goto end_cm_cut_logo
 echo ### ロゴ除去 ###>>%avs%
 echo EraseLOGO("%logo_path%%service%.lgd", pos_x=0, pos_y=0, depth=128, yc_y=0, yc_u=0, yc_v=0, start=0, fadein=0, fadeout=0, end=-1, interlaced=true)>>%avs%
 echo.>>%avs%
-
 :end_cm_cut_logo
-
-echo SetMTMode(2)>>%avs%
-echo.>>%avs%
 
 if %deint% == 0 goto end_deint
 if "%scan_type%" == "Progressive" goto end_deint
@@ -286,9 +298,8 @@ echo ### インターレース解除 / 逆テレシネ ###>>%avs%
 set is_ivtc=0
 
 if %is_sd% == 0 goto not_sd
-if %deint_mode% == 0 goto set_deint
-if %deint_mode% == 1 goto set_deint_bob
-if %deint_mode% == 2 goto set_deint_it
+if %deint_bob% == 0 goto set_deint
+if %deint_bob% == 1 goto set_deint_bob
 
 :not_sd
 for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -g') do set genre=%%A
@@ -296,7 +307,8 @@ echo #ジャンル名：%genre%>>%avs%
 if "%scan_type%" == "Progressive" goto end_deint
 
 echo %genre% | find " を開くのに失敗しました." > NUL
-if not ERRORLEVEL 1 goto set_deint
+if not ERRORLEVEL 1 if %deint_bob% == 0 goto set_deint
+if not ERRORLEVEL 1 if %deint_bob% == 1 goto set_deint_bob
 
 echo %genre% | find "アニメ" > NUL
 if not ERRORLEVEL 1 goto set_deint_it
@@ -314,6 +326,7 @@ echo #GPU_Begin()>>%avs%
 echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
 echo #GPU_End()>>%avs%
 goto end_deint
+
 :set_deint_gpu
 echo #TIVTC24P2()>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
@@ -337,6 +350,7 @@ echo #GPU_Begin()>>%avs%
 echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
 echo #GPU_End()>>%avs%
 goto end_deint
+
 :set_deint_bob_gpu
 echo #TIVTC24P2()>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
@@ -360,6 +374,7 @@ echo #GPU_Begin()>>%avs%
 echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
 echo #GPU_End()>>%avs%
 goto end_deint
+
 :set_deint_it_gpu
 echo #TIVTC24P2()>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
@@ -385,27 +400,21 @@ if %is_anime% == 1 goto anime_hq
 echo GPU_Convolution3d(preset="movieLQ")>>%avs%
 echo #GPU_Convolution3d(preset="animeLQ")>>%avs%
 goto end_mov_anm
+
 :anime_hq
 echo #GPU_Convolution3d(preset="movieLQ")>>%avs%
 echo GPU_Convolution3d(preset="animeLQ")>>%avs%
+
 :end_mov_anm
 echo GPU_End()>>%avs%
 goto end_denoize
+
 :not_denoize
 echo #GPU_Begin()>>%avs%
 echo #GPU_Convolution3d(preset="movieLQ")>>%avs%
 echo #GPU_Convolution3d(preset="animeLQ")>>%avs%
 echo #GPU_End()>>%avs%
-
 :end_denoize
-echo.>>%avs%
-
-echo ### 自動レベル補正 ###>>%avs%
-echo #ColorYUV(autogain=true, cont_u=64, cont_v=64)>>%avs%
-echo.>>%avs%
-
-echo ### アップコンバート ###>>%avs%
-echo #nnedi3_rpow2(rfactor=2, cshift="Spline36Resize")>>%avs%
 echo.>>%avs%
 
 if %is_sd% == 1 goto end_resize
@@ -414,16 +423,15 @@ if %resize% == 0 goto end_resize
 echo ### リサイズ ###>>%avs%
 echo (Width() ^> 1280) ? Spline36Resize(1280, 720) : last>>%avs%
 echo.>>%avs%
-
 :end_resize
 
 echo ### シャープ化 ###>>%avs%
 if %sharpen% == 0 goto not_sharpen
 echo Sharpen(0.02)>>%avs%
 goto end_sharpen
+
 :not_sharpen
 echo #Sharpen(0.02)>>%avs%
-
 :end_sharpen
 echo.>>%avs%
 
@@ -447,7 +455,6 @@ echo.
 
 if %check_avs% == 1 (
   echo ※avsファイル確認オプションが設定されています。
-  echo ※avsファイルを確認し、必要であれば編集してください。
   echo ※確認・編集完了後は何かキーを押せば処理を続行できます。
   echo.
   pause
@@ -482,18 +489,18 @@ if %audio_encoder% == 0 (
     echo 既にwavファイルが存在します。
   )
   if not exist %output_aac% (
-    call %fawcl% %output_wav% %output_aac%
+    call %fawcl% %wav_fullpath% %output_aac%
   ) else (
     echo 既にaacファイルが存在します。
   )
 ) else if %audio_encoder% == 1 (
   if not exist %output_wav% (
-    call %wavi% %avs% %output_wav%
+    call %avs2pipemod% -wav %avs% > %output_wav%
   ) else (
     echo 既にwavファイルが存在します。
   )
   if not exist %output_aac% (
-    call %qaac% -q 2 --tvbr 109 %output_wav% -o %output_aac%
+    call %qaac% -q 2 --tvbr 95 %output_wav% -o %output_aac%
   ) else (
     echo 既にaacファイルが存在します。
   )
@@ -533,9 +540,11 @@ if %file_ext% == .ts if %is_sd% == 0 set del_hd_file=1
 
 if exist "%file_fullname%.lwi" del /f /q "%file_fullname%.lwi"
 if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi"
-if exist "%aac_fullpath%.lwi" del /f /q "%aac_fullpath%.lwi"
+if exist "%source_fullpath%.d2v" del /f /q "%source_fullpath%.d2v"
+if exist "%source_fullpath% PID*.aac" del /f /q "%source_fullpath%.lwi"
 if exist %avs% del /f /q %avs%
 if exist "%aac_fullpath%" del /f /q "%aac_fullpath%"
+if exist "%wav_fullpath%" del /f /q "%wav_fullpath%"
 if %del_hd_file% == 1 if exist "%source_fullpath%" del /f /q "%source_fullpath%"
 if exist %output_enc% del /f /q %output_enc%
 if exist %output_wav% del /f /q %output_wav%
@@ -543,10 +552,12 @@ if exist %output_aac% del /f /q %output_aac%
 if exist %output_m4a% del /f /q %output_m4a%
 
 if not exist "%file_fullname%.lwi" echo "%file_fullname%.lwi"
+if not exist "%source_fullpath%.d2v" echo "%source_fullpath%.d2v"
 if not exist "%source_fullpath%.lwi" echo "%source_fullpath%.lwi"
 if not exist "%aac_fullpath%.lwi" echo "%aac_fullpath%.lwi"
 if not exist %avs% echo %avs%
 if not exist "%aac_fullpath%" echo "%aac_fullpath%"
+if not exist "%wav_fullpath%" echo "%wav_fullpath%"
 if %del_hd_file% == 1 if not exist "%source_fullpath%" echo "%source_fullpath%"
 if not exist %output_enc% echo %output_enc%
 if not exist %output_wav% echo %output_wav%
