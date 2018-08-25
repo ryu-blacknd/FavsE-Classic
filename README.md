@@ -50,7 +50,7 @@ FavsEの動作に必要なツールは以下の通りで、結構あります。
 以下のAviSynth用プラグインは`C:\Program Files(x86)\AviSynth\plugins`に置いてください。
 
 - [L-SMASH Works](https://www.dropbox.com/sh/3i81ttxf028m1eh/AAABkQn4Y5w1k-toVhYLasmwa?dl=0)（LSMASHSourceの方が管理が楽）
-- [aacfaw](http://www.rutice.net/)（aacfaw.auiの拡張子を.dllに変更）
+- [aacfaw](http://www.rutice.net/)（aacfaw.auiの拡張子を.dllに変更）※現在不要ですが将来はわかりません。
 - [delogo](https://github.com/makiuchi-d/delogo-avisynth/releases)
 - [nnedi3](https://forum.doom9.org/showthread.php?t=170083)
 - [TDeint](http://avisynth.nl/index.php/TDeint)
