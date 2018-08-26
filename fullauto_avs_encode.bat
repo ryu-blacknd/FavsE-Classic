@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 3.12
+echo FavsE (FullAuto AVS Encode) 3.13
 echo.
 
 REM ----------------------------------------------------------------------
@@ -99,7 +99,7 @@ set mediainfo=%bin_path%MediaInfo\MediaInfo.exe
 set rplsinfo=%bin_path%rplsinfo.exe
 set tsspritter=%bin_path%TsSplitter\TsSplitter.exe
 set dgindex=%bin_path%DGIndex.exe
-set bontsdemuxc=%bin_path%BonTsDemuxC.exe
+REM set bontsdemuxc=%bin_path%BonTsDemuxC.exe
 set join_logo_scp=%bin_path%join_logo_scp\jlse_bat.bat
 
 :loop
@@ -204,10 +204,10 @@ echo.
 
 if not %file_ext% == .ts goto end_dgindex
 echo ----------------------------------------------------------------------
-echo BonTsDemux処理
+echo DGIndex処理
 echo ----------------------------------------------------------------------
-if not exist "%source_fullname%.m2v" (
-  call %bontsdemuxc% -i "%source_fullpath%" -encode "Demux(m2v+aac)" -sound 0
+if not exist "%source_fullname%.demuxed.m2v" (
+  call %dgindex% -i "%source_fullpath%" -od "%source_fullname%" -ia 5 -fo 0 -yr 2 -om 2 -hide -exit
 ) else (
   echo 既に分離済みのファイルが存在します。
 )
@@ -218,8 +218,8 @@ if not %audio_encoder% == 0 goto end_audio_split
 echo ----------------------------------------------------------------------
 echo  FAWによるaac → 疑似wav化処理
 echo ----------------------------------------------------------------------
-for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% DELAY *.aac"`) do set aac_fullpath=%file_path%%%A
-if exist "%source_fullname% DELAY *_aac.wav" goto exist_wav
+for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *.aac"`) do set aac_fullpath=%file_path%%%A
+if exist "%source_fullname% PID *_aac.wav" goto exist_wav
 call %fawcl% -s2 "%aac_fullpath%"
 goto end_audio_split
 
@@ -227,7 +227,7 @@ goto end_audio_split
 echo 既に疑似wavファイルが存在します。
 
 :end_audio_split
-for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% DELAY *_aac.wav"`) do set wav_fullpath=%file_path%%%A
+for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *_aac.wav"`) do set wav_fullpath=%file_path%%%A
 echo.
 
 echo ----------------------------------------------------------------------
@@ -243,7 +243,7 @@ echo.>>%avs%
 
 if not %audio_encoder% == 0 goto not_faw
 echo ### ファイル読み込み ###>>%avs%
-echo LWLibavVideoSource("%source_fullname%.m2v")>>%avs%
+echo LWLibavVideoSource("%source_fullname%.demuxed.m2v")>>%avs%
 echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
 goto end_fileread
 
@@ -555,8 +555,10 @@ if %file_ext% == .ts if %is_sd% == 0 set del_hd_file=1
 
 if exist "%file_fullname%.lwi" del /f /q "%file_fullname%.lwi" & echo "%file_fullname%.lwi"
 if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi" & echo "%source_fullpath%.lwi"
-if exist "%source_fullpath%.m2v" del /f /q "%source_fullpath%.m2v" & echo "%source_fullpath%.m2v"
-if exist "%source_fullpath%.m2v.lwi" del /f /q "%source_fullpath%.m2v.lwi" & echo "%source_fullpath%.m2v.lwi"
+if exist "%source_fullpath%.demuxed.m2v" del /f /q "%source_fullpath%.demuxed.m2v" & echo "%source_fullpath%.demuxed.m2v"
+if exist "%source_fullpath%.demuxed.m2v.lwi" del /f /q "%source_fullpath%.demuxed.m2v.lwi" & echo "%source_fullpath%.demuxed.m2v.lwi"
+if exist "%source_fullpath%.d2v" del /f /q "%source_fullpath%.d2v" & echo "%source_fullpath%.d2v"
+if exist "%source_fullpath%.d2v" del /f /q "%source_fullpath%.d2v.lwi" & echo "%source_fullpath%.d2v.lwi"
 if exist "%aac_fullpath%.lwi" del /f /q "%aac_fullpath%.lwi" & echo "%aac_fullpath%.lwi"
 if exist "%wav_fullpath%.lwi" del /f /q "%wav_fullpath%.lwi" & echo "%wav_fullpath%.lwi"
 if exist %avs% del /f /q %avs%

@@ -73,7 +73,7 @@ FavsEの動作に必要なツールは以下の通りで、結構あります。
 - [L-SMASH](http://pop.4-bit.jp/?page_id=7920)（`muxer.exe`と`remuxer.exe`のみ必要です）
 
 - [TSSplitter](https://www.videohelp.com/software/TSSplitter)
-- [BonTsDemux](http://www2.wazoku.net/2sen/friioup/) （基本的に最新のものです。`BonTsDemuxC.exe`のみ必要です）
+- [DGIndex](http://rationalqm.us/dgmpgdec/ Index of /dgmpgdec)（`dgmpgdec158.zip`が最新ですが、入手困難な改良版もあります。`DGIndex.exe`のみ必要です）
 - [FFmpeg](https://ffmpeg.zeranoe.com/builds/)（上記に`bin\ffmpeg.exe`が必要です。Static版でOKです）
 - [avs2pipemod](https://github.com/chikuzen/avs2pipemod/releases)
 
@@ -103,7 +103,7 @@ L-SMASH Worksで読めるすべての動画ファイルが対象です（ver.2.0
 
 FAWを使う場合、**元の音声がAAC**である必要があります。
 
-> FAW（FakeAacWav）とは、DGIndexやBonTsDemux等で分離したaacファイルを疑似wavファイルに変換（偽装）して使用するソフトウェアです。後にaacファイルに戻すことができ、エンコードを介することによる音質の劣化を回避できます。また、音ズレを防止する役目も果たします。
+> FAW（FakeAacWav）とは、DGIndexやBonTsDemux等で分離したaacファイルを疑似wavファイルに変換（偽装）して使用するソフトウェアです。後にaacファイルに戻すことができ、エンコードを介することによる音質の劣化を回避することができます。また、音ズレを防止する役目も果たします。
 
 PT3等のTVチューナーで録画したtsファイルはFAWの条件をクリアしますので、そのままドラッグすればOKです。
 
