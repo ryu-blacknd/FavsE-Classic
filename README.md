@@ -1,4 +1,4 @@
-## FavsE (FullAuto AVS Encode)
+# FavsE (FullAuto AVS Encode)
 
 読み方は「フェイブス」ですが、別に「ふぁぶせ」でもいいです。
 
@@ -6,7 +6,7 @@
 
 [BLACKND – Web系エンジニアのチラシ裏](https://blacknd.com/)
 
-### 特徴
+## 特徴
 
 - 1つのバッチファイルでエンコード完了までの処理がすべて完結
 - 複数のファイルをドラッグすれば連続一括処理が可能
@@ -32,15 +32,15 @@
 
 「設定はファイル冒頭のフラグだけ」「ファイルは1つだけ」に拘りました。操作はファイル（複数可）のドラッグのみです。
 
-### 実行に必要なツール
+## 実行に必要なツール
 
 FavsEの動作に必要なツールは以下の通りで、結構あります。
 
 設定内容によっては無くても構わないものがありますが、今後の更新でどうなるかわかりませんので、一応すべて入れておくのが無難です。
 
-以後すべて**32bit(x86版)**で揃えてください（Windowsが64bitでも）。
+以後すべて **32bit（x86版）** で揃えてください（Windowsが64bitでも）。
 
-#### AviSynth
+### AviSynth
 
 まずは中核となるAviSynthをインストールと、MT対応化ファイルの上書きコピーを行ってください。
 
@@ -49,51 +49,50 @@ FavsEの動作に必要なツールは以下の通りで、結構あります。
 
 以下のAviSynth用プラグインは`C:\Program Files(x86)\AviSynth\plugins`に置いてください。
 
-- [DGDecode](http://rationalqm.us/dgmpgdec/)※dgmpgdec158.zipで良いが、入手困難な改良版あり。dllのみ必要。
-- [L-SMASH Works](https://www.dropbox.com/sh/3i81ttxf028m1eh/AAABkQn4Y5w1k-toVhYLasmwa?dl=0)（LSMASHSourceの方が管理が楽）
-- [aacfaw](http://www.rutice.net/)（aacfaw.auiの拡張子を.dllに変更）※現在不要ですが将来はわかりません。
+- [DGDecode](http://rationalqm.us/dgmpgdec/)（dgmpgdec158.zipですが、入手困難な改良版もあります。dllのみ必要です）
+- [L-SMASH Works](https://www.dropbox.com/sh/3i81ttxf028m1eh/AAABkQn4Y5w1k-toVhYLasmwa?dl=0)（LSMASHSourceの方がファイル1つなので管理が楽です）
 - [delogo](https://github.com/makiuchi-d/delogo-avisynth/releases)
 - [nnedi3](https://forum.doom9.org/showthread.php?t=170083)
 - [TDeint](http://avisynth.nl/index.php/TDeint)
 - [TIVTC](http://avisynth.nl/index.php/TIVTC)
 - [D3DVP](https://github.com/nekopanda/D3DVP/releases)
-- [_GPU25](http://www.avisynth.info/?GPU%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3)（拡張子`.hlsl`のファイルも必要）
+- [_GPU25](http://www.avisynth.info/?GPU%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3)（拡張子`.hlsl`のファイルも必要です）
 
-#### 必須コマンドと推奨ソフトウェア
+### 必須コマンドと推奨ソフトウェア
 
 UNIX系コマンドである`grep`と`sed`が必要であるため、以下をインストールしてください。
 
-- [Git for Windows](https://gitforwindows.org/)
+- [Git for Windows](https://gitforwindows.org/)（Gitと共にLinuxライクなコマンド群もインストールされます）
 
 インストールしたくない場合、Windows版の`grep.exe`と`sed.exe`がPATHの通った場所にあれば構いません。
 
 コマンドが無い or よくわからないのであればGIt for Windowsをインストールし、64bit Windowsの場合`C:\Program Files\Git\usr\bin`にPATHを通してください。
 
-#### 各種ツール
+### 各種ツール
 
 以下は、フォルダを決めてまとめておいてください（例：`C:\bin`）。こちらもPATHを通しておくと便利です。
 
 基本的に実行ファイルだけで良いのですが例外もありますので、注意書きに目を通してください。
 
-- [x264 kMod](http://komisar.gin.by/)（AviSynthスクリプトの入力対応版）
-- [QSVEncC](https://onedrive.live.com/?cid=6bdd4375ac8933c6&id=6BDD4375AC8933C6%21482&lor=shortUrl)（`QSVEncC\x86`の中身）
-- [NVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%212293&cid=6BDD4375AC8933C6)（`NVEncC\x86`の中身）
+- [x264 kMod](http://komisar.gin.by/)（AviSynthスクリプトの入力に対応しているバイナリです）
+- [QSVEncC](https://onedrive.live.com/?cid=6bdd4375ac8933c6&id=6BDD4375AC8933C6%21482&lor=shortUrl)（`QSVEncC\x86`の中身です）
+- [NVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%212293&cid=6BDD4375AC8933C6)（`NVEncC\x86`の中身です）
 
-- [fawcl](http://www2.wazoku.net/2sen/friioup/)（アップローダにある`up1009.zip`というファイル）
+- [fawcl](http://www2.wazoku.net/2sen/friioup/)（アップローダにある`up1009.zip`というファイルです）
 - [qaac](https://sites.google.com/site/qaacpage/cabinet)
-- [L-SMASH](http://pop.4-bit.jp/?page_id=7920)（`muxer.exe`と`remuxer.exe`のみ必要）
+- [L-SMASH](http://pop.4-bit.jp/?page_id=7920)（`muxer.exe`と`remuxer.exe`のみ必要です）
 
 - [TSSplitter](https://www.videohelp.com/software/TSSplitter)
-- DGIndex ※上記DGDecodeに含まれる。exeのみ必要。
+- [DGIndex](http://rationalqm.us/dgmpgdec/)（前述のDGDecodeに含まれています。exeのみ必要です）
 - [avs2pipemod](https://github.com/chikuzen/avs2pipemod/releases)
 
 - [MediaInfo CLI](https://mediaarea.net/en/MediaInfo/Download/Windows)
 - [rplsinfo](https://web.archive.org/web/20180309090449/http://saysaysay.net/rplstool)
-- [join_logo_scp](http://www1.axfc.net/u/3506121.zip)
+- [join_logo_scp](http://www1.axfc.net/u/3506121.zip)（必要なのは`join_logo_scp試行環境_2.zip`という圧縮ファイルの中身です）
 
-必要なのは`join_logo_scp試行環境_2.zip`という圧縮ファイルの中身です。さらに[CMカットスレ](https://mevius.5ch.net/test/read.cgi/avi/1531949212/)を参考に、最新版を上書きコピーすることをお勧めします。
+※join_logo_scpは、[CMカットスレ](https://mevius.5ch.net/test/read.cgi/avi/1531949212/)で最新版が公開されています。精度が上がっているようです。
 
-### 入力ファイルの仕様
+## 入力ファイルの仕様
 
 L-SMASH Worksで読めるすべての動画ファイルが対象です（ver.2.00より）
 
@@ -113,7 +112,7 @@ mpeg4な動画ファイルも音声はAACであることが多いと思います
 
 繰り返しになりますが、よくわからなければqaacを使用してください。
 
-### 使用方法
+## 使用方法
 
 このバッチファイル、もしくはバッチファイルへのショートカットに、動画ファイルをドラッグしてください。複数同時ドラッグも可能です。
 
