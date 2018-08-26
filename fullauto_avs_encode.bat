@@ -99,6 +99,7 @@ set mediainfo=%bin_path%MediaInfo\MediaInfo.exe
 set rplsinfo=%bin_path%rplsinfo.exe
 set tsspritter=%bin_path%TsSplitter\TsSplitter.exe
 set dgindex=%bin_path%DGIndex.exe
+set bontsdemuxc=%bin_path%BonTsDemuxC.exe
 set join_logo_scp=%bin_path%join_logo_scp\jlse_bat.bat
 
 :loop
@@ -203,10 +204,10 @@ echo.
 
 if not %file_ext% == .ts goto end_dgindex
 echo ----------------------------------------------------------------------
-echo DGIndex処理
+echo BonTsDemux処理
 echo ----------------------------------------------------------------------
-if not exist "%source_fullname%.d2v" (
-  call %dgindex% -i "%file_fullpath%" -o "%source_fullname%" -ia 5 -fo 0 -om 2 -yr 2 -hide -exit
+if not exist "%source_fullname%.m2v" (
+  call %bontsdemuxc% -i "%source_fullpath%" -encode "Demux(m2v+aac)" -sound 0
 ) else (
   echo 既に分離済みのファイルが存在します。
 )
@@ -237,23 +238,23 @@ if exist %avs% (
   goto end_avs
 )
 
-if %audio_encoder% == 1 goto qaac_faze
-echo SetMTMode(2, 0)>>%avs%
+echo SetMemoryMax(2048)>>%avs%
 echo.>>%avs%
+
+if not %audio_encoder% == 0 goto not_faw
 echo ### ファイル読み込み ###>>%avs%
-echo #DGDecode_MPEG2Source("%source_fullname%.d2v")>>%avs%
-echo MPEG2Source("%source_fullname%.d2v")>>%avs%
-echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
-echo.>>%avs%
+echo LWLibavVideoSource("%source_fullname%.m2v")>>%avs%
+echo AudioDub(last, LWLibavAudioSource("%wav_fullpath%", av_sync=true, layout="stereo"))>>%avs%
 goto end_fileread
 
-:qaac_faze
+:not_faw
 echo LWLibavVideoSource("%source_fullpath%")>>%avs%
 echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
+
+:end_fileread
 echo.>>%avs%
 echo SetMTMode(2, 0)>>%avs%
 echo.>>%avs%
-:end_fileread
 
 echo ### 10bitソースの場合のみ ###>>%avs%
 echo #ConvertToYV12>>%avs%
@@ -284,9 +285,16 @@ call %join_logo_scp% "%source_fullpath%"
 
 sleep 2
 for /f "usebackq tokens=*" %%A in (%cut_fullpath%) do set trim_line=%%A
+echo SetMTMode(1)>>%avs%
 echo %trim_line%>>%avs%
+echo SetMTMode(2)>>%avs%
 echo.>>%avs%
 :end_do_cut_cm
+
+echo ### 手動Trim ###>>%avs%
+echo #SetMTMode(1)>>%avs%
+echo #Trim(*,*)>>%avs%
+echo #SetMTMode(2)>>%avs%
 
 if %cut_logo% == 0 goto end_cm_cut_logo
 echo ### ロゴ除去 ###>>%avs%
@@ -454,6 +462,7 @@ echo }>>%avs%
 :end_tivtc24p2
 
 echo avsファイルを生成しました。
+echo %avs%
 
 :end_avs
 echo.
@@ -545,6 +554,7 @@ if %file_ext% == .ts if %is_sd% == 0 set del_hd_file=1
 if exist "%file_fullname%.lwi" del /f /q "%file_fullname%.lwi"
 if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi"
 if exist "%source_fullpath%.d2v" del /f /q "%source_fullpath%.d2v"
+if exist "%source_fullpath%.m2v" del /f /q "%source_fullpath%.m2v"
 if exist "%source_fullpath% PID*.aac" del /f /q "%source_fullpath%.lwi"
 if exist %avs% del /f /q %avs%
 if exist "%aac_fullpath%" del /f /q "%aac_fullpath%"
@@ -557,6 +567,7 @@ if exist %output_m4a% del /f /q %output_m4a%
 
 if not exist "%file_fullname%.lwi" echo "%file_fullname%.lwi"
 if not exist "%source_fullpath%.d2v" echo "%source_fullpath%.d2v"
+if not exist "%source_fullpath%.m2v" echo "%source_fullpath%.m2v"
 if not exist "%source_fullpath%.lwi" echo "%source_fullpath%.lwi"
 if not exist "%aac_fullpath%.lwi" echo "%aac_fullpath%.lwi"
 if not exist %avs% echo %avs%
