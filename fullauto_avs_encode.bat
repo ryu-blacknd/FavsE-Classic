@@ -1,10 +1,10 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 3.10
+echo FavsE (FullAuto AVS Encode) 3.12
 echo.
 
 REM ----------------------------------------------------------------------
-REM 映像エンコーダの指定（0:x264, 1:QSV, 2:NVEnc_AVC, 3:NVEnc_HEVC）
+REM 映像エンコーダの指定（0:x264, 1:QSVEnc, 2:NVEnc_AVC, 3:NVEnc_HEVC）
 REM ----------------------------------------------------------------------
 set video_encoder=0
 REM ----------------------------------------------------------------------
@@ -15,7 +15,7 @@ set audio_encoder=0
 REM ----------------------------------------------------------------------
 REM 自動CMカットの処理を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
-set cut_cm=0
+set cut_cm=1
 REM ----------------------------------------------------------------------
 REM ロゴ除去の処理を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
@@ -23,7 +23,7 @@ set cut_logo=1
 REM ----------------------------------------------------------------------
 REM avs生成後に処理を一時停止するか（0:しない, 1:する）※ほぼ手動CMカット用
 REM ----------------------------------------------------------------------
-set check_avs=1
+set check_avs=0
 
 REM ----------------------------------------------------------------------
 REM インターレース解除を行うか（0:インターレース保持, 1:インターレース解除）
@@ -45,7 +45,7 @@ REM GPUによるノイズ除去を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
 set denoize=0
 REM ----------------------------------------------------------------------
-REM Widthが1280pxを超える場合に1280x720pxに縮小するか（0:しない, 1:する）
+REM Widthが1280pxを超える場合に1280x720pxにリサイズするか（0:しない, 1:する）
 REM ----------------------------------------------------------------------
 set resize=1
 REM ----------------------------------------------------------------------
@@ -56,7 +56,7 @@ set sharpen=0
 REM ----------------------------------------------------------------------
 REM 終了後に一時ファイルを削除するか（0:しない, 1:する）
 REM ----------------------------------------------------------------------
-set del_temp=0
+set del_temp=1
 
 REM ----------------------------------------------------------------------
 REM エンコーダのオプション
@@ -216,7 +216,7 @@ echo.
 
 if not %audio_encoder% == 0 goto end_audio_split
 echo ----------------------------------------------------------------------
-echo  音声分離処理（FAW）
+echo  FAWによるaac → 疑似wav化処理
 echo ----------------------------------------------------------------------
 for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% DELAY *.aac"`) do set aac_fullpath=%file_path%%%A
 if exist "%source_fullname% DELAY *_aac.wav" goto exist_wav
@@ -224,7 +224,7 @@ call %fawcl% -s2 "%aac_fullpath%"
 goto end_audio_split
 
 :exist_wav
-echo 既にwavファイルが存在します。
+echo 既に疑似wavファイルが存在します。
 
 :end_audio_split
 for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% DELAY *_aac.wav"`) do set wav_fullpath=%file_path%%%A
@@ -276,26 +276,27 @@ for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -c') do set service=%%A
 echo #サービス名：%service%>>%avs%
 echo.>>%avs%
 
-if %cut_cm% == 0 goto end_do_cut_cm
+if %cut_cm% == 0 goto end_auto_trim
 echo ### 自動CMカット ###>>%avs%
 set cut_fullpath="%cut_result_path%%cut_dir_name%\obs_cut.avs"
 if exist %cut_fullpath% goto end_cut_cm
 call %join_logo_scp% "%source_fullpath%"
-:end_cut_cm
 
+:end_cut_cm
 sleep 2
 for /f "usebackq tokens=*" %%A in (%cut_fullpath%) do set trim_line=%%A
-echo SetMTMode(1)>>%avs%
 echo %trim_line%>>%avs%
-echo SetMTMode(2)>>%avs%
 echo.>>%avs%
-:end_do_cut_cm
+goto end_trim
 
+:end_auto_trim
+
+if %cut_cm% == 1 goto end_do_manual_cut
 echo ### 手動Trim ###>>%avs%
-echo #SetMTMode(1)>>%avs%
-echo #Trim(*,*)>>%avs%
-echo #SetMTMode(2)>>%avs%
+echo #Trim()>>%avs%
 echo.>>%avs%
+
+:end_trim
 
 if %cut_logo% == 0 goto end_cm_cut_logo
 echo ### ロゴ除去 ###>>%avs%
@@ -500,14 +501,14 @@ echo ----------------------------------------------------------------------
 if not exist %output_wav% (
   call %avs2pipemod% -wav %avs% > %output_wav%
 ) else (
-  echo 既にwavファイルが存在します。
+  echo 既に中間wavファイルが存在します。
 )
 if %audio_encoder% == 1 goto qaac_encode
 
 if not exist %output_aac% (
   call %fawcl% %output_wav% %output_aac%
 ) else (
-  echo 既にaacファイルが存在します。
+  echo 既にエンコード済みaacファイルが存在します。
 )
 goto end_audio_encode
 
@@ -552,33 +553,20 @@ echo.
 set del_hd_file=0
 if %file_ext% == .ts if %is_sd% == 0 set del_hd_file=1
 
-if exist "%file_fullname%.lwi" del /f /q "%file_fullname%.lwi"
-if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi"
-if exist "%source_fullpath%.d2v" del /f /q "%source_fullpath%.d2v"
-if exist "%source_fullpath%.m2v" del /f /q "%source_fullpath%.m2v"
-if exist "%source_fullpath% PID*.aac" del /f /q "%source_fullpath%.lwi"
+if exist "%file_fullname%.lwi" del /f /q "%file_fullname%.lwi" & echo "%file_fullname%.lwi"
+if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi" & echo "%source_fullpath%.lwi"
+if exist "%source_fullpath%.m2v" del /f /q "%source_fullpath%.m2v" & echo "%source_fullpath%.m2v"
+if exist "%source_fullpath%.m2v.lwi" del /f /q "%source_fullpath%.m2v.lwi" & echo "%source_fullpath%.m2v.lwi"
+if exist "%aac_fullpath%.lwi" del /f /q "%aac_fullpath%.lwi" & echo "%aac_fullpath%.lwi"
+if exist "%wav_fullpath%.lwi" del /f /q "%wav_fullpath%.lwi" & echo "%wav_fullpath%.lwi"
 if exist %avs% del /f /q %avs%
-if exist "%aac_fullpath%" del /f /q "%aac_fullpath%"
-if exist "%wav_fullpath%" del /f /q "%wav_fullpath%"
-if %del_hd_file% == 1 if exist "%source_fullpath%" del /f /q "%source_fullpath%"
-if exist %output_enc% del /f /q %output_enc%
-if exist %output_wav% del /f /q %output_wav%
-if exist %output_aac% del /f /q %output_aac%
-if exist %output_m4a% del /f /q %output_m4a%
-
-if not exist "%file_fullname%.lwi" echo "%file_fullname%.lwi"
-if not exist "%source_fullpath%.d2v" echo "%source_fullpath%.d2v"
-if not exist "%source_fullpath%.m2v" echo "%source_fullpath%.m2v"
-if not exist "%source_fullpath%.lwi" echo "%source_fullpath%.lwi"
-if not exist "%aac_fullpath%.lwi" echo "%aac_fullpath%.lwi"
-if not exist %avs% echo %avs%
-if not exist "%aac_fullpath%" echo "%aac_fullpath%"
-if not exist "%wav_fullpath%" echo "%wav_fullpath%"
-if %del_hd_file% == 1 if not exist "%source_fullpath%" echo "%source_fullpath%"
-if not exist %output_enc% echo %output_enc%
-if not exist %output_wav% echo %output_wav%
-if not exist %output_aac% echo %output_aac%
-if not exist %output_m4a% echo %output_m4a%
+if exist "%aac_fullpath%" del /f /q "%aac_fullpath%" & echo "%aac_fullpath%"
+if exist "%wav_fullpath%" del /f /q "%wav_fullpath%" & echo "%wav_fullpath%"
+if %del_hd_file% == 1 if exist "%source_fullpath%" del /f /q "%source_fullpath%" & echo "%source_fullpath%"
+if exist %output_enc% del /f /q %output_enc% & echo %output_enc%
+if exist %output_wav% del /f /q %output_wav% & echo %output_wav%
+if exist %output_aac% del /f /q %output_aac% & echo %output_aac%
+if exist %output_m4a% del /f /q %output_m4a% & echo %output_m4a%
 echo.
 goto end_del_temp
 
