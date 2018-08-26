@@ -37,20 +37,19 @@ FavsEの動作に必要なツールは以下の通りで、結構あります。
 
 設定内容によっては無くても構わないものがありますが、今後の更新でどうなるかわかりませんので、一応すべて入れておくのが無難です。
 
-以後すべて **32bit（x86版）** で揃えてください（Windowsが64bitでも）。
+以後すべて **32bit（x86版）** で揃えてください。Windowsが64bitでも、ツール類は32bitです。
 
-> 動作しない場合は、.NET FrameworkやMicrosoft Visual C++ 再頒布可能パッケージ等がインストールされていないケースが多いかと思います。この辺りはググってみてください。
+> 動作しない場合は、.NET FrameworkやMicrosoft Visual C++ 再頒布可能パッケージ等がインストールされていないケースが多いかと思います。この辺りは環境によりますのでググってみてください。
 
 ### AviSynth
 
-まずは中核となるAviSynthをインストールと、MT対応化ファイルの上書きコピーを行ってください。
+まずは中核となるAviSynthをインストール、そしてMT対応化dllの上書きコピーを行ってください。
 
 - [AviSynth 2.60](https://sourceforge.net/projects/avisynth2/files/AviSynth%202.6/AviSynth%202.6.0/)
-- [AviSynth MT対応dll](https://forum.doom9.org/showthread.php?t=148782)（64bit Windowsでは`C:\Windows\SysWOW64`にDLLを上書きコピーしてくだい）
+- [AviSynth MT対応dll](https://forum.doom9.org/showthread.php?t=148782)（64bit Windowsでは`C:\Windows\SysWOW64`にdllファイルを上書きしてください）
 
-以下のAviSynth用プラグインは`C:\Program Files(x86)\AviSynth\plugins`に置いてください。
+以下のAviSynth用プラグインはdllファイルを`C:\Program Files(x86)\AviSynth\plugins`に置いてください。
 
-- [DGDecode](http://rationalqm.us/dgmpgdec/)（dgmpgdec158.zipですが、入手困難な改良版もあります。dllのみ必要です）
 - [L-SMASH Works](https://www.dropbox.com/sh/3i81ttxf028m1eh/AAABkQn4Y5w1k-toVhYLasmwa?dl=0)（LSMASHSourceの方がファイル1つなので管理が楽です）
 - [delogo](https://github.com/makiuchi-d/delogo-avisynth/releases)
 - [nnedi3](https://forum.doom9.org/showthread.php?t=170083)
@@ -59,9 +58,34 @@ FavsEの動作に必要なツールは以下の通りで、結構あります。
 - [D3DVP](https://github.com/nekopanda/D3DVP/releases)
 - [_GPU25](http://www.avisynth.info/?GPU%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3)（拡張子`.hlsl`のファイルも必要です）
 
-### 必須コマンドと推奨ソフトウェア
+### 各種ツール
 
-UNIX系コマンドである`grep`と`sed`が必要であるため、以下をインストールしてください。
+以下は、フォルダを決めてまとめておいてください（例：`C:\bin`）。PATHを通しておくと便利です。
+
+基本的にexeファイルだけで良いのですが例外もありますので、注意書きに目を通してください。
+
+- [x264 kMod](http://komisar.gin.by/)（AviSynthスクリプトの入力に対応しているバイナリです）
+- [QSVEncC](https://onedrive.live.com/?cid=6bdd4375ac8933c6&id=6BDD4375AC8933C6%21482&lor=shortUrl)（`QSVEncC\x86`の中身です）
+- [NVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%212293&cid=6BDD4375AC8933C6)（`NVEncC\x86`の中身です）
+
+- [fawcl](http://www2.wazoku.net/2sen/friioup/)（基本的に最新のものです。ページ内検索してください）
+- [qaac](https://sites.google.com/site/qaacpage/cabinet)
+- [L-SMASH](http://pop.4-bit.jp/?page_id=7920)（`muxer.exe`と`remuxer.exe`のみ必要です）
+
+- [TSSplitter](https://www.videohelp.com/software/TSSplitter)
+- [BonTsDemux](http://www2.wazoku.net/2sen/friioup/) （基本的に最新のものです。`BonTsDemuxC.exe`のみ必要です）
+- [FFmpeg](https://ffmpeg.zeranoe.com/builds/)（上記に`bin\ffmpeg.exe`が必要です。Static版でOKです）
+- [avs2pipemod](https://github.com/chikuzen/avs2pipemod/releases)
+
+- [MediaInfo CLI](https://mediaarea.net/en/MediaInfo/Download/Windows)
+- [rplsinfo](https://web.archive.org/web/20180309090449/http://saysaysay.net/rplstool)
+- [join_logo_scp](http://www1.axfc.net/u/3506121.zip)（必要なのは`join_logo_scp試行環境_2.zip`という圧縮ファイルの中身のみです）
+
+※join_logo_scpは、[CMカットスレ](https://mevius.5ch.net/test/read.cgi/avi/1531949212/)で最新版が公開されています。精度が上がっているようです。
+
+### UNIX系コマンド
+
+UNIX系コマンドである`grep`と`sed`が必要です。Cygwin等よりも以下をインストールするのが簡単です。
 
 - [Git for Windows](https://gitforwindows.org/)（Gitと共にLinuxライクなコマンド群もインストールされます）
 
@@ -69,57 +93,33 @@ UNIX系コマンドである`grep`と`sed`が必要であるため、以下を�
 
 コマンドが無い or よくわからないのであればGIt for Windowsをインストールし、64bit Windowsの場合`C:\Program Files\Git\usr\bin`にPATHを通してください。
 
-### 各種ツール
-
-以下は、フォルダを決めてまとめておいてください（例：`C:\bin`）。こちらもPATHを通しておくと便利です。
-
-基本的に実行ファイルだけで良いのですが例外もありますので、注意書きに目を通してください。
-
-- [x264 kMod](http://komisar.gin.by/)（AviSynthスクリプトの入力に対応しているバイナリです）
-- [QSVEncC](https://onedrive.live.com/?cid=6bdd4375ac8933c6&id=6BDD4375AC8933C6%21482&lor=shortUrl)（`QSVEncC\x86`の中身です）
-- [NVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%212293&cid=6BDD4375AC8933C6)（`NVEncC\x86`の中身です）
-
-- [fawcl](http://www2.wazoku.net/2sen/friioup/)（アップローダにある`up1009.zip`というファイルです）
-- [qaac](https://sites.google.com/site/qaacpage/cabinet)
-- [L-SMASH](http://pop.4-bit.jp/?page_id=7920)（`muxer.exe`と`remuxer.exe`のみ必要です）
-
-- [TSSplitter](https://www.videohelp.com/software/TSSplitter)
-- [DGIndex](http://rationalqm.us/dgmpgdec/)（exeのみ必要です）
-- [BonTsDemux](http://www2.wazoku.net/2sen/friioup/) （基本的に最新のものです。`BonTsDemuxC.exe`のみ必要です）
-- [FFmpeg](https://ffmpeg.zeranoe.com/builds/)（上記に`bin\ffmpeg.exe`が必要です。Static版でOKです）
-- [avs2pipemod](https://github.com/chikuzen/avs2pipemod/releases)
-
-- [MediaInfo CLI](https://mediaarea.net/en/MediaInfo/Download/Windows)
-- [rplsinfo](https://web.archive.org/web/20180309090449/http://saysaysay.net/rplstool)
-- [join_logo_scp](http://www1.axfc.net/u/3506121.zip)（必要なのは`join_logo_scp試行環境_2.zip`という圧縮ファイルの中身です）
-
-※join_logo_scpは、[CMカットスレ](https://mevius.5ch.net/test/read.cgi/avi/1531949212/)で最新版が公開されています。精度が上がっているようです。
+> Git for Windowsは64bit版で構いません。
 
 ## 入力ファイルの仕様
 
-L-SMASH Worksで読めるすべての動画ファイルが対象です（ver.2.00より）
+L-SMASH Worksで読めるすべての動画ファイルが対象です（ver.2.00より）。つまり日常的に扱う動画ファイルはほぼすべてが対象となります。
 
-FAWを使う場合、**元の音声がAAC**である必要があります。よくわからなければqaacを使用してください。高音質設定なので、よほど敏感な人でないと音質はそれほど変わりません。
+FAWを使う場合、**元の音声がAAC**である必要があります。
 
-PT3等のTVチューナーで録画したファイルはFAWの条件をクリアしますので、そのままドラッグすればOKです。
+PT3等のTVチューナーで録画したtsファイルはFAWの条件をクリアしますので、そのままドラッグすればOKです。
 
-気をつけるのはDVDソースからゴニョったファイルの場合です。
+気をつけるのは、同じtsファイルでもDVDソースからゴニョったり、自力で作成した場合です。
 
-例えば当サイト管理人オススメの[TMPGEnc MPEG Smart Renderer](http://tmpgenc.pegasys-inc.com/ja/product/tmsr5.html)だと、映像無劣化かつ音声を**LPCM**や**AC-3**で出力することが多いと思います。
+例えば当サイト管理人オススメの[TMPGEnc MPEG Smart Renderer](http://tmpgenc.pegasys-inc.com/ja/product/tmsr5.html)は映像無劣化でtsファイルにできますが、デフォルトのままだと音声は**LPCM**や**AC-3**になると思います。
 
-映像は問題ありませんが、音声はAC-3ではなくAAC（**MPEG2 AAC(LC)**）に変更する必要があります。
+この場合、出力直前の画面で音声を明示的にAAC（**MPEG2 AAC(LC)**）に指定する必要があります。
 
 > せっかくFAWを使うのに非可逆圧縮が入るのも気分的にアレですが、ビットレートを256kbpsとか384kbpsにすれば、元との違いを聞き分けられるような人はそうそういないと思います。
 
-mpeg4な動画ファイルも音声はAACであることが多いと思いますが、たまにFLACとかもありますのでご注意ください。[MediaInfo](https://mediaarea.net/en/MediaInfo)で調査することをオススメします。
+mp4やmov等、近頃のありふれた動画ファイルは音声がAACであることも多いと思いますが、たまにFLACとかもありますのでご注意ください。[MediaInfo](https://mediaarea.net/en/MediaInfo)で調査することをおすすめします。
 
-繰り返しになりますが、よくわからなければqaacを使用してください。
+条件に合わない場合、合わせたくない場合、よくわからない場合はFAWではなくqaacを使用してください。
 
 ## 使用方法
 
 このバッチファイル、もしくはバッチファイルへのショートカットに、動画ファイルをドラッグしてください。複数同時ドラッグも可能です。
 
-> 基本的に、元動画の形式に注意しなければならないのは、前述の通り**FAWを使用するときのみ**です。
+> 基本的に、元動画の格納形式（音声）に注意しなければならないのは、前述の通り**FAWを使用するときのみ**です。
 
 すると設定に応じた動作を自動で行います。AvsPmodやAviUtl + カット編集プラグイン等で手動カット編集を行いたい場合もあるかと思いますが、その際はavsファイル書き出し後に一時停止する設定にしてくだい。
 
