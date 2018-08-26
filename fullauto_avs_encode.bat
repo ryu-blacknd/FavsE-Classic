@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 3.03
+echo FavsE (FullAuto AVS Encode) 3.10
 echo.
 
 REM ----------------------------------------------------------------------
@@ -218,8 +218,8 @@ if not %audio_encoder% == 0 goto end_audio_split
 echo ----------------------------------------------------------------------
 echo  音声分離処理（FAW）
 echo ----------------------------------------------------------------------
-for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *.aac"`) do set aac_fullpath=%file_path%%%A
-if exist "%source_fullname% PID *_aac.wav" goto exist_wav
+for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% DELAY *.aac"`) do set aac_fullpath=%file_path%%%A
+if exist "%source_fullname% DELAY *_aac.wav" goto exist_wav
 call %fawcl% -s2 "%aac_fullpath%"
 goto end_audio_split
 
@@ -227,7 +227,7 @@ goto end_audio_split
 echo 既にwavファイルが存在します。
 
 :end_audio_split
-for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *_aac.wav"`) do set wav_fullpath=%file_path%%%A
+for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% DELAY *_aac.wav"`) do set wav_fullpath=%file_path%%%A
 echo.
 
 echo ----------------------------------------------------------------------
@@ -244,7 +244,7 @@ echo.>>%avs%
 if not %audio_encoder% == 0 goto not_faw
 echo ### ファイル読み込み ###>>%avs%
 echo LWLibavVideoSource("%source_fullname%.m2v")>>%avs%
-echo AudioDub(last, LWLibavAudioSource("%wav_fullpath%", av_sync=true, layout="stereo"))>>%avs%
+echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
 goto end_fileread
 
 :not_faw
@@ -295,6 +295,7 @@ echo ### 手動Trim ###>>%avs%
 echo #SetMTMode(1)>>%avs%
 echo #Trim(*,*)>>%avs%
 echo #SetMTMode(2)>>%avs%
+echo.>>%avs%
 
 if %cut_logo% == 0 goto end_cm_cut_logo
 echo ### ロゴ除去 ###>>%avs%
