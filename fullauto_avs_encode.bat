@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 3.20
+echo FavsE (FullAuto AVS Encode) 3.21
 echo.
 
 REM ----------------------------------------------------------------------
