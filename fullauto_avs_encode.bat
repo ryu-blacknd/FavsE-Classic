@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 3.14
+echo FavsE (FullAuto AVS Encode) 3.16
 echo.
 
 REM ----------------------------------------------------------------------
@@ -10,16 +10,16 @@ set video_encoder=0
 REM ----------------------------------------------------------------------
 REM 音声エンコーダの指定（0:FAW, 1:qaac）
 REM ----------------------------------------------------------------------
-set audio_encoder=0
+set audio_encoder=1
 
 REM ----------------------------------------------------------------------
 REM 自動CMカットの処理を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
-set cut_cm=1
+set cut_cm=0
 REM ----------------------------------------------------------------------
 REM ロゴ除去の処理を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
-set cut_logo=1
+set cut_logo=0
 REM ----------------------------------------------------------------------
 REM avs生成後に処理を一時停止するか（0:しない, 1:する）※ほぼ手動CMカット用
 REM ----------------------------------------------------------------------
@@ -30,9 +30,9 @@ REM インターレース解除を行うか（0:インターレース保持, 1:インターレース解除）
 REM ----------------------------------------------------------------------
 set deint=1
 REM ----------------------------------------------------------------------
-REM 30pへのインターレース解除時にBOB化を行うか（0:行わない, 1:行う）
+REM 30fpsのインターレース解除時にBOB化を行うか（0:行わない, 1:行う）
 REM ----------------------------------------------------------------------
-set deint_bob=0
+set deint_bob=1
 REM ----------------------------------------------------------------------
 REM インターレース解除 / 逆テレシネをGPUで行うか（0:行わない, 1:行う）
 REM 使用するデバイスが複数ある場合は Intel, NVIDIA, Radeonから指定してください
@@ -56,13 +56,17 @@ set sharpen=0
 REM ----------------------------------------------------------------------
 REM 終了後に一時ファイルを削除するか（0:しない, 1:する）
 REM ----------------------------------------------------------------------
-set del_temp=0
+set del_temp=1
+
+REM ----------------------------------------------------------------------
+REM 設定ここまで
+REM ----------------------------------------------------------------------
 
 REM ----------------------------------------------------------------------
 REM エンコーダのオプション
 REM ----------------------------------------------------------------------
 if %video_encoder% == 0 (
-  set x264_opt=--crf 20 --qcomp 0.7 --me umh --subme 9 --direct auto --ref 5 --trellis 2
+  set x264_opt=--crf 22 --qcomp 0.7 --me umh --subme 9 --direct auto --ref 5 --trellis 2
 ) else if %video_encoder% == 1 (
   set qsvencc_opt=-c h264 -u 2 --la-icq 24 --la-quality slow --bframes 3 --weightb --weightp
 ) else if %video_encoder% == 2 (
@@ -173,7 +177,9 @@ for /f "delims=" %%A in ('%mediainfo% "%source_fullpath%" ^| grep "Scan type" ^|
 for /f "delims=" %%A in ('%mediainfo% "%source_fullpath%" ^| grep "Scan order" ^| sed -r "s/Scan order *: (.*)/\1/"') do set scan_order=%%A
 
 if "%scan_type%" == "Progressive" (
-  echo # %scan_type%>>%avs%
+  echo ※プログレッシブソースです。
+  echo.
+  set order_ref=PROGRESSIVE
   goto end_scan_order
 )
 if "%scan_order%" == "Bottom Field First" (
@@ -186,6 +192,7 @@ if "%scan_order%" == "Bottom Field First" (
 :end_scan_order
 
 if not %file_ext% == .ts goto end_tssplitter
+if %is_sd% == 1 goto end_tssplitter
 echo ----------------------------------------------------------------------
 echo TSSplitter処理
 echo ----------------------------------------------------------------------
@@ -202,11 +209,12 @@ echo.
 :end_tssplitter
 
 if not %file_ext% == .ts goto end_dgindex
+if %is_sd% == 1 goto end_dgindex
+if not %audio_encoder% == 0 goto end_dgindex
 echo ----------------------------------------------------------------------
 echo DGIndex処理
 echo ----------------------------------------------------------------------
 if not exist "%source_fullname%.d2v" (
-  REM call %dgindex% -i "%source_fullpath%" -od "%source_fullname%" -ia 5 -fo 0 -yr 2 -om 2 -hide -exit
   call %dgindex% -i "%source_fullpath%" -o "%source_fullname%" -ia 5 -fo 0 -yr 2 -om 2 -hide -exit
 ) else (
   echo 既に分離済みのファイルが存在します。
@@ -214,7 +222,9 @@ if not exist "%source_fullname%.d2v" (
 echo.
 :end_dgindex
 
-if not %audio_encoder% == 0 goto end_audio_split
+if not %audio_encoder% == 0 goto end_faw
+if not %file_ext% == .ts goto end_faw
+if %is_sd% == 1 goto end_faw
 echo ----------------------------------------------------------------------
 echo  FAWによるaac → 疑似wav化処理
 echo ----------------------------------------------------------------------
@@ -229,6 +239,7 @@ echo 既に疑似wavファイルが存在します。
 :end_audio_split
 for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *_aac.wav"`) do set wav_fullpath=%file_path%%%A
 echo.
+:end_faw
 
 echo ----------------------------------------------------------------------
 echo avsファイル生成処理
@@ -243,6 +254,8 @@ echo.>>%avs%
 
 echo ### ファイル読み込み ###>>%avs%
 if not %audio_encoder% == 0 goto not_faw
+if not %file_ext% == .ts goto not_faw
+if %is_sd% == 1 goto not_faw
 echo SetMTMode(1, 0)>>%avs%
 echo MPEG2Source("%source_fullname%.d2v")>>%avs%
 echo SetMTMode(2)>>%avs%
@@ -265,6 +278,7 @@ echo.>>%avs%
 echo ### フィールドオーダー ###>>%avs%
 if %order_ref% == TOP echo AssumeTFF()>>%avs%
 if %order_ref% == BOTTOM echo AssumeBFF()>>%avs%
+if %order_ref% == PROGRESSIVE echo #Progressive>>%avs%
 echo.>>%avs%
 
 echo ### クロップ ###>>%avs%
@@ -340,6 +354,7 @@ echo #GPU_Begin()>>%avs%
 echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
 echo #GPU_End()>>%avs%
 goto end_deint
+echo.>>%avs%
 
 :set_deint_gpu
 echo #TIVTC24P2()>>%avs%
@@ -351,6 +366,7 @@ echo #GPU_Begin()>>%avs%
 echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
 echo #GPU_End()>>%avs%
 goto end_deint
+echo.>>%avs%
 
 :set_deint_bob
 if %gpu_deint% == 1 goto set_deint_bob_gpu
@@ -364,6 +380,7 @@ echo #GPU_Begin()>>%avs%
 echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
 echo #GPU_End()>>%avs%
 goto end_deint
+echo.>>%avs%
 
 :set_deint_bob_gpu
 echo #TIVTC24P2()>>%avs%
@@ -375,6 +392,7 @@ echo #GPU_Begin()>>%avs%
 echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
 echo #GPU_End()>>%avs%
 goto end_deint
+echo.>>%avs%
 
 :set_deint_it
 set is_ivtc=1
@@ -388,6 +406,7 @@ echo #GPU_Begin()>>%avs%
 echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
 echo #GPU_End()>>%avs%
 goto end_deint
+echo.>>%avs%
 
 :set_deint_it_gpu
 echo #TIVTC24P2()>>%avs%
@@ -399,9 +418,9 @@ echo GPU_Begin()>>%avs%
 echo GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
 echo GPU_End()>>%avs%
 goto end_deint
+echo.>>%avs%
 
 :end_deint
-echo.>>%avs%
 
 echo ### ノイズ除去 ###>>%avs%
 if %denoize% == 0 goto not_denoize
@@ -506,6 +525,8 @@ if not exist %output_wav% (
   echo 既に中間wavファイルが存在します。
 )
 if %audio_encoder% == 1 goto qaac_encode
+if not %file_ext% == .ts goto qaac_encode
+if %is_sd% == 1 goto qaac_encode
 
 if not exist %output_aac% (
   call %fawcl% %output_wav% %output_aac%
