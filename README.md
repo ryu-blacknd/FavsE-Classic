@@ -73,7 +73,6 @@ FavsEの動作に必要なツールは以下の通りで、結構あります。
 
 - [TSSplitter](https://www.videohelp.com/software/TSSplitter)
 - [DGIndex](http://rationalqm.us/dgmpgdec/)（`dgmpgdec158.zip`が最新ですが、入手困難な改良版もあります。`DGIndex.exe`のみ必要です）
-- [FFmpeg](https://ffmpeg.zeranoe.com/builds/)（上記に`bin\ffmpeg.exe`が必要です。Static版でOKです）
 - [avs2pipemod](https://github.com/chikuzen/avs2pipemod/releases)
 
 - [MediaInfo CLI](https://mediaarea.net/en/MediaInfo/Download/Windows)
