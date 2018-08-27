@@ -169,14 +169,16 @@ set output_mp4="%output_path%%file_name%.mp4"
 REM ----------------------------------------------------------------------
 REM コーデック取得
 REM ----------------------------------------------------------------------
+for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Commercial name" ^| head -n 1 ^| sed -r "s/Commercial name *: (.*)/\1/"') do set info_container=%%A
 for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Codecs Video" ^| sed -r "s/Codecs Video *: (.*)/\1/"') do set info_vcodec=%%A
 for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Audio codecs" ^| sed -r "s/Audio codecs *: (.*)/\1/"') do set info_acodec=%%A
 for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Bit depth" ^| head -n 1 ^| sed -r "s/Bit depth *: (.*)/\1/"') do set info_bitdepth=%%A
+echo コンテナ　　　：%info_container%
 echo 映像コーデック：%info_vcodec%
 echo 音声コーデック：%info_acodec%
 echo ビット深度　　：%info_bitdepth%ビット
 echo.
-
+pause
 REM ----------------------------------------------------------------------
 REM SD（主にDVDソース）のアスペクト比を設定
 REM ----------------------------------------------------------------------
@@ -295,7 +297,8 @@ echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
 goto end_fileread
 
 :not_faw
-echo LWLibavVideoSource("%source_fullpath%", format="YUV420P8")>>%avs%
+if %info_bitdepth% == 8 echo LWLibavVideoSource("%source_fullpath%")>>%avs%
+if not %info_bitdepth% == 8 echo LWLibavVideoSource("%source_fullpath%", format="YUV420P8")>>%avs%
 echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
 echo.>>%avs%
 echo SetMTMode(2, 0)>>%avs%
