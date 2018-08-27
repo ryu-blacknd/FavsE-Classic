@@ -1,85 +1,77 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 3.16
+echo FavsE (FullAuto AVS Encode) 3.17
 echo.
 
 REM ----------------------------------------------------------------------
 REM 映像エンコーダの指定（0:x264, 1:QSVEnc, 2:NVEnc_AVC, 3:NVEnc_HEVC）
+REM 正直それほど強烈な速度差はありません。画質の差はありますのでx264推奨です。
 REM ----------------------------------------------------------------------
 set video_encoder=0
 REM ----------------------------------------------------------------------
 REM 音声エンコーダの指定（0:FAW, 1:qaac）
+REM 通常はFAWでOKです。FAWが使用できない場合は自動的にqaacで処理します。
 REM ----------------------------------------------------------------------
-set audio_encoder=1
+set audio_encoder=0
 
 REM ----------------------------------------------------------------------
 REM 自動CMカットの処理を行うか（0:行わない, 1:行う）
+REM CMは高精度でカットしますが、完璧ではありません。手動カットとの組み合わせ推奨です。
 REM ----------------------------------------------------------------------
 set cut_cm=0
 REM ----------------------------------------------------------------------
 REM ロゴ除去の処理を行うか（0:行わない, 1:行う）
+REM 事前にAviUtl + ロゴ解析プラグインで.lgdファイルを作成しておく必要があります。
 REM ----------------------------------------------------------------------
 set cut_logo=0
 REM ----------------------------------------------------------------------
-REM avs生成後に処理を一時停止するか（0:しない, 1:する）※ほぼ手動CMカット用
+REM avs生成後に処理を一時停止するか（0:しない, 1:する）
+REM 生成されたスクリプトを確認してから進められます。ほぼ手動CMカット用です。
 REM ----------------------------------------------------------------------
-set check_avs=1
+set check_avs=0
 
 REM ----------------------------------------------------------------------
 REM インターレース解除を行うか（0:インターレース保持, 1:インターレース解除）
+REM 通常は解除推奨です。リサイズ処理を行うのであればインターレース保持の意味は薄れます。
 REM ----------------------------------------------------------------------
 set deint=1
 REM ----------------------------------------------------------------------
 REM 30fpsのインターレース解除時にBOB化を行うか（0:行わない, 1:行う）
+REM 24fps化（逆テレシネ）ではないケースで、動きヌルヌルの60fps動画にできます。
 REM ----------------------------------------------------------------------
 set deint_bob=1
 REM ----------------------------------------------------------------------
 REM インターレース解除 / 逆テレシネをGPUで行うか（0:行わない, 1:行う）
-REM 使用するデバイスが複数ある場合は Intel, NVIDIA, Radeonから指定してください
+REM 使用するデバイスが複数ある場合は Intel, NVIDIA, Radeonから指定してください。
 REM ----------------------------------------------------------------------
 set gpu_deint=0
 set d3dvp_device=Intel
 
 REM ----------------------------------------------------------------------
 REM GPUによるノイズ除去を行うか（0:行わない, 1:行う）
+REM _GPU25プラグインを使用します。対応GPUを持っていなければエラーになります。
 REM ----------------------------------------------------------------------
 set denoize=0
 REM ----------------------------------------------------------------------
 REM Widthが1280pxを超える場合に1280x720pxにリサイズするか（0:しない, 1:する）
+REM 4K / 2K / Full HD等の場合にHDサイズに揃え、ファイルサイズを縮める意味があります。
 REM ----------------------------------------------------------------------
 set resize=1
 REM ----------------------------------------------------------------------
 REM 若干のシャープ化を行うか（0:行わない, 1:行う）
+REM 気持ち程度のシャープネスですが、例えばノイズ除去後や拡大処理後には有効です。
 REM ----------------------------------------------------------------------
 set sharpen=0
 
 REM ----------------------------------------------------------------------
 REM 終了後に一時ファイルを削除するか（0:しない, 1:する）
+REM 一時ファイル群を一括削除できます。0だと放置されますが、やり直し時に再利用できます。
 REM ----------------------------------------------------------------------
-set del_temp=1
+set del_temp=0
 
 REM ----------------------------------------------------------------------
-REM 設定ここまで
-REM ----------------------------------------------------------------------
-
-REM ----------------------------------------------------------------------
-REM エンコーダのオプション
-REM ----------------------------------------------------------------------
-if %video_encoder% == 0 (
-  set x264_opt=--crf 22 --qcomp 0.7 --me umh --subme 9 --direct auto --ref 5 --trellis 2
-) else if %video_encoder% == 1 (
-  set qsvencc_opt=-c h264 -u 2 --la-icq 24 --la-quality slow --bframes 3 --weightb --weightp
-) else if %video_encoder% == 2 (
-  set nvencc_opt=--avs -c h264 --cqp 20:22:24 --qp-init 20:22:24 --weightp --aq --aq-temporal
-) else if %video_encoder% == 3 (
-  set nvencc_opt=--avs -c hevc --cqp 21:22:24 --qp-init 21:22:24 --weightp --aq --aq-temporal
-) else (
-  echo [エラー] エンコーダを正しく指定してください。
-  goto end
-)
-
-REM ----------------------------------------------------------------------
-REM フォルダ名(環境に応じて書き換えてください)
+REM ■確認必須：フォルダ名
+REM 環境に応じて【必ず】書き換えてください。
 REM ----------------------------------------------------------------------
 set output_path=F:\Encode\
 set bin_path=C:\DTV\bin\
@@ -87,7 +79,8 @@ set logo_path=%bin_path%join_logo_scp\logo\
 set cut_result_path=%bin_path%join_logo_scp\result\
 
 REM ----------------------------------------------------------------------
-REM 実行ファイルダ名(環境に応じて書き換えてください)
+REM ■確認必須：実行ファイル名
+REM 環境に応じて【必ず】書き換えてください。わかる方は必要なものだけで結構です。
 REM ----------------------------------------------------------------------
 set x264=%bin_path%x264.exe
 set qsvencc=%bin_path%QSVEncC.exe
@@ -104,6 +97,27 @@ set rplsinfo=%bin_path%rplsinfo.exe
 set tsspritter=%bin_path%TsSplitter\TsSplitter.exe
 set dgindex=%bin_path%DGIndex.exe
 set join_logo_scp=%bin_path%join_logo_scp\jlse_bat.bat
+
+REM ----------------------------------------------------------------------
+REM 映像エンコーダのオプション
+REM 設定値の意味がわかる方は自由に改変してください。
+REM ----------------------------------------------------------------------
+if %video_encoder% == 0 (
+  set x264_opt=--crf 22 --qcomp 0.7 --me umh --subme 9 --direct auto --ref 5 --trellis 2
+) else if %video_encoder% == 1 (
+  set qsvencc_opt=-c h264 -u 2 --la-icq 24 --la-quality slow --bframes 3 --weightb --weightp
+) else if %video_encoder% == 2 (
+  set nvencc_opt=--avs -c h264 --cqp 20:22:24 --qp-init 20:22:24 --weightp --aq --aq-temporal
+) else if %video_encoder% == 3 (
+  set nvencc_opt=--avs -c hevc --cqp 21:22:24 --qp-init 21:22:24 --weightp --aq --aq-temporal
+) else (
+  echo [エラー] エンコーダを正しく指定してください。
+  goto end
+)
+
+REM ----------------------------------------------------------------------
+REM 設定ここまで
+REM ======================================================================
 
 :loop
 if "%~1" == "" goto end
@@ -153,6 +167,15 @@ set output_m4a="%output_path%%file_name%.m4a"
 set output_mp4="%output_path%%file_name%.mp4"
 
 REM ----------------------------------------------------------------------
+REM コーデック取得
+REM ----------------------------------------------------------------------
+for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Codecs Video" ^| sed -r "s/Codecs Video *: (.*)/\1/"') do set info_vcodec=%%A
+for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Audio codecs" ^| sed -r "s/Audio codecs *: (.*)/\1/"') do set info_acodec=%%A
+echo 映像コーデック：%info_vcodec%
+echo 音声コーデック：%info_acodec%
+echo.
+
+REM ----------------------------------------------------------------------
 REM SD（主にDVDソース）のアスペクト比を設定
 REM ----------------------------------------------------------------------
 for /f "delims=" %%A in ('%mediainfo% "%file_fullpath%" ^| grep "Width" ^| sed -r "s/Width *: (.*) pixels/\1/" ^| sed -r "s/ //"') do set width=%%A
@@ -192,6 +215,8 @@ if "%scan_order%" == "Bottom Field First" (
 :end_scan_order
 
 if not %file_ext% == .ts goto end_tssplitter
+if not "%info_vcodec%" == "MPEG-2 Video" goto end_tssplitter
+if not "%info_acodec%" == "AAC LC" goto end_tssplitter
 if %is_sd% == 1 goto end_tssplitter
 echo ----------------------------------------------------------------------
 echo TSSplitter処理
@@ -200,7 +225,7 @@ if %is_sd% == 0 (
   if not exist "%source_fullpath%" (
     call %tsspritter% -EIT -ECM -EMM -SD -1SEG "%file_fullpath%"
   ) else (
-    echo 既に分割済みのファイルが存在します。
+    echo 分割済みのファイルが存在しています。
   )
 ) else (
   echo 処理は必要ありません。
@@ -209,6 +234,8 @@ echo.
 :end_tssplitter
 
 if not %file_ext% == .ts goto end_dgindex
+if not "%info_vcodec%" == "MPEG-2 Video" goto end_dgindex
+if not "%info_acodec%" == "AAC LC" goto end_dgindex
 if %is_sd% == 1 goto end_dgindex
 if not %audio_encoder% == 0 goto end_dgindex
 echo ----------------------------------------------------------------------
@@ -217,13 +244,15 @@ echo ----------------------------------------------------------------------
 if not exist "%source_fullname%.d2v" (
   call %dgindex% -i "%source_fullpath%" -o "%source_fullname%" -ia 5 -fo 0 -yr 2 -om 2 -hide -exit
 ) else (
-  echo 既に分離済みのファイルが存在します。
+  echo 分離済みのファイルが存在しています。
 )
 echo.
 :end_dgindex
 
 if not %audio_encoder% == 0 goto end_faw
 if not %file_ext% == .ts goto end_faw
+if not "%info_vcodec%" == "MPEG-2 Video" goto end_faw
+if not "%info_acodec%" == "AAC LC" goto end_faw
 if %is_sd% == 1 goto end_faw
 echo ----------------------------------------------------------------------
 echo  FAWによるaac → 疑似wav化処理
@@ -234,7 +263,7 @@ call %fawcl% -s2 "%aac_fullpath%"
 goto end_audio_split
 
 :exist_wav
-echo 既に疑似wavファイルが存在します。
+echo 疑似wavファイルが存在しています。
 
 :end_audio_split
 for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *_aac.wav"`) do set wav_fullpath=%file_path%%%A
@@ -245,7 +274,7 @@ echo ----------------------------------------------------------------------
 echo avsファイル生成処理
 echo ----------------------------------------------------------------------
 if exist %avs% (
-  echo 既にavsファイルが存在します。
+  echo avsファイルが存在しています。
   goto end_avs
 )
 
@@ -255,6 +284,8 @@ echo.>>%avs%
 echo ### ファイル読み込み ###>>%avs%
 if not %audio_encoder% == 0 goto not_faw
 if not %file_ext% == .ts goto not_faw
+if not "%info_vcodec%" == "MPEG-2 Video" goto not_faw
+if not "%info_acodec%" == "AAC LC" goto not_faw
 if %is_sd% == 1 goto not_faw
 echo SetMTMode(1, 0)>>%avs%
 echo MPEG2Source("%source_fullname%.d2v")>>%avs%
@@ -271,7 +302,7 @@ echo.>>%avs%
 
 :end_fileread
 
-echo ### 10bitソースの場合のみ ###>>%avs%
+echo ### 10bitソースの場合は有効に ###>>%avs%
 echo #ConvertToYV12>>%avs%
 echo.>>%avs%
 
@@ -512,7 +543,7 @@ if not exist %output_enc% (
     call %nvencc% %nvencc_opt% %sar%%order_tb% -i %avs% -o %output_enc%
   )
 ) else (
-  echo 既にエンコード済み映像ファイルが存在します。
+  echo エンコード済み映像ファイルが存在しています。
 )
 echo.
 
@@ -522,7 +553,7 @@ echo ----------------------------------------------------------------------
 if not exist %output_wav% (
   call %avs2pipemod% -wav %avs% > %output_wav%
 ) else (
-  echo 既に中間wavファイルが存在します。
+  echo 中間wavファイルが存在しています。
 )
 if %audio_encoder% == 1 goto qaac_encode
 if not %file_ext% == .ts goto qaac_encode
@@ -531,7 +562,7 @@ if %is_sd% == 1 goto qaac_encode
 if not exist %output_aac% (
   call %fawcl% %output_wav% %output_aac%
 ) else (
-  echo 既にエンコード済みaacファイルが存在します。
+  echo エンコード済みaacファイルが存在しています。
 )
 goto end_audio_encode
 
@@ -539,7 +570,7 @@ goto end_audio_encode
 if not exist %output_aac% (
   call %qaac% -q 2 --tvbr 95 %output_wav% -o %output_aac%
 ) else (
-  echo 既にエンコード済みaacファイルが存在します。
+  echo エンコード済みaacファイルが存在しています。
 )
 
 :end_audio_encode
@@ -551,7 +582,7 @@ echo ----------------------------------------------------------------------
 if not exist %output_m4a% (
   call %muxer% -i %output_aac% -o %output_m4a%
 ) else (
-  echo 既にmuxer済みのm4aファイルが存在します。
+  echo muxer済みのm4aファイルが存在しています。
 )
 echo.
 
@@ -561,7 +592,7 @@ echo ----------------------------------------------------------------------
 if not exist %output_mp4% (
   call %remuxer% -i %output_enc% -i %output_m4a% -o %output_mp4%
 ) else (
-  echo 既にremuxer済みのmp4ファイルが存在します。
+  echo remuxer済みのmp4ファイルが存在しています。
 )
 echo.
 
