@@ -83,7 +83,7 @@ FavsEの動作に必要なツールは以下の通りで、結構あります。
 - [DGIndex](http://rationalqm.us/dgmpgdec/)（`dgmpgdec158.zip`が最新ですが、入手困難な改良版もあります。`DGIndex.exe`のみ必要です）
 - [avs2pipemod](https://github.com/chikuzen/avs2pipemod/releases)
 
-- [MediaInfo CLI](https://mediaarea.net/en/MediaInfo/Download/Windows)
+- [MediaInfo CLI](https://mediaarea.net/en/MediaInfo/Download/Windows)（GUIが版ではなくCLI版です）
 - [rplsinfo](https://web.archive.org/web/20180309090449/http://saysaysay.net/rplstool)
 - [join_logo_scp](http://www1.axfc.net/u/3506121.zip)（必要なのは`join_logo_scp試行環境_2.zip`という圧縮ファイルの中身のみです）
 

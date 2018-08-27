@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 3.17
+echo FavsE (FullAuto AVS Encode) 3.20
 echo.
 
 REM ----------------------------------------------------------------------
@@ -28,7 +28,7 @@ REM ----------------------------------------------------------------------
 REM avs生成後に処理を一時停止するか（0:しない, 1:する）
 REM 生成されたスクリプトを確認してから進められます。ほぼ手動CMカット用です。
 REM ----------------------------------------------------------------------
-set check_avs=0
+set check_avs=1
 
 REM ----------------------------------------------------------------------
 REM インターレース解除を行うか（0:インターレース保持, 1:インターレース解除）
@@ -59,7 +59,7 @@ REM ----------------------------------------------------------------------
 set resize=1
 REM ----------------------------------------------------------------------
 REM 若干のシャープ化を行うか（0:行わない, 1:行う）
-REM 気持ち程度のシャープネスですが、例えばノイズ除去後や拡大処理後には有効です。
+REM 気持ち程度のシャープ化ですが、例えばノイズ除去後や拡大処理後にはそれなりに有効です。
 REM ----------------------------------------------------------------------
 set sharpen=0
 
@@ -134,8 +134,8 @@ REM ----------------------------------------------------------------------
 REM SD（主にDVDソース）かをサイズ取得で判定
 REM ----------------------------------------------------------------------
 set is_sd=0
-for /f "delims=" %%A in ('%mediainfo% %1 ^| grep "Width" ^| sed -r "s/Width *: (.*) pixels/\1/" ^| sed -r "s/ //"') do set width=%%A
-if %width% == 720 set is_sd=1
+for /f "delims=" %%A in ('%mediainfo% %1 ^| grep "Width" ^| sed -r "s/Width *: (.*) pixels/\1/" ^| sed -r "s/ //"') do set info_width=%%A
+if %info_width% == 720 set is_sd=1
 
 REM ----------------------------------------------------------------------
 REM 変数セット
@@ -171,18 +171,19 @@ REM コーデック取得
 REM ----------------------------------------------------------------------
 for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Codecs Video" ^| sed -r "s/Codecs Video *: (.*)/\1/"') do set info_vcodec=%%A
 for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Audio codecs" ^| sed -r "s/Audio codecs *: (.*)/\1/"') do set info_acodec=%%A
+for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Bit depth" ^| head -n 1 ^| sed -r "s/Bit depth *: (.*)/\1/"') do set info_bitdepth=%%A
 echo 映像コーデック：%info_vcodec%
 echo 音声コーデック：%info_acodec%
+echo ビット深度　　：%info_bitdepth%ビット
 echo.
 
 REM ----------------------------------------------------------------------
 REM SD（主にDVDソース）のアスペクト比を設定
 REM ----------------------------------------------------------------------
-for /f "delims=" %%A in ('%mediainfo% "%file_fullpath%" ^| grep "Width" ^| sed -r "s/Width *: (.*) pixels/\1/" ^| sed -r "s/ //"') do set width=%%A
-for /f "delims=" %%A in ('%mediainfo% "%file_fullpath%" ^| grep "Display aspect ratio" ^| sed -r "s/Display aspect ratio *: (.*)/\1/"') do set aspect=%%A
+for /f "delims=" %%A in ('%mediainfo% "%file_fullpath%" ^| grep "Display aspect ratio" ^| sed -r "s/Display aspect ratio *: (.*)/\1/"') do set info_aspect=%%A
 
 if %is_sd% == 1 (
-  if %aspect% == 16:9 (
+  if %info_aspect% == 16:9 (
     set sar=--sar 32:27
     REM set sar=--sar 40:33
   ) else (
@@ -294,17 +295,13 @@ echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
 goto end_fileread
 
 :not_faw
-echo LWLibavVideoSource("%source_fullpath%")>>%avs%
+echo LWLibavVideoSource("%source_fullpath%", format="YUV420P8")>>%avs%
 echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
 echo.>>%avs%
 echo SetMTMode(2, 0)>>%avs%
 echo.>>%avs%
 
 :end_fileread
-
-echo ### 10bitソースの場合は有効に ###>>%avs%
-echo #ConvertToYV12>>%avs%
-echo.>>%avs%
 
 echo ### フィールドオーダー ###>>%avs%
 if %order_ref% == TOP echo AssumeTFF()>>%avs%
