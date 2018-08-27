@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 3.13
+echo FavsE (FullAuto AVS Encode) 3.14
 echo.
 
 REM ----------------------------------------------------------------------
@@ -23,7 +23,7 @@ set cut_logo=1
 REM ----------------------------------------------------------------------
 REM avs生成後に処理を一時停止するか（0:しない, 1:する）※ほぼ手動CMカット用
 REM ----------------------------------------------------------------------
-set check_avs=0
+set check_avs=1
 
 REM ----------------------------------------------------------------------
 REM インターレース解除を行うか（0:インターレース保持, 1:インターレース解除）
@@ -56,7 +56,7 @@ set sharpen=0
 REM ----------------------------------------------------------------------
 REM 終了後に一時ファイルを削除するか（0:しない, 1:する）
 REM ----------------------------------------------------------------------
-set del_temp=1
+set del_temp=0
 
 REM ----------------------------------------------------------------------
 REM エンコーダのオプション
@@ -99,7 +99,6 @@ set mediainfo=%bin_path%MediaInfo\MediaInfo.exe
 set rplsinfo=%bin_path%rplsinfo.exe
 set tsspritter=%bin_path%TsSplitter\TsSplitter.exe
 set dgindex=%bin_path%DGIndex.exe
-REM set bontsdemuxc=%bin_path%BonTsDemuxC.exe
 set join_logo_scp=%bin_path%join_logo_scp\jlse_bat.bat
 
 :loop
@@ -206,8 +205,9 @@ if not %file_ext% == .ts goto end_dgindex
 echo ----------------------------------------------------------------------
 echo DGIndex処理
 echo ----------------------------------------------------------------------
-if not exist "%source_fullname%.demuxed.m2v" (
-  call %dgindex% -i "%source_fullpath%" -od "%source_fullname%" -ia 5 -fo 0 -yr 2 -om 2 -hide -exit
+if not exist "%source_fullname%.d2v" (
+  REM call %dgindex% -i "%source_fullpath%" -od "%source_fullname%" -ia 5 -fo 0 -yr 2 -om 2 -hide -exit
+  call %dgindex% -i "%source_fullpath%" -o "%source_fullname%" -ia 5 -fo 0 -yr 2 -om 2 -hide -exit
 ) else (
   echo 既に分離済みのファイルが存在します。
 )
@@ -241,20 +241,22 @@ if exist %avs% (
 echo SetMemoryMax(2048)>>%avs%
 echo.>>%avs%
 
-if not %audio_encoder% == 0 goto not_faw
 echo ### ファイル読み込み ###>>%avs%
-echo LWLibavVideoSource("%source_fullname%.demuxed.m2v")>>%avs%
+if not %audio_encoder% == 0 goto not_faw
+echo SetMTMode(1, 0)>>%avs%
+echo MPEG2Source("%source_fullname%.d2v")>>%avs%
+echo SetMTMode(2)>>%avs%
 echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
 goto end_fileread
 
 :not_faw
 echo LWLibavVideoSource("%source_fullpath%")>>%avs%
 echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
-
-:end_fileread
 echo.>>%avs%
 echo SetMTMode(2, 0)>>%avs%
 echo.>>%avs%
+
+:end_fileread
 
 echo ### 10bitソースの場合のみ ###>>%avs%
 echo #ConvertToYV12>>%avs%
@@ -555,10 +557,11 @@ if %file_ext% == .ts if %is_sd% == 0 set del_hd_file=1
 
 if exist "%file_fullname%.lwi" del /f /q "%file_fullname%.lwi" & echo "%file_fullname%.lwi"
 if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi" & echo "%source_fullpath%.lwi"
-if exist "%source_fullpath%.demuxed.m2v" del /f /q "%source_fullpath%.demuxed.m2v" & echo "%source_fullpath%.demuxed.m2v"
-if exist "%source_fullpath%.demuxed.m2v.lwi" del /f /q "%source_fullpath%.demuxed.m2v.lwi" & echo "%source_fullpath%.demuxed.m2v.lwi"
-if exist "%source_fullpath%.d2v" del /f /q "%source_fullpath%.d2v" & echo "%source_fullpath%.d2v"
-if exist "%source_fullpath%.d2v" del /f /q "%source_fullpath%.d2v.lwi" & echo "%source_fullpath%.d2v.lwi"
+if exist "%source_fullname%.demuxed.m2v" del /f /q "%source_fullname%.demuxed.m2v" & echo "%source_fullname%.demuxed.m2v"
+if exist "%source_fullname%.demuxed.m2v.lwi" del /f /q "%source_fullname%.demuxed.m2v.lwi" & echo "%source_fullnameh%.demuxed.m2v.lwi"
+if exist "%source_fullname%.d2v" del /f /q "%source_fullname%.d2v" & echo "%source_fullname%.d2v"
+if exist "%source_fullname%.d2v" del /f /q "%source_fullname%.d2v.lwi" & echo "%source_fullname%.d2v.lwi"
+if exist "%source_fullname%.log" del /f /q "%source_fullname%.log" & echo "%source_fullname%.log"
 if exist "%aac_fullpath%.lwi" del /f /q "%aac_fullpath%.lwi" & echo "%aac_fullpath%.lwi"
 if exist "%wav_fullpath%.lwi" del /f /q "%wav_fullpath%.lwi" & echo "%wav_fullpath%.lwi"
 if exist %avs% del /f /q %avs%
