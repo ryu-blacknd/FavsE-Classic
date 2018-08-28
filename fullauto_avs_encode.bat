@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 3.21
+echo FavsE (FullAuto AVS Encode) 3.22
 echo.
 
 REM ----------------------------------------------------------------------
@@ -609,8 +609,6 @@ if %file_ext% == .ts if %is_sd% == 0 set del_hd_file=1
 
 if exist "%file_fullname%.lwi" del /f /q "%file_fullname%.lwi" & echo "%file_fullname%.lwi"
 if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi" & echo "%source_fullpath%.lwi"
-if exist "%source_fullname%.demuxed.m2v" del /f /q "%source_fullname%.demuxed.m2v" & echo "%source_fullname%.demuxed.m2v"
-if exist "%source_fullname%.demuxed.m2v.lwi" del /f /q "%source_fullname%.demuxed.m2v.lwi" & echo "%source_fullnameh%.demuxed.m2v.lwi"
 if exist "%source_fullname%.d2v" del /f /q "%source_fullname%.d2v" & echo "%source_fullname%.d2v"
 if exist "%source_fullname%.d2v" del /f /q "%source_fullname%.d2v.lwi" & echo "%source_fullname%.d2v.lwi"
 if exist "%source_fullname%.log" del /f /q "%source_fullname%.log" & echo "%source_fullname%.log"
