@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 3.22
+echo FavsE (FullAuto AVS Encode) 3.23
 echo.
 
 REM ----------------------------------------------------------------------
@@ -28,7 +28,7 @@ REM ----------------------------------------------------------------------
 REM avs生成後に処理を一時停止するか（0:しない, 1:する）
 REM 生成されたスクリプトを確認してから進められます。ほぼ手動CMカット用です。
 REM ----------------------------------------------------------------------
-set check_avs=0
+set check_avs=1
 
 REM ----------------------------------------------------------------------
 REM インターレース解除モード（0:インターレース保持, 1:通常, 2:24fps化, 3:BOB化）
@@ -162,12 +162,13 @@ set output_m4a="%output_path%%file_name%.m4a"
 set output_mp4="%output_path%%file_name%.mp4"
 
 REM ----------------------------------------------------------------------
-REM コーデック取得
+REM 動画情報取得
 REM ----------------------------------------------------------------------
 for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Commercial name" ^| head -n 1 ^| sed -r "s/Commercial name *: (.*)/\1/"') do set info_container=%%A
 for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Codecs Video" ^| sed -r "s/Codecs Video *: (.*)/\1/"') do set info_vcodec=%%A
 for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Audio codecs" ^| sed -r "s/Audio codecs *: (.*)/\1/"') do set info_acodec=%%A
 for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Bit depth" ^| head -n 1 ^| sed -r "s/Bit depth *: (.*)/\1/"') do set info_bitdepth=%%A
+
 echo コンテナ　　　：%info_container%
 echo 映像コーデック：%info_vcodec%
 echo 音声コーデック：%info_acodec%
@@ -219,23 +220,19 @@ if %is_sd% == 1 goto end_tssplitter
 echo ----------------------------------------------------------------------
 echo TSSplitter処理
 echo ----------------------------------------------------------------------
-if %is_sd% == 0 (
-  if not exist "%source_fullpath%" (
-    call %tsspritter% -EIT -ECM -EMM -SD -1SEG "%file_fullpath%"
-  ) else (
-    echo 分割済みのファイルが存在しています。
-  )
+if not exist "%source_fullpath%" (
+  call %tsspritter% -EIT -ECM -EMM -SD -1SEG "%file_fullpath%"
 ) else (
-  echo 処理は必要ありません。
+  echo 分割済みのファイルが存在しています。
 )
 echo.
+
 :end_tssplitter
 
+if not %audio_encoder% == 0 goto end_dgindex
 if not %file_ext% == .ts goto end_dgindex
 if not "%info_vcodec%" == "MPEG-2 Video" goto end_dgindex
 if not "%info_acodec%" == "AAC LC" goto end_dgindex
-if %is_sd% == 1 goto end_dgindex
-if not %audio_encoder% == 0 goto end_dgindex
 echo ----------------------------------------------------------------------
 echo DGIndex処理
 echo ----------------------------------------------------------------------
@@ -251,7 +248,6 @@ if not %audio_encoder% == 0 goto end_faw
 if not %file_ext% == .ts goto end_faw
 if not "%info_vcodec%" == "MPEG-2 Video" goto end_faw
 if not "%info_acodec%" == "AAC LC" goto end_faw
-if %is_sd% == 1 goto end_faw
 echo ----------------------------------------------------------------------
 echo  FAWによるaac → 疑似wav化処理
 echo ----------------------------------------------------------------------
@@ -284,7 +280,6 @@ if not %audio_encoder% == 0 goto not_faw
 if not %file_ext% == .ts goto not_faw
 if not "%info_vcodec%" == "MPEG-2 Video" goto not_faw
 if not "%info_acodec%" == "AAC LC" goto not_faw
-if %is_sd% == 1 goto not_faw
 echo SetMTMode(1, 0)>>%avs%
 echo MPEG2Source("%source_fullname%.d2v")>>%avs%
 echo SetMTMode(2)>>%avs%
@@ -292,9 +287,19 @@ echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
 goto end_fileread
 
 :not_faw
-if %info_bitdepth% == 8 echo LWLibavVideoSource("%source_fullpath%")>>%avs%
-if not %info_bitdepth% == 8 echo LWLibavVideoSource("%source_fullpath%", format="YUV420P8")>>%avs%
+if "%info_container%" == "MPEG-4" goto lsmash
+if %info_bitdepth% == 8 echo LWLibavVideoSource("%source_fullpath%").AssumeFPS(30000, 1001)>>%avs%
+if not %info_bitdepth% == 8 echo LWLibavVideoSource("%source_fullpath%", format="YUV420P8").AssumeFPS(30000, 1001)>>%avs%
 echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
+echo.>>%avs%
+echo SetMTMode(2, 0)>>%avs%
+echo.>>%avs%
+goto end_fileread
+
+:lsmash
+if %info_bitdepth% == 8 echo LSMASHVideoSource("%source_fullpath%").AssumeFPS(30000, 1001)>>%avs%
+if not %info_bitdepth% == 8 echo LSMASHVideoSource("%source_fullpath%", format="YUV420P8").AssumeFPS(30000, 1001)>>%avs%
+echo AudioDub(last, LSMASHAudioSource("%source_fullpath%", layout="stereo"))>>%avs%
 echo.>>%avs%
 echo SetMTMode(2, 0)>>%avs%
 echo.>>%avs%
@@ -474,9 +479,6 @@ echo #Sharpen(0.02)>>%avs%
 :end_sharpen
 echo.>>%avs%
 
-echo ### その他の処理 ###>>%avs%
-echo.>>%avs%
-
 echo return last>>%avs%
 
 if %deint_mode% == 0 goto end_tivtc24p2
@@ -526,8 +528,7 @@ echo ----------------------------------------------------------------------
 echo 音声処理
 echo ----------------------------------------------------------------------
 if %audio_encoder% == 1 goto qaac_encode
-if not %file_ext% == .ts goto qaac_encode
-if not "%info_vcodec%" == "MPEG-2 Video" goto qaac_encode
+if not "%info_acodec%" == "AAC LC" goto qaac_encode
 if %is_sd% == 1 goto qaac_encode
 
 if not exist %output_wav% (
