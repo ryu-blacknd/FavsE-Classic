@@ -31,18 +31,13 @@ REM ----------------------------------------------------------------------
 set check_avs=0
 
 REM ----------------------------------------------------------------------
-REM インターレース解除を行うか（0:インターレース保持, 1:インターレース解除）
-REM 通常は解除推奨です。リサイズ処理を行うのであればインターレース保持の意味は薄れます。
+REM インターレース解除モード（0:インターレース保持, 1:通常, 2:24fps化, 3:BOB化）
+REM PT3等で録画したtsファイルの場合は自動判別しますので、この設定は無効となります。
 REM ----------------------------------------------------------------------
-set deint=1
+set deint_mode=1
 REM ----------------------------------------------------------------------
-REM 30fpsのインターレース解除時にBOB化を行うか（0:行わない, 1:行う）
-REM 24fps化（逆テレシネ）ではないケースで、動きヌルヌルの60fps動画にできます。
-REM ----------------------------------------------------------------------
-set deint_bob=1
-REM ----------------------------------------------------------------------
-REM インターレース解除 / 逆テレシネをGPUで行うか（0:行わない, 1:行う）
-REM 使用するデバイスが複数ある場合は Intel, NVIDIA, Radeonから指定してください。
+REM インターレース解除 / 逆テレシネ化をGPUで行うか（0:行わない, 1:行う）
+REM 使用するデバイスに合わせてIntel, NVIDIA, Radeonから指定してください。
 REM ----------------------------------------------------------------------
 set gpu_deint=0
 set d3dvp_device=Intel
@@ -210,10 +205,10 @@ if "%scan_type%" == "Progressive" (
 )
 if "%scan_order%" == "Bottom Field First" (
   set order_ref=BOTTOM
-  if %deint% == 0 set order_tb= --bff
+  if %deint_mode% == 0 set order_tb= --bff
 ) else (
   set order_ref=TOP
-  if %deint% == 0 set order_tb= --tff
+  if %deint_mode% == 0 set order_tb= --tff
 )
 :end_scan_order
 
@@ -317,6 +312,8 @@ echo #Crop(8, 0, -8, 0)>>%avs%
 echo.>>%avs%
 
 if %is_sd% == 1 goto end_cm_cut_logo
+if not %file_ext% == .ts goto end_cm_cut_logo
+if not "%info_vcodec%" == "MPEG-2 Video" goto end_cm_cut_logo
 
 echo ### サービス情報取得 ###>>%avs%
 for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -c') do set service=%%A
@@ -351,23 +348,31 @@ echo EraseLOGO("%logo_path%%service%.lgd", pos_x=0, pos_y=0, depth=128, yc_y=0, 
 echo.>>%avs%
 :end_cm_cut_logo
 
-if %deint% == 0 goto end_deint
 if "%scan_type%" == "Progressive" goto end_deint
+if %deint_mode% == 0 goto end_deint
 echo ### インターレース解除 / 逆テレシネ ###>>%avs%
-set is_ivtc=0
 
-if %is_sd% == 0 goto not_sd
-if %deint_bob% == 0 goto set_deint
-if %deint_bob% == 1 goto set_deint_bob
+if %is_sd% == 0 if "%info_vcodec%" == "MPEG-2 Video" goto is_tv_ts
+if %deint_mode% == 1 goto set_deint
+if %deint_mode% == 2 goto set_deint_it
+if %deint_mode% == 3 goto set_deint_bob
+goto end_deint
 
-:not_sd
+:is_tv_ts
+if not %file_ext% == .ts goto end_get_genre
+
 for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -g') do set genre=%%A
 echo #ジャンル名：%genre%>>%avs%
 if "%scan_type%" == "Progressive" goto end_deint
 
+:end_get_genre
 echo %genre% | find " を開くのに失敗しました." > NUL
-if not ERRORLEVEL 1 if %deint_bob% == 0 goto set_deint
-if not ERRORLEVEL 1 if %deint_bob% == 1 goto set_deint_bob
+if not ERRORLEVEL 1 (
+  if %deint_mode% == 1 goto set_deint
+  if %deint_mode% == 2 goto set_deint_it
+  if %deint_mode% == 3 goto set_deint_bob
+  goto end_deint
+)
 
 echo %genre% | find "アニメ" > NUL
 if not ERRORLEVEL 1 goto set_deint_it
@@ -380,75 +385,45 @@ echo #TIVTC24P2()>>%avs%
 echo TDeint(edeint=nnedi3)>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
-echo #D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
-echo #GPU_Begin()>>%avs%
-echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
-echo #GPU_End()>>%avs%
 goto end_deint
-echo.>>%avs%
 
 :set_deint_gpu
-echo #TIVTC24P2()>>%avs%
-echo #TDeint(edeint=nnedi3)>>%avs%
-echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
-echo.>>%avs%
 echo D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
 echo #GPU_Begin()>>%avs%
 echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
 echo #GPU_End()>>%avs%
-goto end_deint
 echo.>>%avs%
+goto end_deint
 
 :set_deint_bob
 if %gpu_deint% == 1 goto set_deint_bob_gpu
 echo #TIVTC24P2()>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
 echo TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
-echo #D3DVP(mode=1, device="%d3dvp_device%")>>%avs%
 echo.>>%avs%
-echo #D3DVP(mode=1, device="%d3dvp_device%")>>%avs%
-echo #GPU_Begin()>>%avs%
-echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
-echo #GPU_End()>>%avs%
 goto end_deint
-echo.>>%avs%
 
 :set_deint_bob_gpu
-echo #TIVTC24P2()>>%avs%
-echo #TDeint(edeint=nnedi3)>>%avs%
-echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
-echo.>>%avs%
 echo D3DVP(mode=1, device="%d3dvp_device%")>>%avs%
 echo #GPU_Begin()>>%avs%
 echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
 echo #GPU_End()>>%avs%
-goto end_deint
 echo.>>%avs%
+goto end_deint
 
 :set_deint_it
-set is_ivtc=1
 if %gpu_deint% == 1 goto set_deint_it_gpu
 echo TIVTC24P2()>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
-echo #D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
-echo #GPU_Begin()>>%avs%
-echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
-echo #GPU_End()>>%avs%
 goto end_deint
-echo.>>%avs%
 
 :set_deint_it_gpu
-echo #TIVTC24P2()>>%avs%
-echo #TDeint(edeint=nnedi3)>>%avs%
-echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
-echo.>>%avs%
 echo D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
 echo GPU_Begin()>>%avs%
 echo GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
 echo GPU_End()>>%avs%
-goto end_deint
 echo.>>%avs%
 
 :end_deint
@@ -504,7 +479,7 @@ echo.>>%avs%
 
 echo return last>>%avs%
 
-if %deint% == 0 goto end_tivtc24p2
+if %deint_mode% == 0 goto end_tivtc24p2
 if "%scan_type%" == "Progressive" goto end_tivtc24p2
 echo.>>%avs%
 echo function TIVTC24P2(clip clip){>>%avs%
@@ -550,15 +525,16 @@ echo.
 echo ----------------------------------------------------------------------
 echo 音声処理
 echo ----------------------------------------------------------------------
+if %audio_encoder% == 1 goto qaac_encode
+if not %file_ext% == .ts goto qaac_encode
+if not "%info_vcodec%" == "MPEG-2 Video" goto qaac_encode
+if %is_sd% == 1 goto qaac_encode
+
 if not exist %output_wav% (
   call %avs2pipemod% -wav %avs% > %output_wav%
 ) else (
   echo 中間wavファイルが存在しています。
 )
-if %audio_encoder% == 1 goto qaac_encode
-if not %file_ext% == .ts goto qaac_encode
-if %is_sd% == 1 goto qaac_encode
-
 if not exist %output_aac% (
   call %fawcl% %output_wav% %output_aac%
 ) else (
@@ -568,7 +544,7 @@ goto end_audio_encode
 
 :qaac_encode
 if not exist %output_aac% (
-  call %qaac% -q 2 --tvbr 95 %output_wav% -o %output_aac%
+  call %qaac% -q 2 --tvbr 95 %avs% -o %output_aac%
 ) else (
   echo エンコード済みaacファイルが存在しています。
 )
