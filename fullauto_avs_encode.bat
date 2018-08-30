@@ -1,8 +1,12 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 3.23
+echo FavsE (FullAuto AVS Encode) 4.00
 echo.
-
+REM ----------------------------------------------------------------------
+REM CPUÇÃÉRÉAêîÅiêîílÅj
+REM ÉXÉåÉbÉhêîÇ≈ÇÕÇ»Ç≠ÉRÉAêîÇêîílÇ≈ãLì¸ÇµÇƒÇ≠ÇæÇ≥Ç¢ÅB
+REM ----------------------------------------------------------------------
+set cpu_cores=6
 REM ----------------------------------------------------------------------
 REM âfëúÉGÉìÉRÅ[É_ÇÃéwíËÅi0:x264, 1:QSVEnc, 2:NVEnc_AVC, 3:NVEnc_HEVCÅj
 REM ê≥íºÇªÇÍÇŸÇ«ã≠óÛÇ»ë¨ìxç∑ÇÕÇ†ÇËÇ‹ÇπÇÒÅBâÊéøÇÃç∑ÇÕÇ†ÇËÇ‹Ç∑ÇÃÇ≈x264êÑèßÇ≈Ç∑ÅB
@@ -18,12 +22,12 @@ REM ----------------------------------------------------------------------
 REM é©ìÆCMÉJÉbÉgÇÃèàóùÇçsÇ§Ç©Åi0:çsÇÌÇ»Ç¢, 1:çsÇ§Åj
 REM CMÇÕçÇê∏ìxÇ≈ÉJÉbÉgÇµÇ‹Ç∑Ç™ÅAäÆ‡¯Ç≈ÇÕÇ†ÇËÇ‹ÇπÇÒÅBéËìÆÉJÉbÉgÇ∆ÇÃëgÇ›çáÇÌÇπêÑèßÇ≈Ç∑ÅB
 REM ----------------------------------------------------------------------
-set cut_cm=0
+set cut_cm=1
 REM ----------------------------------------------------------------------
 REM ÉçÉSèúãéÇÃèàóùÇçsÇ§Ç©Åi0:çsÇÌÇ»Ç¢, 1:çsÇ§Åj
 REM éñëOÇ…AviUtl + ÉçÉSâêÕÉvÉâÉOÉCÉìÇ≈.lgdÉtÉ@ÉCÉãÇçÏê¨ÇµÇƒÇ®Ç≠ïKóvÇ™Ç†ÇËÇ‹Ç∑ÅB
 REM ----------------------------------------------------------------------
-set cut_logo=0
+set cut_logo=1
 REM ----------------------------------------------------------------------
 REM avsê∂ê¨å„Ç…èàóùÇàÍéûí‚é~Ç∑ÇÈÇ©Åi0:ÇµÇ»Ç¢, 1:Ç∑ÇÈÅj
 REM ê∂ê¨Ç≥ÇÍÇΩÉXÉNÉäÉvÉgÇämîFÇµÇƒÇ©ÇÁêiÇﬂÇÁÇÍÇ‹Ç∑ÅBÇŸÇ⁄éËìÆCMÉJÉbÉgópÇ≈Ç∑ÅB
@@ -36,15 +40,8 @@ REM PT3ìôÇ≈ò^âÊÇµÇΩtsÉtÉ@ÉCÉãÇÃèÍçáÇÕé©ìÆîªï ÇµÇ‹Ç∑ÇÃÇ≈ÅAÇ±ÇÃê›íËÇÕñ≥å¯Ç∆Ç»ÇËÇ‹Ç
 REM ----------------------------------------------------------------------
 set deint_mode=1
 REM ----------------------------------------------------------------------
-REM ÉCÉìÉ^Å[ÉåÅ[ÉXâèú / ãtÉeÉåÉVÉlâªÇGPUÇ≈çsÇ§Ç©Åi0:çsÇÌÇ»Ç¢, 1:çsÇ§Åj
-REM égópÇ∑ÇÈÉfÉoÉCÉXÇ…çáÇÌÇπÇƒIntel, NVIDIA, RadeonÇ©ÇÁéwíËÇµÇƒÇ≠ÇæÇ≥Ç¢ÅB
-REM ----------------------------------------------------------------------
-set gpu_deint=0
-set d3dvp_device=Intel
-
-REM ----------------------------------------------------------------------
-REM GPUÇ…ÇÊÇÈÉmÉCÉYèúãéÇçsÇ§Ç©Åi0:çsÇÌÇ»Ç¢, 1:çsÇ§Åj
-REM _GPU25ÉvÉâÉOÉCÉìÇégópÇµÇ‹Ç∑ÅBëŒâûGPUÇéùÇ¡ÇƒÇ¢Ç»ÇØÇÍÇŒÉGÉâÅ[Ç…Ç»ÇËÇ‹Ç∑ÅB
+REM ÉmÉCÉYèúãéÇçsÇ§Ç©Åi0:çsÇÌÇ»Ç¢, 1:çsÇ§Åj
+REM çÇé¸îgÉmÉCÉYèúãéÇ≈Ç∑ÅBé„ÇﬂÇ…ê›íËÇµÇƒÇ¢Ç‹Ç∑ÅBã≠ÇﬂÇ…Ç∑ÇÈÇ…ÇÕê›íËílÇïœçXÇµÇƒÇ≠ÇæÇ≥Ç¢ÅB
 REM ----------------------------------------------------------------------
 set denoize=0
 REM ----------------------------------------------------------------------
@@ -62,7 +59,7 @@ REM ----------------------------------------------------------------------
 REM èIóπå„Ç…àÍéûÉtÉ@ÉCÉãÇçÌèúÇ∑ÇÈÇ©Åi0:ÇµÇ»Ç¢, 1:Ç∑ÇÈÅj
 REM àÍéûÉtÉ@ÉCÉãåQÇàÍäáçÌèúÇ≈Ç´Ç‹Ç∑ÅB0ÇæÇ∆ï˙íuÇ≥ÇÍÇ‹Ç∑Ç™ÅAÇ‚ÇËíºÇµéûÇ…çƒóòópÇ≈Ç´Ç‹Ç∑ÅB
 REM ----------------------------------------------------------------------
-set del_temp=0
+set del_temp=1
 
 REM ----------------------------------------------------------------------
 REM Å°ämîFïKê{ÅFÉtÉHÉãÉ_ñº
@@ -77,19 +74,19 @@ REM ----------------------------------------------------------------------
 REM Å°ämîFïKê{ÅFé¿çsÉtÉ@ÉCÉãñº
 REM ä¬ã´Ç…âûÇ∂ÇƒÅyïKÇ∏ÅzèëÇ´ä∑Ç¶ÇƒÇ≠ÇæÇ≥Ç¢ÅBÇÌÇ©ÇÈï˚ÇÕïKóvÇ»Ç‡ÇÃÇæÇØÇ≈åãç\Ç≈Ç∑ÅB
 REM ----------------------------------------------------------------------
-set x264=%bin_path%x264.exe
-set qsvencc=%bin_path%QSVEncC.exe
-set nvencc=%bin_path%NVEncC.exe
+set x264=%bin_path%x264_64.exe
+set qsvencc=%bin_path%QSVEncC64.exe
+set nvencc=%bin_path%NVEncC64.exe
 
-set avs2pipemod=%bin_path%avs2pipemod.exe
+set avs2pipemod=%bin_path%avs2pipemod64.exe
 set fawcl=%bin_path%fawcl.exe
-set qaac=%bin_path%qaac.exe
+set qaac=%bin_path%qaac64.exe
 set muxer=%bin_path%muxer.exe
 set remuxer=%bin_path%remuxer.exe
 
-set mediainfo=%bin_path%MediaInfo\MediaInfo.exe
+set mediainfo=%bin_path%MediaInfo.exe
 set rplsinfo=%bin_path%rplsinfo.exe
-set tsspritter=%bin_path%TsSplitter\TsSplitter.exe
+set tssplitter=%bin_path%TsSplitter.exe
 set dgindex=%bin_path%DGIndex.exe
 set join_logo_scp=%bin_path%join_logo_scp\jlse_bat.bat
 
@@ -129,24 +126,54 @@ REM ----------------------------------------------------------------------
 REM SDÅiéÂÇ…DVDÉ\Å[ÉXÅjÇ©ÇÉTÉCÉYéÊìæÇ≈îªíË
 REM ----------------------------------------------------------------------
 set is_sd=0
-for /f "delims=" %%A in ('%mediainfo% %1 ^| grep "Width" ^| sed -r "s/Width *: (.*) pixels/\1/" ^| sed -r "s/ //"') do set info_width=%%A
+for /f "delims=" %%A in ('%mediainfo% -f %1 ^| grep "Width" ^| head -n 1 ^| sed -r "s/Width *: (.*)/\1/"') do set info_width=%%A
+for /f "delims=" %%A in ('%mediainfo% -f %1 ^| grep "Height" ^| head -n 1 ^| sed -r "s/Height *: (.*)/\1/"') do set info_height=%%A
+
 if %info_width% == 720 set is_sd=1
 
 REM ----------------------------------------------------------------------
-REM ïœêîÉZÉbÉg
+REM ïœêîÉZÉbÉg1
 REM ----------------------------------------------------------------------
 set file_path=%~dp1
 set file_name=%~n1
 set file_fullname=%~dpn1
 set file_fullpath=%~1
 
-if not %file_ext% == .ts goto not_hd_ts_source
-if %is_sd% == 1 goto not_hd_ts_source
+REM ----------------------------------------------------------------------
+REM ìÆâÊèÓïÒéÊìæ
+REM ----------------------------------------------------------------------
+for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Commercial name" ^| head -n 1 ^| sed -r "s/Commercial name *: (.*)/\1/"') do set info_container=%%A
+
+for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Codecs Video" ^| sed -r "s/Codecs Video *: (.*)/\1/"') do set info_vcodec=%%A
+for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Audio codecs" ^| sed -r "s/Audio codecs *: (.*)/\1/"') do set info_acodec=%%A
+
+for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Bit depth" ^| head -n 1 ^| sed -r "s/Bit depth *: (.*)/\1/"') do set info_bitdepth=%%A
+for /f "delims=" %%A in ('%mediainfo% "%file_fullpath%" ^| grep "Display aspect ratio" ^| sed -r "s/Display aspect ratio *: (.*)/\1/"') do set info_aspect=%%A
+
+for /f "delims=" %%A in ('%mediainfo% "%file_fullpath%" ^| grep "Scan type" ^| sed -r "s/Scan type *: (.*)/\1/"') do set info_scan_type=%%A
+for /f "delims=" %%A in ('%mediainfo% "%file_fullpath%" ^| grep "Scan order" ^| sed -r "s/Scan order *: (.*)/\1/"') do set info_scan_order=%%A
+
+echo ìÆâÊÉRÉìÉeÉiÅ@Å@ÅF%info_container%
+echo âfëúÉRÅ[ÉfÉbÉNÅ@ÅF%info_vcodec%
+echo âπê∫ÉRÅ[ÉfÉbÉNÅ@ÅF%info_acodec%
+echo ÉrÉbÉgê[ìxÅ@Å@Å@ÅF%info_bitdepth%ÉrÉbÉg
+echo âfëúÉTÉCÉYÅ@Å@Å@ÅF%info_width%x%info_height%px
+echo èoóÕÉAÉXÉyÉNÉgî‰ÅF%info_aspect%
+echo ÉXÉLÉÉÉìÉ^ÉCÉvÅ@ÅF%info_scan_type%
+if not "%info_scan_type%" == "Progressive" echo ÉXÉLÉÉÉìÉIÅ[É_Å[ÅF%info_scan_order%
+echo.
+
+REM ----------------------------------------------------------------------
+REM ïœêîÉZÉbÉg2
+REM ----------------------------------------------------------------------
+if not "%info_container%" == "MPEG-TS" goto not_tssplitter_source
+if not "%info_vcodec%" == "MPEG-2 Video" goto not_tssplitter_source
+if %is_sd% == 1 goto not_tssplitter_source
 
 set source_fullname=%file_fullname%_HD
 set cut_dir_name=%file_name%_HD
 goto end_source
-:not_hd_ts_source
+:not_tssplitter_source
 
 set source_fullname=%file_fullname%
 :end_source
@@ -154,7 +181,6 @@ set source_fullname=%file_fullname%
 set source_fullpath=%source_fullname%%file_ext%
 
 set avs="%source_fullname%.avs"
-set avs_template="%bin_path%.template.avs"
 set output_enc="%output_path%%file_name%.enc.mp4"
 set output_wav="%output_path%%file_name%.wav"
 set output_aac="%output_path%%file_name%.aac"
@@ -162,24 +188,8 @@ set output_m4a="%output_path%%file_name%.m4a"
 set output_mp4="%output_path%%file_name%.mp4"
 
 REM ----------------------------------------------------------------------
-REM ìÆâÊèÓïÒéÊìæ
-REM ----------------------------------------------------------------------
-for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Commercial name" ^| head -n 1 ^| sed -r "s/Commercial name *: (.*)/\1/"') do set info_container=%%A
-for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Codecs Video" ^| sed -r "s/Codecs Video *: (.*)/\1/"') do set info_vcodec=%%A
-for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Audio codecs" ^| sed -r "s/Audio codecs *: (.*)/\1/"') do set info_acodec=%%A
-for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Bit depth" ^| head -n 1 ^| sed -r "s/Bit depth *: (.*)/\1/"') do set info_bitdepth=%%A
-
-echo ÉRÉìÉeÉiÅ@Å@Å@ÅF%info_container%
-echo âfëúÉRÅ[ÉfÉbÉNÅF%info_vcodec%
-echo âπê∫ÉRÅ[ÉfÉbÉNÅF%info_acodec%
-echo ÉrÉbÉgê[ìxÅ@Å@ÅF%info_bitdepth%ÉrÉbÉg
-echo.
-
-REM ----------------------------------------------------------------------
 REM SDÅiéÂÇ…DVDÉ\Å[ÉXÅjÇÃÉAÉXÉyÉNÉgî‰Çê›íË
 REM ----------------------------------------------------------------------
-for /f "delims=" %%A in ('%mediainfo% "%file_fullpath%" ^| grep "Display aspect ratio" ^| sed -r "s/Display aspect ratio *: (.*)/\1/"') do set info_aspect=%%A
-
 if %is_sd% == 1 (
   if %info_aspect% == 16:9 (
     set sar=--sar 32:27
@@ -195,25 +205,20 @@ if %is_sd% == 1 (
 REM ----------------------------------------------------------------------
 REM ÉtÉBÅ[ÉãÉhÉIÅ[É_Å[îªíË
 REM ----------------------------------------------------------------------
-for /f "delims=" %%A in ('%mediainfo% "%source_fullpath%" ^| grep "Scan type" ^| sed -r "s/Scan type *: (.*)/\1/"') do set scan_type=%%A
-for /f "delims=" %%A in ('%mediainfo% "%source_fullpath%" ^| grep "Scan order" ^| sed -r "s/Scan order *: (.*)/\1/"') do set scan_order=%%A
-
-if "%scan_type%" == "Progressive" (
-  echo Å¶ÉvÉçÉOÉåÉbÉVÉuÉ\Å[ÉXÇ≈Ç∑ÅB
-  echo.
+if "%info_scan_type%" == "Progressive" (
   set order_ref=PROGRESSIVE
-  goto end_scan_order
+  goto end_info_scan_order
 )
-if "%scan_order%" == "Bottom Field First" (
+if "%info_scan_order%" == "Bottom Field First" (
   set order_ref=BOTTOM
   if %deint_mode% == 0 set order_tb= --bff
 ) else (
   set order_ref=TOP
   if %deint_mode% == 0 set order_tb= --tff
 )
-:end_scan_order
+:end_info_scan_order
 
-if not %file_ext% == .ts goto end_tssplitter
+if not "%info_container%" == "MPEG-TS" goto end_tssplitter
 if not "%info_vcodec%" == "MPEG-2 Video" goto end_tssplitter
 if not "%info_acodec%" == "AAC LC" goto end_tssplitter
 if %is_sd% == 1 goto end_tssplitter
@@ -221,7 +226,7 @@ echo ----------------------------------------------------------------------
 echo TSSplitterèàóù
 echo ----------------------------------------------------------------------
 if not exist "%source_fullpath%" (
-  call %tsspritter% -EIT -ECM -EMM -SD -1SEG "%file_fullpath%"
+  call %tssplitter% -EIT -ECM -EMM -SD -1SEG "%file_fullpath%"
 ) else (
   echo ï™äÑçœÇ›ÇÃÉtÉ@ÉCÉãÇ™ë∂ç›ÇµÇƒÇ¢Ç‹Ç∑ÅB
 )
@@ -230,34 +235,32 @@ echo.
 :end_tssplitter
 
 if not %audio_encoder% == 0 goto end_dgindex
-if not %file_ext% == .ts goto end_dgindex
 if not "%info_vcodec%" == "MPEG-2 Video" goto end_dgindex
 if not "%info_acodec%" == "AAC LC" goto end_dgindex
 echo ----------------------------------------------------------------------
 echo DGIndexèàóù
 echo ----------------------------------------------------------------------
-if not exist "%source_fullname%.d2v" (
-  call %dgindex% -i "%source_fullpath%" -o "%source_fullname%" -ia 5 -fo 0 -yr 2 -om 2 -hide -exit
+if not exist "%source_fullname%.m2v" if not exist "%source_fullname% PID *.aac" (
+  call %dgindex% -i "%source_fullpath%" -od "%source_fullname%" -ia 5 -fo 0 -yr 2 -om 2 -hide -exit
 ) else (
-  echo ï™ó£çœÇ›ÇÃÉtÉ@ÉCÉãÇ™ë∂ç›ÇµÇƒÇ¢Ç‹Ç∑ÅB
+  echo ï™ó£çœÇ›ÇÃm2v / aacÉtÉ@ÉCÉãÇ™ë∂ç›ÇµÇƒÇ¢Ç‹Ç∑ÅB
 )
 echo.
+
+for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *.aac"`) do set aac_fullpath=%file_path%%%A
+
 :end_dgindex
 
 if not %audio_encoder% == 0 goto end_faw
-if not %file_ext% == .ts goto end_faw
-if not "%info_vcodec%" == "MPEG-2 Video" goto end_faw
-if not "%info_acodec%" == "AAC LC" goto end_faw
+if not exist "%aac_fullpath%" goto end_faw
 echo ----------------------------------------------------------------------
-echo  FAWÇ…ÇÊÇÈaac Å® ã^éówavâªèàóù
+echo  FAWëOèàóù
 echo ----------------------------------------------------------------------
-for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *.aac"`) do set aac_fullpath=%file_path%%%A
-if exist "%source_fullname% PID *_aac.wav" goto exist_wav
-call %fawcl% -s2 "%aac_fullpath%"
-goto end_audio_split
-
-:exist_wav
-echo ã^éówavÉtÉ@ÉCÉãÇ™ë∂ç›ÇµÇƒÇ¢Ç‹Ç∑ÅB
+if not exist "%source_fullname% PID *_aac.wav" (
+  call %fawcl% "%aac_fullpath%"
+) else (
+  echo ã^éówavÉtÉ@ÉCÉãÇ™ë∂ç›ÇµÇƒÇ¢Ç‹Ç∑ÅB
+)
 
 :end_audio_split
 for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *_aac.wav"`) do set wav_fullpath=%file_path%%%A
@@ -274,37 +277,46 @@ if exist %avs% (
 
 echo SetMemoryMax(1024)>>%avs%
 echo.>>%avs%
+echo SetFilterMTMode("DEFAULT_MT_MODE", MT_MULTI_INSTANCE)>>%avs%
+REM echo SetFilterMTMode("MPEG2Source",        MT_NICE_FILTER)>>%avs%
+echo SetFilterMTMode("LWLibavVideoSource",  MT_SERIALIZED)>>%avs%
+echo SetFilterMTMode("LWLibavAudioSource",  MT_SERIALIZED)>>%avs%
+echo SetFilterMTMode("LSMASHVideoSource",   MT_SERIALIZED)>>%avs%
+echo SetFilterMTMode("LSMASHAudioSource",   MT_SERIALIZED)>>%avs%
+echo SetFilterMtMode("AudioDub",            MT_SERIALIZED)>>%avs%
+echo SetFilterMTMode("TDecimate",           MT_SERIALIZED)>>%avs%
+echo SetFilterMTMode("EraseLOGO",           MT_SERIALIZED)>>%avs%
+echo.>>%avs%
 
 echo ### ÉtÉ@ÉCÉãì«Ç›çûÇ› ###>>%avs%
-if not %audio_encoder% == 0 goto not_faw
-if not %file_ext% == .ts goto not_faw
-if not "%info_vcodec%" == "MPEG-2 Video" goto not_faw
-if not "%info_acodec%" == "AAC LC" goto not_faw
-echo SetMTMode(1, 0)>>%avs%
-echo MPEG2Source("%source_fullname%.d2v")>>%avs%
-echo SetMTMode(2)>>%avs%
+if not exist "%source_fullname%.demuxed.m2v" goto lsmashsource
+
+REM echo MPEG2Source("%source_fullname%.d2v")>>%avs%
+echo LWLibavVideoSource("%source_fullname%.demuxed.m2v")>>%avs%
 echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
 goto end_fileread
 
-:not_faw
-if "%info_container%" == "MPEG-4" goto lsmash
-if %info_bitdepth% == 8 echo LWLibavVideoSource("%source_fullpath%").AssumeFPS(30000, 1001)>>%avs%
-if not %info_bitdepth% == 8 echo LWLibavVideoSource("%source_fullpath%", format="YUV420P8").AssumeFPS(30000, 1001)>>%avs%
-echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
-echo.>>%avs%
-echo SetMTMode(2, 0)>>%avs%
-echo.>>%avs%
-goto end_fileread
+:lsmashsource
+set lsmash_format=
+if not %info_bitdepth% == 8 set lsmash_format=, format="YUV420P8"
+if not "%info_container%" == "MPEG-4" goto lwlibav
 
-:lsmash
-if %info_bitdepth% == 8 echo LSMASHVideoSource("%source_fullpath%").AssumeFPS(30000, 1001)>>%avs%
-if not %info_bitdepth% == 8 echo LSMASHVideoSource("%source_fullpath%", format="YUV420P8").AssumeFPS(30000, 1001)>>%avs%
-echo AudioDub(last, LSMASHAudioSource("%source_fullpath%", layout="stereo"))>>%avs%
-echo.>>%avs%
-echo SetMTMode(2, 0)>>%avs%
-echo.>>%avs%
+REM echo LSMASHVideoSource("%source_fullpath%"%lsmash_format%, fpsnum=30000, fpsden=1001)>>%avs%
+echo LSMASHVideoSource("%source_fullpath%"%lsmash_format%)>>%avs%
+if exist "%wav_fullpath%" echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
+if not exist "%wav_fullpath%" echo AudioDub(last, LSMASHAudioSource("%source_fullpath%", layout="stereo"))>>%avs%
+goto end_lsmash
+
+:lwlibav
+echo LWLibavVideoSource("%source_fullpath%"%lsmash_format%, fpsnum=30000, fpsden=1001)>>%avs%
+REM echo LWLibavVideoSource("%source_fullpath%"%lsmash_format%)>>%avs%
+if exist "%wav_fullpath%" echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
+if not exist "%wav_fullpath%" echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
+
+:end_lsmash
 
 :end_fileread
+echo.>>%avs%
 
 echo ### ÉtÉBÅ[ÉãÉhÉIÅ[É_Å[ ###>>%avs%
 if %order_ref% == TOP echo AssumeTFF()>>%avs%
@@ -317,7 +329,7 @@ echo #Crop(8, 0, -8, 0)>>%avs%
 echo.>>%avs%
 
 if %is_sd% == 1 goto end_cm_cut_logo
-if not %file_ext% == .ts goto end_cm_cut_logo
+if not "%info_container%" == "MPEG-TS" goto end_cm_cut_logo
 if not "%info_vcodec%" == "MPEG-2 Video" goto end_cm_cut_logo
 
 echo ### ÉTÅ[ÉrÉXèÓïÒéÊìæ ###>>%avs%
@@ -353,7 +365,7 @@ echo EraseLOGO("%logo_path%%service%.lgd", pos_x=0, pos_y=0, depth=128, yc_y=0, 
 echo.>>%avs%
 :end_cm_cut_logo
 
-if "%scan_type%" == "Progressive" goto end_deint
+if "%info_scan_type%" == "Progressive" goto end_deint
 if %deint_mode% == 0 goto end_deint
 echo ### ÉCÉìÉ^Å[ÉåÅ[ÉXâèú / ãtÉeÉåÉVÉl ###>>%avs%
 
@@ -364,11 +376,11 @@ if %deint_mode% == 3 goto set_deint_bob
 goto end_deint
 
 :is_tv_ts
-if not %file_ext% == .ts goto end_get_genre
+if not "%info_container%" == "MPEG-TS" goto end_get_genre
 
 for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -g') do set genre=%%A
 echo #ÉWÉÉÉìÉãñºÅF%genre%>>%avs%
-if "%scan_type%" == "Progressive" goto end_deint
+if "%info_scan_type%" == "Progressive" goto end_deint
 
 :end_get_genre
 echo %genre% | find " ÇäJÇ≠ÇÃÇ…é∏îsÇµÇ‹ÇµÇΩ." > NUL
@@ -385,87 +397,42 @@ echo %genre% | find "âfâÊ" > NUL
 if not ERRORLEVEL 1 goto set_deint_it
 
 :set_deint
-if %gpu_deint% == 1 goto set_deint_gpu
 echo #TIVTC24P2()>>%avs%
 echo TDeint(edeint=nnedi3)>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
 goto end_deint
 
-:set_deint_gpu
-echo D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
-echo #GPU_Begin()>>%avs%
-echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
-echo #GPU_End()>>%avs%
-echo.>>%avs%
-goto end_deint
-
 :set_deint_bob
-if %gpu_deint% == 1 goto set_deint_bob_gpu
 echo #TIVTC24P2()>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
 echo TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
 goto end_deint
 
-:set_deint_bob_gpu
-echo D3DVP(mode=1, device="%d3dvp_device%")>>%avs%
-echo #GPU_Begin()>>%avs%
-echo #GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
-echo #GPU_End()>>%avs%
-echo.>>%avs%
-goto end_deint
-
 :set_deint_it
-if %gpu_deint% == 1 goto set_deint_it_gpu
 echo TIVTC24P2()>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
 goto end_deint
 
-:set_deint_it_gpu
-echo D3DVP(mode=0, device="%d3dvp_device%")>>%avs%
-echo GPU_Begin()>>%avs%
-echo GPU_IT(fps=24, ref="%order_ref%", blend=false)>>%avs%
-echo GPU_End()>>%avs%
-echo.>>%avs%
-
 :end_deint
 
+if %denoize% == 0 goto end_denoize
+
 echo ### ÉmÉCÉYèúãé ###>>%avs%
-if %denoize% == 0 goto not_denoize
-set is_anime=0
-echo %genre% | find "ÉAÉjÉÅ" > NUL
-if not ERRORLEVEL 1 set is_anime=1
-
-echo GPU_Begin()>>%avs%
-if %is_anime% == 1 goto anime_hq
-echo GPU_Convolution3d(preset="movieLQ")>>%avs%
-echo #GPU_Convolution3d(preset="animeLQ")>>%avs%
-goto end_mov_anm
-
-:anime_hq
-echo #GPU_Convolution3d(preset="movieLQ")>>%avs%
-echo GPU_Convolution3d(preset="animeLQ")>>%avs%
-
-:end_mov_anm
-echo GPU_End()>>%avs%
-goto end_denoize
-
-:not_denoize
-echo #GPU_Begin()>>%avs%
-echo #GPU_Convolution3d(preset="movieLQ")>>%avs%
-echo #GPU_Convolution3d(preset="animeLQ")>>%avs%
-echo #GPU_End()>>%avs%
-:end_denoize
+echo hqdn3d(2)>>%avs%
 echo.>>%avs%
 
-if %is_sd% == 1 goto end_resize
+:end_denoize
+
 if %resize% == 0 goto end_resize
+if %is_sd% == 1 goto end_resize
+if %info_width% leq 1280 goto end_resize
 
 echo ### ÉäÉTÉCÉY ###>>%avs%
-echo (Width() ^> 1280) ? Spline36Resize(1280, 720) : last>>%avs%
+echo Spline36Resize(1280, 720)>>%avs%
 echo.>>%avs%
 :end_resize
 
@@ -479,10 +446,11 @@ echo #Sharpen(0.02)>>%avs%
 :end_sharpen
 echo.>>%avs%
 
+echo Prefetch(%cpu_cores%)>>%avs%
 echo return last>>%avs%
 
 if %deint_mode% == 0 goto end_tivtc24p2
-if "%scan_type%" == "Progressive" goto end_tivtc24p2
+if "%info_scan_type%" == "Progressive" goto end_tivtc24p2
 echo.>>%avs%
 echo function TIVTC24P2(clip clip){>>%avs%
 echo Deinted=clip.TDeint(order=-1,field=-1,edeint=clip.nnedi3(field=-1))>>%avs%
@@ -527,15 +495,15 @@ echo.
 echo ----------------------------------------------------------------------
 echo âπê∫èàóù
 echo ----------------------------------------------------------------------
-if %audio_encoder% == 1 goto qaac_encode
-if not "%info_acodec%" == "AAC LC" goto qaac_encode
-if %is_sd% == 1 goto qaac_encode
-
 if not exist %output_wav% (
   call %avs2pipemod% -wav %avs% > %output_wav%
 ) else (
   echo íÜä‘wavÉtÉ@ÉCÉãÇ™ë∂ç›ÇµÇƒÇ¢Ç‹Ç∑ÅB
 )
+
+if not %audio_encoder% == 0 goto qaac_encode
+if not exist "%wav_fullpath%" goto qaac_encode
+
 if not exist %output_aac% (
   call %fawcl% %output_wav% %output_aac%
 ) else (
@@ -545,7 +513,7 @@ goto end_audio_encode
 
 :qaac_encode
 if not exist %output_aac% (
-  call %qaac% -q 2 --tvbr 95 %avs% -o %output_aac%
+  call %qaac% %output_wav% -o %output_aac%
 ) else (
   echo ÉGÉìÉRÅ[ÉhçœÇ›aacÉtÉ@ÉCÉãÇ™ë∂ç›ÇµÇƒÇ¢Ç‹Ç∑ÅB
 )
@@ -582,19 +550,18 @@ echo àÍéûÉtÉ@ÉCÉãÇçÌèúÇµÇ‹Ç∑ÅB
 echo.
 
 set del_hd_file=0
-if %file_ext% == .ts if %is_sd% == 0 set del_hd_file=1
+if "%info_container%" == "MPEG-TS" if %is_sd% == 0 set del_hd_file=1
 
-if exist "%file_fullname%.lwi" del /f /q "%file_fullname%.lwi" & echo "%file_fullname%.lwi"
-if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi" & echo "%source_fullpath%.lwi"
-if exist "%source_fullname%.d2v" del /f /q "%source_fullname%.d2v" & echo "%source_fullname%.d2v"
-if exist "%source_fullname%.d2v" del /f /q "%source_fullname%.d2v.lwi" & echo "%source_fullname%.d2v.lwi"
-if exist "%source_fullname%.log" del /f /q "%source_fullname%.log" & echo "%source_fullname%.log"
-if exist "%aac_fullpath%.lwi" del /f /q "%aac_fullpath%.lwi" & echo "%aac_fullpath%.lwi"
-if exist "%wav_fullpath%.lwi" del /f /q "%wav_fullpath%.lwi" & echo "%wav_fullpath%.lwi"
-if exist %avs% del /f /q %avs%
-if exist "%aac_fullpath%" del /f /q "%aac_fullpath%" & echo "%aac_fullpath%"
-if exist "%wav_fullpath%" del /f /q "%wav_fullpath%" & echo "%wav_fullpath%"
-if %del_hd_file% == 1 if exist "%source_fullpath%" del /f /q "%source_fullpath%" & echo "%source_fullpath%"
+if exist "%file_fullname%.lwi" del /f /q "%file_fullname%.lwi" & echo %file_fullname%.lwi
+if %del_hd_file% == 1 if exist "%source_fullpath%" del /f /q "%source_fullpath%" & echo %source_fullpath%
+if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi" & echo %source_fullpath%.lwi
+if exist "%source_fullname%.d2v" del /f /q "%source_fullname%.d2v" & echo %source_fullname%.d2v
+if exist "%source_fullname%.d2v" del /f /q "%source_fullname%.d2v.lwi" & echo %source_fullname%.d2v.lwi
+if exist "%source_fullname%.demuxed.m2v" del /f /q "%source_fullname%.demuxed.m2v" & echo %source_fullname%.demuxed.m2v
+if exist "%source_fullname%.demuxed.m2v.lwi" del /f /q "%source_fullname%.demuxed.m2v.lwi" & echo %source_fullname%.demuxed.m2v.lwi
+if exist "%aac_fullpath%" del /f /q "%aac_fullpath%" & echo %aac_fullpath%
+if exist "%wav_fullpath%" del /f /q "%wav_fullpath%" & echo %wav_fullpath%
+if exist %avs% del /f /q %avs% & echo %avs%
 if exist %output_enc% del /f /q %output_enc% & echo %output_enc%
 if exist %output_wav% del /f /q %output_wav% & echo %output_wav%
 if exist %output_aac% del /f /q %output_aac% & echo %output_aac%
