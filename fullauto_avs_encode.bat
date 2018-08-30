@@ -1,6 +1,6 @@
-REM @echo off
+@echo off
 
-echo FavsE (FullAuto AVS Encode) 4.03
+echo FavsE (FullAuto AVS Encode) 4.04
 echo.
 REM ----------------------------------------------------------------------
 REM CPUのコア数（数値）
@@ -35,7 +35,7 @@ REM ----------------------------------------------------------------------
 set cut_logo=1
 REM ----------------------------------------------------------------------
 REM avs生成後に処理を一時停止（0:しない, 1:する）※推奨：1
-REM 生成されたスクリプトを確認してから進められます。100秒経つと処理を続行します。
+REM 生成されたスクリプトを確認してから進められます。120秒経つと処理を続行します。
 REM ----------------------------------------------------------------------
 set check_avs=1
 
@@ -226,8 +226,6 @@ if "%info_scan_order%" == "Bottom Field First" (
 :end_info_scan_order
 
 if not "%info_container%" == "MPEG-TS" goto end_tssplitter
-for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -b') do set tvname=%%A
-if "%tnvame%" == "" goto end_tssplitter
 if not "%info_vcodec%" == "MPEG-2 Video" goto end_tssplitter
 if not "%info_acodec%" == "AAC LC" goto end_tssplitter
 if %is_sd% == 1 goto end_tssplitter
@@ -475,10 +473,13 @@ echo %avs%
 echo.
 
 if %check_avs% == 1 (
-  echo ※avsファイル確認オプションが設定されています。
-  echo ※確認・編集完了後は何かキーを押せば処理を続行できます。
+  echo ※avsファイル確認オプションが設定されています。120秒間待機します。
   echo.
-  timeout /T 100
+  echo ※確認・編集を行う場合、[Ctrl] + [C]でカウントダウンを中止できます。
+  echo ※中止した場合、[Y]で終了するか、[N]で処理を続行してください。
+  echo ※終了後に再度実行すると、既に行った処理はスキップ（再利用）されます。
+  echo.
+  timeout /T 120
 )
 echo.
 
