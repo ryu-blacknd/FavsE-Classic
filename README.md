@@ -46,22 +46,26 @@ FavsEの動作に必要なツールは以下の通りで、結構あります。
 
 設定内容によっては無くても構わないものがありますが、今後の更新でどうなるかわかりませんので、一応すべて入れておくのが無難です。
 
-以後すべて **64bit（x64版）** で揃えてください。Windowsが64bitでも、ツール類は32bitです。32bit版しか配布されていないものは32bit版で構いません。
+以後すべて **64bit（x64版）** で揃えてください。Windowsが32bitの場合のみ、すべて32bitに読み換えてください。
 
-> 動作しない場合は、.NET Frameworkや[Download Visual C\+\+ Redistributable Packages for Visual Studio 2013 from Official Microsoft Download Center](https://www.microsoft.com/en-us/download/details.aspx?id=40784)等の対応バージョンがインストールされていないケースが多いかと思います。この辺りは環境によりますのでググってみてください。
+AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配布サイトが異なる場合があります（例：`DGDecode.dll`）。
+
+> ツール類が動作しない場合は、.NET Frameworkや[Download Visual C\+\+ Redistributable Packages for Visual Studio 2013 from Official Microsoft Download Center](https://www.microsoft.com/en-us/download/details.aspx?id=40784)等の対応バージョンがインストールされていないケースが多いかと思います。この辺りは環境によりますのでググってみてください。
 
 ### AviSynth+ MT
 
-まずは中核となるAviSynth+（4.00よりAviSynth MT 32bitからAviSynth+ MT 64bitに変更しました）をインストール、そしてMT対応化dllの上書きコピーを行ってください。
+まずは中核となるAviSynth+をインストールしてください。
+
+> 4.00よりAviSynth MT 32bitからAviSynth+ MT 64bitに変更しました。
 
 - [AviSynth+ MT](https://github.com/pinterf/AviSynthPlus/releases)（よくわからなければwith-vc-redistで）
 
 #### AviSynth+ プラグイン
 
-基本的に64bit版は`C:¥Program Files (x86)¥AviSynth+`内の`plugins64+`へ、32bit版は`plugins+`へコピーして使用します。
+64bit版は`C:¥Program Files (x86)¥AviSynth+`内の`plugins64+`へ、32bit版は`plugins+`へコピーして使用します。
 
-- [DGDecode](https://www.mediafire.com/file/c0wmemj5jam/DGDecode_3-19-2010.rar)（`DGDecode.dll`のみ必要です。32bit版は以下のDGIndexに同梱されています）
-- [L-SMASH Works](https://www.dropbox.com/sh/3i81ttxf028m1eh/AAABkQn4Y5w1k-toVhYLasmwa?dl=0)（LSMASHSourceの方がファイル1つなので管理が楽です）
+- [DGDecode](https://www.mediafire.com/file/c0wmemj5jam/DGDecode_3-19-2010.rar)（`DGDecode.dll`のみ必要です。32bit版は後述のDGIndexに同梱されています）
+- [L-SMASHSource](https://www.dropbox.com/sh/3i81ttxf028m1eh/AAABkQn4Y5w1k-toVhYLasmwa?dl=0)（2種ありますがLSMASHSourceの方です。`LSMASHSource.dll`のみ必要です）
 - [delogo](https://www.avisynth.info/?%E3%82%A2%E3%83%BC%E3%82%AB%E3%82%A4%E3%83%96#bbcd6a1e)
 - [NNEDI3](https://github.com/jpsdr/NNEDI3/releases)
 - [TDeint](https://www.mediafire.com/download/kmcztm1xzjm/TDeinterlace_3-14-2010.rar)
@@ -108,7 +112,7 @@ join_logo_scpは、[CMカットスレ](https://mevius.5ch.net/test/read.cgi/avi/
 
 ## 入力ファイルの仕様
 
-L-SMASH Worksで読めるすべての動画ファイルが対象です（ver.2.00より）。
+LSMASHSourceで読めるすべての動画ファイルが対象です（ver.2.00より）。
 
 つまり日常的に扱う動画ファイルはほぼすべてが対象となります。
 
