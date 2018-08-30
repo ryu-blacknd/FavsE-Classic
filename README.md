@@ -18,10 +18,10 @@
 - 音声処理はFAWとqaacを選択可能（FAWを選択しても利用できない場合は自動でqaac使用）
 - 設定や動画の情報からAviSynth+スクリプトを自動生成
 - AviSynth+スクリプト作成後に一時停止する機能あり（編集して作業続行可能）
-- 自動CMカット（しない設定も可能）
-- 自動ロゴ除去（しない設定も可能）
-- インターレース保持/解除/BOB化/24fps化の自動/手動選択
-- 上記をGPU処理に置き換えることが可能（高速だが若干低品質）
+- 自動CMカット（しない設定も可能、tsファイル以外では無効）
+- 自動ロゴ除去（しない設定も可能、tsファイル以外では無効）
+- インターレース保持/解除/BOB化/24fps化の自動/手動選択（プログレッシブな場合は無効）
+  - 上記をGPU処理に置き換えることが可能（高速だが若干低品質）
 - 実写とアニメを自動判別して3Dノイズ除去（しない設定も可能）
 - widthが1280px超になる場合、720pにリサイズ（しない設定も可能）
 - 若干のシャープ化（しない設定も可能）
@@ -29,15 +29,15 @@
 
 ### 要するに
 
-「面倒な知識・判断・作業を排除し、お好きなエンコーダでのエンコード完了までをほぼ全自動化する1本のバッチファイル」です。
+「面倒な知識・判断・作業が不要で、お好きなエンコーダでのエンコード完了までを全自動化する1本のバッチファイル」です。
 
-あのソフトで読み込んでポチポチ、このソフトで読み込んでポチポチ…と面倒な作業は必要ありません。動画ファイルをドラッグするだけです。
+あの場合はこうして、この場合はこうして、あのソフトで読み込んでポチポチ、このソフトで読み込んでポチポチ…と面倒な作業は必要ありません。動画ファイルをドラッグするだけです。
 
 ## 使用方法
 
-このバッチファイル、もしくはバッチファイルへのショートカットに、動画ファイル（avsファイルではありません）をドラッグしてください。複数ファイルの同時ドラッグにも対応します。
+このバッチファイル（もしくはバッチファイルへのショートカット）に、動画ファイル（avsファイルではありません）をドラッグしてください。複数ファイルの同時ドラッグにも対応します。
 
-すると設定に応じた動作を自動で行います。AvsPmodやAviUtl + カット編集プラグイン等で手動カット編集を行いたい場合もあるかと思いますが、その際はavsファイル書き出し後に一時停止する設定にしてください。
+すると設定に応じた動作を全自動で行います。AvsPmodやAviUtl + カット編集プラグイン等で手動カット編集を行いたい場合もあるかと思いますが、その際はavsファイル書き出し後に一時停止する設定にしてください。
 
 設定項目については、バッチファイルの冒頭部分を参照してください。簡単な説明があります。
 
@@ -67,10 +67,10 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 
 - [DGDecode](https://www.mediafire.com/file/c0wmemj5jam/DGDecode_3-19-2010.rar)（`DGDecode.dll`のみ必要です。32bit版は後述のDGIndexに同梱されています）
 - [LSMASHSource](https://www.dropbox.com/sh/3i81ttxf028m1eh/AAABkQn4Y5w1k-toVhYLasmwa?dl=0)（2種ありますがLSMASHSourceの方です。`LSMASHSource.dll`のみ必要です）
-- [delogo](https://www.avisynth.info/?%E3%82%A2%E3%83%BC%E3%82%AB%E3%82%A4%E3%83%96#bbcd6a1e)
-- [NNEDI3](https://github.com/jpsdr/NNEDI3/releases)
-- [TDeint](https://www.mediafire.com/download/kmcztm1xzjm/TDeinterlace_3-14-2010.rar)
-- [TIVTC](https://github.com/pinterf/TIVTC/releases)
+- [delogo](https://www.avisynth.info/?%E3%82%A2%E3%83%BC%E3%82%AB%E3%82%A4%E3%83%96#bbcd6a1e)（`delogo.dll`のみ必要です）
+- [NNEDI3](https://github.com/jpsdr/NNEDI3/releases)（`nnedi3.dll`のみ必要です。CPUに合ったフォルダを選択してください）
+- [TDeinterlace](https://www.mediafire.com/download/kmcztm1xzjm/TDeinterlace_3-14-2010.rar)（`TDeinterlace.dll`のみ必要です。32bitは[TDeint](http://web.archive.org/web/20140420182314/http://bengal.missouri.edu/~kes25c/TDeintv11.zip)です）
+- [TIVTC](https://github.com/pinterf/TIVTC/releases)（`TIVTC.dll`のみ必要です）
 - [Hqdn3dY](https://forum.doom9.org/attachment.php?attachmentid=15589&d=1474456943)（`Hqdn3dY-x64.dll`が64bit版です。ハイフンは非推奨とエラーが出るので`-x64`を消したほうが良いです）
 
 ### 各種ツール
@@ -93,7 +93,9 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 - [TSSplitter](https://www.videohelp.com/software/TSSplitter)（`TsSplitter.exe`のみ必要です）
 - [DGIndex](http://rationalqm.us/dgmpgdec/dgmpgdec.html)（`DGDecode.dll`, `DGIndex.exe`, dllをリネームした`DGVfapi.vfp`が必要です）
 
-> DGIndex 1.5.8にはバグがあり、修正・改造した[mod版のソース](https://onedrive.live.com/?id=8658EC275D9699D5%211215&cid=8658EC275D9699D5)が公開されています。ソースのみ配布でバイナリが無いため、VisualStudio 2017やNASMを導入して自分でビルドする必要があります。Windows SDKのバージョンだけ気をつければ特に難しくはありません。なおビルドできるのは32bit版のみです。
+> `DGDecode.dll`はAviSynth+の32bitプラグイン用フォルダにコピーしてください（移動ではありません）。
+
+> なおDGIndex 1.5.8にはバグがあり、修正・改造した[mod版のソース](https://onedrive.live.com/?id=8658EC275D9699D5%211215&cid=8658EC275D9699D5)が公開されています。ソースのみ配布でバイナリが無いため、VisualStudio 2017やNASMを導入して自分でビルドする必要があります。Windows SDKのバージョンだけ気をつければ特に難しくはありません。なおビルドできるのは32bit版のみです。
 
 #### 補助ツール
 
