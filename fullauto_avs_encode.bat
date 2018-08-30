@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 4.00
+echo FavsE (FullAuto AVS Encode) 4.01
 echo.
 REM ----------------------------------------------------------------------
 REM CPUのコア数（数値）
@@ -20,12 +20,12 @@ set audio_encoder=0
 
 REM ----------------------------------------------------------------------
 REM 自動CMカットの処理を行うか（0:行わない, 1:行う）
-REM CMは高精度でカットしますが、完璧ではありません。手動カットとの組み合わせ推奨です。
+REM tsファイルのみ有効です。高精度ですが完璧ではありません。手動カットとの併用推奨です。
 REM ----------------------------------------------------------------------
 set cut_cm=1
 REM ----------------------------------------------------------------------
 REM ロゴ除去の処理を行うか（0:行わない, 1:行う）
-REM 事前にAviUtl + ロゴ解析プラグインで.lgdファイルを作成しておく必要があります。
+REM tsファイルのみ有効です。事前にAviUtlで.lgdファイル群を作成しておく必要があります。
 REM ----------------------------------------------------------------------
 set cut_logo=1
 REM ----------------------------------------------------------------------
@@ -59,7 +59,7 @@ REM ----------------------------------------------------------------------
 REM 終了後に一時ファイルを削除するか（0:しない, 1:する）
 REM 一時ファイル群を一括削除できます。0だと放置されますが、やり直し時に再利用できます。
 REM ----------------------------------------------------------------------
-set del_temp=1
+set del_temp=0
 
 REM ----------------------------------------------------------------------
 REM ■確認必須：フォルダ名
@@ -301,7 +301,6 @@ set lsmash_format=
 if not %info_bitdepth% == 8 set lsmash_format=, format="YUV420P8"
 if not "%info_container%" == "MPEG-4" goto lwlibav
 
-REM echo LSMASHVideoSource("%source_fullpath%"%lsmash_format%, fpsnum=30000, fpsden=1001)>>%avs%
 echo LSMASHVideoSource("%source_fullpath%"%lsmash_format%)>>%avs%
 if exist "%wav_fullpath%" echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
 if not exist "%wav_fullpath%" echo AudioDub(last, LSMASHAudioSource("%source_fullpath%", layout="stereo"))>>%avs%
@@ -309,7 +308,6 @@ goto end_lsmash
 
 :lwlibav
 echo LWLibavVideoSource("%source_fullpath%"%lsmash_format%, fpsnum=30000, fpsden=1001)>>%avs%
-REM echo LWLibavVideoSource("%source_fullpath%"%lsmash_format%)>>%avs%
 if exist "%wav_fullpath%" echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
 if not exist "%wav_fullpath%" echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
 
@@ -317,6 +315,9 @@ if not exist "%wav_fullpath%" echo AudioDub(last, LWLibavAudioSource("%source_fu
 
 :end_fileread
 echo.>>%avs%
+
+REM echo AssumeFPS(30000, 1001)>>%avs%
+REM echo.>>%avs%
 
 echo ### フィールドオーダー ###>>%avs%
 if %order_ref% == TOP echo AssumeTFF()>>%avs%
