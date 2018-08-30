@@ -2,6 +2,8 @@
 
 読み方は「フェイブス」ですが、別に「ふぁぶせ」でもいいです。
 
+動画ファイル（複数可）をドラッグすると、エンコード完了まで全自動で処理するバッチファイルです。
+
 制作に関すること、質問などはブログへどうぞ。
 
 [BLACKND – Web系エンジニアのチラシ裏](https://blacknd.com/)
@@ -35,9 +37,9 @@
 
 ## 使用方法
 
-このバッチファイル（もしくはバッチファイルへのショートカット）に、動画ファイル（avsファイルではありません）をドラッグしてください。複数ファイルの同時ドラッグにも対応します。
+このバッチファイル（もしくはバッチファイルへのショートカット）に、動画ファイル（avsファイルではありません）をドラッグしてください。複数ファイルのドラッグにも対応します。
 
-すると設定に応じた動作を全自動で行います。AvsPmodやAviUtl + カット編集プラグイン等で手動カット編集を行いたい場合もあるかと思いますが、その際はavsファイル書き出し後に一時停止する設定にしてください。
+すると設定や動画情報に応じた動作を全自動で行います。AvsPmodやAviUtl + カット編集プラグイン等で手動カット編集を行いたい場合もあるかと思いますが、その際はavsファイル書き出し後に一時停止する設定にしてください。
 
 設定項目については、バッチファイルの冒頭部分を参照してください。簡単な説明があります。
 
@@ -69,7 +71,7 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 - [LSMASHSource](https://www.dropbox.com/sh/3i81ttxf028m1eh/AAABkQn4Y5w1k-toVhYLasmwa?dl=0)（2種ありますがLSMASHSourceの方です。`LSMASHSource.dll`のみ必要です）
 - [delogo](https://www.avisynth.info/?%E3%82%A2%E3%83%BC%E3%82%AB%E3%82%A4%E3%83%96#bbcd6a1e)（`delogo.dll`のみ必要です）
 - [NNEDI3](https://github.com/jpsdr/NNEDI3/releases)（`nnedi3.dll`のみ必要です。CPUに合ったフォルダを選択してください）
-- [TDeinterlace](https://www.mediafire.com/download/kmcztm1xzjm/TDeinterlace_3-14-2010.rar)（`TDeinterlace.dll`のみ必要です。32bitは[TDeint](http://web.archive.org/web/20140420182314/http://bengal.missouri.edu/~kes25c/TDeintv11.zip)です）
+- [TDeinterlace](https://www.mediafire.com/download/kmcztm1xzjm/TDeinterlace_3-14-2010.rar)（`TDeinterlace.dll`のみ必要です。32bitは[TDeint](http://web.archive.org/web/20140420182314/http://bengal.missouri.edu/~kes25c/TDeintv11.zip)で、`TDeint.dll`のみ必要です）
 - [TIVTC](https://github.com/pinterf/TIVTC/releases)（`TIVTC.dll`のみ必要です）
 - [Hqdn3dY](https://forum.doom9.org/attachment.php?attachmentid=15589&d=1474456943)（`Hqdn3dY-x64.dll`が64bit版です。ハイフンは非推奨とエラーが出るので`-x64`を消したほうが良いです）
 
@@ -88,7 +90,7 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 - [qaac](https://sites.google.com/site/qaacpage/cabinet)（`qaac64.exe`のみ必要です）
 - [L-SMASH](http://pop.4-bit.jp/?page_id=7920)（`muxer.exe`と`remuxer.exe`のみ必要です）
 
-#### 分割・結合ツール
+#### 分割ツール
 
 - [TSSplitter](https://www.videohelp.com/software/TSSplitter)（`TsSplitter.exe`のみ必要です）
 - [DGIndex](http://rationalqm.us/dgmpgdec/dgmpgdec.html)（`DGDecode.dll`, `DGIndex.exe`, dllをリネームした`DGVfapi.vfp`が必要です）
@@ -100,7 +102,7 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 #### 補助ツール
 
 - [avs2pipemod](https://github.com/chikuzen/avs2pipemod/releases)（`avs2pipemod64.exe`のみ必要です）
-- [MediaInfo \- Download MediaInfo for Microsoft Windows](https://mediaarea.net/en/MediaInfo/Download/Windows)（CLI版の`MediaInfo.exe`のみ必要です）
+- [MediaInfo](https://mediaarea.net/en/MediaInfo/Download/Windows)（CLI版の`MediaInfo.exe`のみ必要です）
 - [rplsinfo](https://www.axfc.net/u/3933238.zip)（`rplsinfo.exe`のみ必要です）
 - [sed for Windows](http://gnuwin32.sourceforge.net/packages/sed.htm)（BinariesとDependencies、`bin`の中身が必要です）
 - [Grep for Windows](http://gnuwin32.sourceforge.net/packages/grep.htm)（BinariesとDependencies、`bin`の中身が必要です）
@@ -122,15 +124,15 @@ LSMASHSourceで読めるすべての動画ファイルが対象です（ver.2.00
 
 音声処理にFAWを使う場合、**元の音声がAAC**である必要があります。
 
-> FAW（FakeAacWav）とは、DGIndexやBonTsDemux等で分離したaacファイルを疑似wavファイルに変換（偽装）して使用するソフトウェアです。後にaacファイルに戻すことができ、エンコードを介することによる音質の劣化を回避することができます。また、音ズレを防止する役目も果たします。
+> FAW（FakeAacWav）とは、DGIndexやBonTsDemux等で分離したaacファイルを疑似wavファイルに変換（偽装）して使用するソフトウェアです。編集後に無劣化でaacファイルに戻すことができます。また、音ズレを防止する役目も果たします。
 
-PT3等のTVチューナーで録画したtsファイルはFAWの条件をクリアしますので、そのままドラッグすればOKです。
+PT3等のTVチューナーで録画したtsファイルはFAWの条件を満たしますので、そのままドラッグすればOKです。
 
-気をつけるのは、同じtsファイルでもDVDソースからゴニョったり、自力で作成した場合です。
+気をつけるのは、同じtsファイルでもDVDソースからゴニョった場合など自力で作成した場合です。
 
-例えば当サイト管理人オススメの[TMPGEnc MPEG Smart Renderer](http://tmpgenc.pegasys-inc.com/ja/product/tmsr5.html)は映像無劣化でtsファイルにできますが、デフォルトのままだと音声は**LPCM**や**AC-3**になると思います。
+例えば当サイト管理人オススメの[TMPGEnc MPEG Smart Renderer](https://www.amazon.co.jp/TMPGEnc-MPEG-Smart-Renderer-%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89/dp/B01CZSBBCA/ref=as_li_ss_tl?ie=UTF8&linkCode=ll1&tag=blacknd-22&linkId=018f85d3da64f66563638612dcd1ac37&language=ja_JP)は映像無劣化でtsファイルにできますが、デフォルトのままだと音声は**LPCM**や**AC-3**になると思います。
 
-この場合、出力直前の画面で音声を明示的にAAC（**MPEG2 AAC(LC)**）に指定する必要があります。
+この場合、出力直前の画面で音声を明示的にAAC（**MPEG2 AAC(LC)**）を指定する必要があります。
 
 > せっかくFAWを使うのに非可逆圧縮が入るのも気分的にアレですが、ビットレートを256kbpsとか384kbpsにすれば、元との違いを聞き分けられるような人はそうそういないと思います。
 
