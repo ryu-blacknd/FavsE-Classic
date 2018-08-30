@@ -67,7 +67,6 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 
 64bit版は`C:¥Program Files (x86)¥AviSynth+`内の`plugins64+`へ、32bit版は`plugins+`へコピーして使用します。
 
-- [DGDecode](https://www.mediafire.com/file/c0wmemj5jam/DGDecode_3-19-2010.rar)（`DGDecode.dll`のみ必要です。32bit版は後述のDGIndexに同梱されています）
 - [LSMASHSource](https://www.dropbox.com/sh/3i81ttxf028m1eh/AAABkQn4Y5w1k-toVhYLasmwa?dl=0)（2種ありますがLSMASHSourceの方です。`LSMASHSource.dll`のみ必要です）
 - [delogo](https://www.avisynth.info/?%E3%82%A2%E3%83%BC%E3%82%AB%E3%82%A4%E3%83%96#bbcd6a1e)（`delogo.dll`のみ必要です）
 - [NNEDI3](https://github.com/jpsdr/NNEDI3/releases)（`nnedi3.dll`のみ必要です。CPUに合ったフォルダを選択してください）
@@ -99,9 +98,7 @@ rigaya氏ビルドのものは更新多めなので、[同氏のブログ](https
 - [TSSplitter](https://www.videohelp.com/software/TSSplitter)（`TsSplitter.exe`のみ必要です）
 - [DGIndex](http://rationalqm.us/dgmpgdec/dgmpgdec.html)（`DGDecode.dll`, `DGIndex.exe`, dllをリネームした`DGVfapi.vfp`が必要です）
 
-> `DGDecode.dll`はAviSynth+の32bitプラグイン用フォルダにコピーしてください（移動ではありません）。
-
-> なおDGIndex 1.5.8にはバグがあり、修正・改造した[mod版のソース](https://onedrive.live.com/?id=8658EC275D9699D5%211215&cid=8658EC275D9699D5)が公開されています。ソースのみ配布でバイナリが無いため、VisualStudio 2017やNASMを導入して自分でビルドする必要があります。手順とWindows SDKのバージョンだけ気をつければ特に難しくはありません。なおビルドできるのは32bit版のみです。
+> DGIndex 1.5.8にはバグがあり、修正・改造した[mod版のソース](https://onedrive.live.com/?id=8658EC275D9699D5%211215&cid=8658EC275D9699D5)が公開されています。ソースのみの配布でバイナリが無いため、VisualStudio 2017とNASMを導入して自分でビルドする必要があります。手順とWindows SDKのバージョンだけ気をつければ特に難しくはありません。なおビルドできるのは32bit版のみです。
 
 #### 補助ツール
 

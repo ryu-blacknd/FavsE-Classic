@@ -1,74 +1,74 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 4.04
+echo FavsE (FullAuto AVS Encode) 4.05
 echo.
 REM ----------------------------------------------------------------------
-REM CPU‚МѓRѓAђ”Ѓiђ”’lЃj
-REM ѓXѓЊѓbѓhђ”‚Е‚Н‚И‚­ѓRѓAђ”‚рђ”’l‚Е‹L“ь‚µ‚Д‚­‚ѕ‚і‚ўЃBѓXѓЊѓbѓhђ”‚М”ј•Є‚Є—З‚ў‚ж‚¤‚Е‚·ЃB
+REM CPUгЃ®г‚іг‚ўж•°пј€ж•°еЂ¤пј‰
+REM г‚№гѓ¬гѓѓгѓ‰ж•°гЃ§гЃЇгЃЄгЃЏг‚іг‚ўж•°г‚’ж•°еЂ¤гЃ§иЁе…ҐгЃ—гЃ¦гЃЏгЃ гЃ•гЃ„гЂ‚г‚№гѓ¬гѓѓгѓ‰ж•°гЃ®еЌЉе€†гЃЊи‰ЇгЃ„г‚€гЃ†гЃ§гЃ™гЂ‚
 REM ----------------------------------------------------------------------
 set cpu_cores=6
 REM ----------------------------------------------------------------------
-REM ‰f‘њѓGѓ“ѓRЃ[ѓ_Ѓi0:x264, 1:QSVEnc, 2:NVEnc_AVC, 3:NVEnc_HEVCЃjЃ¦ђ„Џ§ЃF0
-REM ђі’ј‚»‚к‚Щ‚З‹­—у‚И‘¬“xЌ·‚Н‚ ‚и‚Ь‚№‚сЃB‰жЋї‚МЌ·‚Н‚і‚·‚Є‚Й‘е‚«‚ў‚Ѕ‚Яx264ђ„Џ§‚Е‚·ЃB
+REM ж еѓЏг‚Ёгѓіг‚ігѓјгѓЂпј€0:x264, 1:QSVEnc, 2:NVEnc_AVC, 3:NVEnc_HEVCпј‰вЂ»жЋЁеҐЁпјљ0
+REM ж­Јз›ґгЃќг‚ЊгЃ»гЃ©еј·зѓ€гЃЄйЂџеє¦е·®гЃЇгЃ‚г‚ЉгЃѕгЃ›г‚“гЂ‚з”»иіЄгЃ®е·®гЃЇгЃ•гЃ™гЃЊгЃ«е¤§гЃЌгЃ„гЃџг‚Ѓx264жЋЁеҐЁгЃ§гЃ™гЂ‚
 REM ----------------------------------------------------------------------
 set video_encoder=0
 REM ----------------------------------------------------------------------
-REM ‰№ђєѓGѓ“ѓRЃ[ѓ_Ѓi0:FAW, 1:qaacЃjЃ¦ђ„Џ§ЃF0
-REM ’КЏн‚НFAW‚ЕOK‚Е‚·ЃB0‚Е‚ ‚Б‚Д‚аЃAFAW‚ЄЋg—p‚Е‚«‚И‚ўЏкЌ‡‚НЋ©“®“I‚Йqaac‚ЕЏ€—ќ‚µ‚Ь‚·ЃB
+REM йџіеЈ°г‚Ёгѓіг‚ігѓјгѓЂпј€0:FAW, 1:qaacпј‰вЂ»жЋЁеҐЁпјљ0
+REM йЂљеёёгЃЇFAWгЃ§OKгЃ§гЃ™гЂ‚0гЃ§гЃ‚гЃЈгЃ¦г‚‚гЂЃFAWгЃЊдЅїз”ЁгЃ§гЃЌгЃЄгЃ„е ґеђ€гЃЇи‡Єе‹•зљ„гЃ«qaacгЃ§е‡¦зђ†гЃ—гЃѕгЃ™гЂ‚
 REM ----------------------------------------------------------------------
 set audio_encoder=0
 
 REM ----------------------------------------------------------------------
-REM FAW•sЋg—pЋћ‚М‰№ѓYѓЊ‘ОЌфЃi0:Ќs‚н‚И‚ў, 1:Ќs‚¤ЃjЃ¦‰№ѓYѓЊ‚Є‘Ѕ‚ў‚И‚зђ„Џ§ЃF1
-REM ‰№ѓYѓЊ‘ОЌф‚рЋќ‚ВFAW‚рЋg‚н‚И‚ў/Ћg‚¦‚И‚ўЏкЌ‡‚ЙЃAfpsЊЕ’и‚Й‚ж‚й‰№ѓYѓЊ‘ОЌф‚рЌs‚ў‚Ь‚·ЃB
+REM FAWдёЌдЅїз”Ёж™‚гЃ®йџіг‚єгѓ¬еЇѕз­–пј€0:иЎЊг‚ЏгЃЄгЃ„, 1:иЎЊгЃ†пј‰вЂ»йџіг‚єгѓ¬гЃЊе¤љгЃ„гЃЄг‚‰жЋЁеҐЁпјљ1
+REM йџіг‚єгѓ¬еЇѕз­–г‚’жЊЃгЃ¤FAWг‚’дЅїг‚ЏгЃЄгЃ„/дЅїгЃ€гЃЄгЃ„е ґеђ€гЃ«гЂЃfpsе›єе®љгЃ«г‚€г‚Љйџіг‚єгѓ¬еЇѕз­–г‚’иЎЊгЃ„гЃѕгЃ™гЂ‚
 REM ----------------------------------------------------------------------
 set assumefps=1
 REM ----------------------------------------------------------------------
-REM Ћ©“®CMѓJѓbѓgЏ€—ќЃi0:Ќs‚н‚И‚ў, 1:Ќs‚¤Ѓj
-REM ^‰жtsѓtѓ@ѓCѓ‹‚М‚Э—LЊш‚Е‚·ЃBЉ®аш‚Е‚Н‚ ‚и‚Ь‚№‚с‚М‚ЕЃAЋи“®ѓJѓbѓg‚Ж‚М•№—pђ„Џ§‚Е‚·ЃB
+REM и‡Єе‹•CMг‚«гѓѓгѓ€е‡¦зђ†пј€0:иЎЊг‚ЏгЃЄгЃ„, 1:иЎЊгЃ†пј‰
+REM йЊІз”»tsгѓ•г‚Ўг‚¤гѓ«гЃ®гЃїжњ‰еЉ№гЃ§гЃ™гЂ‚е®Њз’§гЃ§гЃЇгЃ‚г‚ЉгЃѕгЃ›г‚“гЃ®гЃ§гЂЃж‰‹е‹•г‚«гѓѓгѓ€гЃЁгЃ®дЅµз”ЁжЋЁеҐЁгЃ§гЃ™гЂ‚
 REM ----------------------------------------------------------------------
 set cut_cm=1
 REM ----------------------------------------------------------------------
-REM ѓЌѓSЏњ‹ЋЏ€—ќЃi0:Ќs‚н‚И‚ў, 1:Ќs‚¤Ѓj
-REM ^‰жtsѓtѓ@ѓCѓ‹‚М‚Э—LЊш‚Е‚·ЃBAviUtl‚Еlgdѓtѓ@ѓCѓ‹ЊQ‚рЌмђ¬‚µ‚Д‚Ё‚­•K—v‚Є‚ ‚и‚Ь‚·ЃB
+REM гѓ­г‚ґй™¤еЋ»е‡¦зђ†пј€0:иЎЊг‚ЏгЃЄгЃ„, 1:иЎЊгЃ†пј‰
+REM йЊІз”»tsгѓ•г‚Ўг‚¤гѓ«гЃ®гЃїжњ‰еЉ№гЃ§гЃ™гЂ‚AviUtlгЃ§lgdгѓ•г‚Ўг‚¤гѓ«зѕ¤г‚’дЅњж€ђгЃ—гЃ¦гЃЉгЃЏеї…и¦ЃгЃЊгЃ‚г‚ЉгЃѕгЃ™гЂ‚
 REM ----------------------------------------------------------------------
 set cut_logo=1
 REM ----------------------------------------------------------------------
-REM avsђ¶ђ¬Њг‚ЙЏ€—ќ‚р€кЋћ’вЋ~Ѓi0:‚µ‚И‚ў, 1:‚·‚йЃjЃ¦ђ„Џ§ЃF1
-REM ђ¶ђ¬‚і‚к‚ЅѓXѓNѓЉѓvѓg‚рЉm”F‚µ‚Д‚©‚зђi‚Я‚з‚к‚Ь‚·ЃB120•bЊo‚В‚ЖЏ€—ќ‚р‘±Ќs‚µ‚Ь‚·ЃB
+REM avsз”џж€ђеѕЊгЃ«е‡¦зђ†г‚’дёЂж™‚еЃњж­ўпј€0:гЃ—гЃЄгЃ„, 1:гЃ™г‚‹пј‰вЂ»жЋЁеҐЁпјљ1
+REM з”џж€ђгЃ•г‚ЊгЃџг‚№г‚ЇгѓЄгѓ—гѓ€г‚’зўєиЄЌгЃ—гЃ¦гЃ‹г‚‰йЂІг‚Ѓг‚‰г‚ЊгЃѕгЃ™гЂ‚120з§’зµЊгЃ¤гЃЁе‡¦зђ†г‚’з¶љиЎЊгЃ—гЃѕгЃ™гЂ‚
 REM ----------------------------------------------------------------------
 set check_avs=1
 
 REM ----------------------------------------------------------------------
-REM ѓCѓ“ѓ^Ѓ[ѓЊЃ[ѓX‰рЏњѓ‚Ѓ[ѓhЃi0:ѓCѓ“ѓ^Ѓ[ѓЊЃ[ѓX•ЫЋќ, 1:’КЏн, 2:24fps‰», 3:BOB‰»Ѓj
-REM PT3“™‚Е^‰ж‚µ‚Ѕtsѓtѓ@ѓCѓ‹‚МЏкЌ‡‚НЋ©“®”»•К‚µ‚Ь‚·‚М‚ЕЃA‚±‚МђЭ’и‚Н–іЊш‚Ж‚И‚и‚Ь‚·ЃB
+REM г‚¤гѓіг‚їгѓјгѓ¬гѓјг‚№и§Јй™¤гѓўгѓјгѓ‰пј€0:г‚¤гѓіг‚їгѓјгѓ¬гѓјг‚№дїќжЊЃ, 1:йЂљеёё, 2:24fpsеЊ–, 3:BOBеЊ–пј‰
+REM PT3з­‰гЃ§йЊІз”»гЃ—гЃџtsгѓ•г‚Ўг‚¤гѓ«гЃ®е ґеђ€гЃЇи‡Єе‹•е€¤е€ҐгЃ—гЃѕгЃ™гЃ®гЃ§гЂЃгЃ“гЃ®иЁ­е®љгЃЇз„ЎеЉ№гЃЁгЃЄг‚ЉгЃѕгЃ™гЂ‚
 REM ----------------------------------------------------------------------
 set deint_mode=1
 REM ----------------------------------------------------------------------
-REM ѓmѓCѓYЏњ‹ЋЃi0:Ќs‚н‚И‚ў, 1:Ќs‚¤Ѓj
-REM Ќ‚Ћь”gѓmѓCѓYЏњ‹Ћ‚Е‚·ЃBЋг‚Я‚ЙђЭ’и‚µ‚Д‚ў‚Ь‚·ЃB‹­‚Я‚Й‚·‚й‚Й‚НђЭ’и’l‚р•ПЌX‚µ‚Д‚­‚ѕ‚і‚ўЃB
+REM гѓЋг‚¤г‚єй™¤еЋ»пј€0:иЎЊг‚ЏгЃЄгЃ„, 1:иЎЊгЃ†пј‰
+REM й«е‘ЁжіўгѓЋг‚¤г‚єй™¤еЋ»гЃ§гЃ™гЂ‚еј±г‚ЃгЃ«иЁ­е®љгЃ—гЃ¦гЃ„гЃѕгЃ™гЂ‚еј·г‚ЃгЃ«гЃ™г‚‹гЃ«гЃЇиЁ­е®љеЂ¤г‚’е¤‰ж›ґгЃ—гЃ¦гЃЏгЃ гЃ•гЃ„гЂ‚
 REM ----------------------------------------------------------------------
 set denoize=0
 REM ----------------------------------------------------------------------
-REM Width‚Є1280px‚р’ґ‚¦‚йЏкЌ‡‚Й1280x720px‚ЙѓЉѓTѓCѓY‚·‚й‚©Ѓi0:‚µ‚И‚ў, 1:‚·‚йЃj
-REM 4K / 2K / Full HD“™‚МЏкЌ‡‚ЙHDѓTѓCѓY‚Й‘µ‚¦ЃAѓtѓ@ѓCѓ‹ѓTѓCѓY‚рЏk‚Я‚й€У–Ў‚Є‚ ‚и‚Ь‚·ЃB
+REM WidthгЃЊ1280pxг‚’и¶…гЃ€г‚‹е ґеђ€гЃ«1280x720pxгЃ«гѓЄг‚µг‚¤г‚єгЃ™г‚‹гЃ‹пј€0:гЃ—гЃЄгЃ„, 1:гЃ™г‚‹пј‰
+REM 4K / 2K / Full HDз­‰гЃ®е ґеђ€гЃ«HDг‚µг‚¤г‚єгЃ«жЏѓгЃ€гЂЃгѓ•г‚Ўг‚¤гѓ«г‚µг‚¤г‚єг‚’зё®г‚Ѓг‚‹ж„Џе‘ігЃЊгЃ‚г‚ЉгЃѕгЃ™гЂ‚
 REM ----------------------------------------------------------------------
 set resize=1
 REM ----------------------------------------------------------------------
-REM ѓVѓѓЃ[ѓv‰»Ѓi0:Ќs‚н‚И‚ў, 1:Ќs‚¤Ѓj
-REM ‹CЋќ‚ї’ц“x‚МѓVѓѓЃ[ѓv‰»‚Е‚·‚ЄЃA—б‚¦‚ОѓmѓCѓYЏњ‹ЋЊг‚вЉg‘еЏ€—ќЊг‚Й‚Н‚»‚к‚И‚и‚Й—LЊш‚Е‚·ЃB
+REM г‚·гѓЈгѓјгѓ—еЊ–пј€0:иЎЊг‚ЏгЃЄгЃ„, 1:иЎЊгЃ†пј‰
+REM ж°—жЊЃгЃЎзЁ‹еє¦гЃ®г‚·гѓЈгѓјгѓ—еЊ–гЃ§гЃ™гЃЊгЂЃдѕ‹гЃ€гЃ°гѓЋг‚¤г‚єй™¤еЋ»еѕЊг‚„ж‹Ўе¤§е‡¦зђ†еѕЊгЃ«гЃЇгЃќг‚ЊгЃЄг‚ЉгЃ«жњ‰еЉ№гЃ§гЃ™гЂ‚
 REM ----------------------------------------------------------------------
 set sharpen=0
 
 REM ----------------------------------------------------------------------
-REM ЏI—№Њг‚Й€кЋћѓtѓ@ѓCѓ‹‚рЌнЏњЃi0:‚µ‚И‚ў, 1:‚·‚йЃj
-REM €кЋћѓtѓ@ѓCѓ‹ЊQ‚р€кЉ‡ЌнЏњ‚Е‚«‚Ь‚·ЃB0‚ѕ‚Ж•ъ’u‚і‚к‚Ь‚·‚ЄЃA‚в‚и’ј‚µЋћ‚ЙЌД——p‚Е‚«‚Ь‚·ЃB
+REM зµ‚дє†еѕЊгЃ«дёЂж™‚гѓ•г‚Ўг‚¤гѓ«г‚’е‰Љй™¤пј€0:гЃ—гЃЄгЃ„, 1:гЃ™г‚‹пј‰
+REM дёЂж™‚гѓ•г‚Ўг‚¤гѓ«зѕ¤г‚’дёЂж‹¬е‰Љй™¤гЃ§гЃЌгЃѕгЃ™гЂ‚0гЃ гЃЁж”ѕзЅ®гЃ•г‚ЊгЃѕгЃ™гЃЊгЂЃг‚„г‚Љз›ґгЃ—ж™‚гЃ«е†Ќе€©з”ЁгЃ§гЃЌгЃѕгЃ™гЂ‚
 REM ----------------------------------------------------------------------
 set del_temp=0
 
 REM ----------------------------------------------------------------------
-REM ЃЎЉm”F•Kђ{ЃFѓtѓHѓ‹ѓ_–ј
-REM ЉВ‹«‚Й‰ћ‚¶‚ДЃy•K‚ёЃzЏ‘‚«Љ·‚¦‚Д‚­‚ѕ‚і‚ўЃB
+REM в– зўєиЄЌеї…й €пјљгѓ•г‚©гѓ«гѓЂеђЌ
+REM з’°еўѓгЃ«еїњгЃгЃ¦гЂђеї…гЃљгЂ‘ж›ёгЃЌжЏ›гЃ€гЃ¦гЃЏгЃ гЃ•гЃ„гЂ‚
 REM ----------------------------------------------------------------------
 set output_path=F:\Encode\
 set bin_path=C:\DTV\bin\
@@ -76,8 +76,8 @@ set logo_path=%bin_path%join_logo_scp\logo\
 set cut_result_path=%bin_path%join_logo_scp\result\
 
 REM ----------------------------------------------------------------------
-REM ЃЎЉm”F•Kђ{ЃFЋАЌsѓtѓ@ѓCѓ‹–ј
-REM ЉВ‹«‚Й‰ћ‚¶‚ДЃy•K‚ёЃzЏ‘‚«Љ·‚¦‚Д‚­‚ѕ‚і‚ўЃB‚н‚©‚й•ы‚Н•K—v‚И‚а‚М‚ѕ‚Ї‚ЕЊ‹Ќ\‚Е‚·ЃB
+REM в– зўєиЄЌеї…й €пјље®џиЎЊгѓ•г‚Ўг‚¤гѓ«еђЌ
+REM з’°еўѓгЃ«еїњгЃгЃ¦гЂђеї…гЃљгЂ‘ж›ёгЃЌжЏ›гЃ€гЃ¦гЃЏгЃ гЃ•гЃ„гЂ‚г‚ЏгЃ‹г‚‹ж–№гЃЇеї…и¦ЃгЃЄг‚‚гЃ®гЃ гЃ‘гЃ§зµђж§‹гЃ§гЃ™гЂ‚
 REM ----------------------------------------------------------------------
 set x264=%bin_path%x264_x64.exe
 set qsvencc=%bin_path%QSVEncC64.exe
@@ -96,8 +96,8 @@ set dgindex=%bin_path%DGIndex.exe
 set join_logo_scp=%bin_path%join_logo_scp\jlse_bat.bat
 
 REM ----------------------------------------------------------------------
-REM ‰f‘њѓGѓ“ѓRЃ[ѓ_‚МѓIѓvѓVѓ‡ѓ“
-REM ђЭ’и’l‚М€У–Ў‚Є‚н‚©‚й•ы‚НЋ©—R‚Й‰ь•П‚µ‚Д‚­‚ѕ‚і‚ўЃB
+REM ж еѓЏг‚Ёгѓіг‚ігѓјгѓЂгЃ®г‚Єгѓ—г‚·гѓ§гѓі
+REM иЁ­е®љеЂ¤гЃ®ж„Џе‘ігЃЊг‚ЏгЃ‹г‚‹ж–№гЃЇи‡Єз”±гЃ«ж”№е¤‰гЃ—гЃ¦гЃЏгЃ гЃ•гЃ„гЂ‚
 REM ----------------------------------------------------------------------
 if %video_encoder% == 0 (
   set x264_opt=--crf 21 --qcomp 0.7 --me umh --subme 9 --direct auto --ref 5 --trellis 2
@@ -108,29 +108,29 @@ if %video_encoder% == 0 (
 ) else if %video_encoder% == 3 (
   set nvencc_opt=--avs -c hevc --cqp 21:22:24 --qp-init 21:22:24 --weightp --aq --aq-temporal
 ) else (
-  echo [ѓGѓ‰Ѓ[] ѓGѓ“ѓRЃ[ѓ_‚рђі‚µ‚­Ћw’и‚µ‚Д‚­‚ѕ‚і‚ўЃB
+  echo [г‚Ёгѓ©гѓј] г‚Ёгѓіг‚ігѓјгѓЂг‚’ж­ЈгЃ—гЃЏжЊ‡е®љгЃ—гЃ¦гЃЏгЃ гЃ•гЃ„гЂ‚
   goto end
 )
 
 REM ----------------------------------------------------------------------
-REM ђЭ’и‚±‚±‚Ь‚Е
+REM иЁ­е®љгЃ“гЃ“гЃѕгЃ§
 REM ======================================================================
 
 :loop
 if "%~1" == "" goto end
 set file_ext=%~x1
 
-if %file_ext% == .avs echo avsѓtѓ@ѓCѓ‹‚Е‚Н‚И‚­“®‰жѓtѓ@ѓCѓ‹‚рѓhѓ‰ѓbѓO‚µ‚Д‚­‚ѕ‚і‚ўЃB & goto end
+if %file_ext% == .avs echo avsгѓ•г‚Ўг‚¤гѓ«гЃ§гЃЇгЃЄгЃЏе‹•з”»гѓ•г‚Ўг‚¤гѓ«г‚’гѓ‰гѓ©гѓѓг‚°гЃ—гЃ¦гЃЏгЃ гЃ•гЃ„гЂ‚ & goto end
 
 echo ======================================================================
 echo %~1
 echo ----------------------------------------------------------------------
-echo Џ€—ќЉJЋn: %date% %time%
+echo е‡¦зђ†й–‹е§‹: %date% %time%
 echo ======================================================================
 echo.
 
 REM ----------------------------------------------------------------------
-REM SDЃiЋе‚ЙDVDѓ\Ѓ[ѓXЃj‚©‚рѓTѓCѓYЋж“ѕ‚Е”»’и
+REM SDпј€дё»гЃ«DVDг‚Ѕгѓјг‚№пј‰гЃ‹г‚’г‚µг‚¤г‚єеЏ–еѕ—гЃ§е€¤е®љ
 REM ----------------------------------------------------------------------
 set is_sd=0
 for /f "delims=" %%A in ('%mediainfo% -f %1 ^| grep "Width" ^| head -n 1 ^| sed -r "s/Width *: (.*)/\1/"') do set info_width=%%A
@@ -139,7 +139,7 @@ for /f "delims=" %%A in ('%mediainfo% -f %1 ^| grep "Height" ^| head -n 1 ^| sed
 if %info_width% == 720 set is_sd=1
 
 REM ----------------------------------------------------------------------
-REM •Пђ”ѓZѓbѓg1
+REM е¤‰ж•°г‚»гѓѓгѓ€1
 REM ----------------------------------------------------------------------
 set file_path=%~dp1
 set file_name=%~n1
@@ -147,7 +147,7 @@ set file_fullname=%~dpn1
 set file_fullpath=%~1
 
 REM ----------------------------------------------------------------------
-REM “®‰жЏо•сЋж“ѕ
+REM е‹•з”»жѓ…е ±еЏ–еѕ—
 REM ----------------------------------------------------------------------
 for /f "delims=" %%A in ('%mediainfo% -f "%file_fullpath%" ^| grep "Commercial name" ^| head -n 1 ^| sed -r "s/Commercial name *: (.*)/\1/"') do set info_container=%%A
 
@@ -160,18 +160,18 @@ for /f "delims=" %%A in ('%mediainfo% "%file_fullpath%" ^| grep "Display aspect 
 for /f "delims=" %%A in ('%mediainfo% "%file_fullpath%" ^| grep "Scan type" ^| sed -r "s/Scan type *: (.*)/\1/"') do set info_scan_type=%%A
 for /f "delims=" %%A in ('%mediainfo% "%file_fullpath%" ^| grep "Scan order" ^| sed -r "s/Scan order *: (.*)/\1/"') do set info_scan_order=%%A
 
-echo “®‰жѓRѓ“ѓeѓiЃ@Ѓ@ЃF%info_container%
-echo ‰f‘њѓRЃ[ѓfѓbѓNЃ@ЃF%info_vcodec%
-echo ‰№ђєѓRЃ[ѓfѓbѓNЃ@ЃF%info_acodec%
-echo ѓrѓbѓgђ[“xЃ@Ѓ@Ѓ@ЃF%info_bitdepth%ѓrѓbѓg
-echo ‰f‘њѓTѓCѓYЃ@Ѓ@Ѓ@ЃF%info_width%x%info_height%px
-echo Џo—НѓAѓXѓyѓNѓg”дЃF%info_aspect%
-echo ѓXѓLѓѓѓ“ѓ^ѓCѓvЃ@ЃF%info_scan_type%
-if not "%info_scan_type%" == "Progressive" echo ѓXѓLѓѓѓ“ѓIЃ[ѓ_Ѓ[ЃF%info_scan_order%
+echo е‹•з”»г‚ігѓігѓ†гѓЉгЂЂгЂЂпјљ%info_container%
+echo ж еѓЏг‚ігѓјгѓ‡гѓѓг‚ЇгЂЂпјљ%info_vcodec%
+echo йџіеЈ°г‚ігѓјгѓ‡гѓѓг‚ЇгЂЂпјљ%info_acodec%
+echo гѓ“гѓѓгѓ€ж·±еє¦гЂЂгЂЂгЂЂпјљ%info_bitdepth%гѓ“гѓѓгѓ€
+echo ж еѓЏг‚µг‚¤г‚єгЂЂгЂЂгЂЂпјљ%info_width%x%info_height%px
+echo е‡єеЉ›г‚ўг‚№гѓљг‚Їгѓ€жЇ”пјљ%info_aspect%
+echo г‚№г‚­гѓЈгѓіг‚їг‚¤гѓ—гЂЂпјљ%info_scan_type%
+if not "%info_scan_type%" == "Progressive" echo г‚№г‚­гѓЈгѓіг‚ЄгѓјгѓЂгѓјпјљ%info_scan_order%
 echo.
 
 REM ----------------------------------------------------------------------
-REM •Пђ”ѓZѓbѓg2
+REM е¤‰ж•°г‚»гѓѓгѓ€2
 REM ----------------------------------------------------------------------
 if not "%info_container%" == "MPEG-TS" goto not_tssplitter_source
 if not "%info_vcodec%" == "MPEG-2 Video" goto not_tssplitter_source
@@ -195,7 +195,7 @@ set output_m4a="%output_path%%file_name%.m4a"
 set output_mp4="%output_path%%file_name%.mp4"
 
 REM ----------------------------------------------------------------------
-REM SDЃiЋе‚ЙDVDѓ\Ѓ[ѓXЃj‚МѓAѓXѓyѓNѓg”д‚рђЭ’и
+REM SDпј€дё»гЃ«DVDг‚Ѕгѓјг‚№пј‰гЃ®г‚ўг‚№гѓљг‚Їгѓ€жЇ”г‚’иЁ­е®љ
 REM ----------------------------------------------------------------------
 if %is_sd% == 1 (
   if %info_aspect% == 16:9 (
@@ -210,7 +210,7 @@ if %is_sd% == 1 (
 )
 
 REM ----------------------------------------------------------------------
-REM ѓtѓBЃ[ѓ‹ѓhѓIЃ[ѓ_Ѓ[”»’и
+REM гѓ•г‚Јгѓјгѓ«гѓ‰г‚ЄгѓјгѓЂгѓје€¤е®љ
 REM ----------------------------------------------------------------------
 if "%info_scan_type%" == "Progressive" (
   set order_ref=PROGRESSIVE
@@ -230,12 +230,12 @@ if not "%info_vcodec%" == "MPEG-2 Video" goto end_tssplitter
 if not "%info_acodec%" == "AAC LC" goto end_tssplitter
 if %is_sd% == 1 goto end_tssplitter
 echo ----------------------------------------------------------------------
-echo TSSplitterЏ€—ќ
+echo TSSplitterе‡¦зђ†
 echo ----------------------------------------------------------------------
 if not exist "%source_fullpath%" (
   call %tssplitter% -EIT -ECM -EMM -SD -1SEG "%file_fullpath%"
 ) else (
-  echo •ЄЉ„ЌП‚Э‚Мѓtѓ@ѓCѓ‹‚Є‘¶ЌЭ‚µ‚Д‚ў‚Ь‚·ЃB
+  echo е€†е‰Іжё€гЃїгЃ®гѓ•г‚Ўг‚¤гѓ«гЃЊе­ењЁгЃ—гЃ¦гЃ„гЃѕгЃ™гЂ‚
 )
 echo.
 
@@ -246,12 +246,12 @@ if not "%info_container%" == "MPEG-TS" goto end_faw
 if not "%info_vcodec%" == "MPEG-2 Video" goto end_faw
 if not "%info_acodec%" == "AAC LC" goto end_faw
 echo ----------------------------------------------------------------------
-echo DGIndexЏ€—ќ
+echo DGIndexе‡¦зђ†
 echo ----------------------------------------------------------------------
 if not exist "%source_fullname%.m2v" if not exist "%source_fullname% PID *.aac" (
   call %dgindex% -i "%source_fullpath%" -od "%source_fullname%" -ia 5 -fo 0 -yr 2 -om 2 -hide -exit
 ) else (
-  echo •Є—ЈЌП‚Э‚Мm2v / aacѓtѓ@ѓCѓ‹‚Є‘¶ЌЭ‚µ‚Д‚ў‚Ь‚·ЃB
+  echo е€†й›ўжё€гЃїгЃ®m2v / aacгѓ•г‚Ўг‚¤гѓ«гЃЊе­ењЁгЃ—гЃ¦гЃ„гЃѕгЃ™гЂ‚
 )
 echo.
 
@@ -260,12 +260,12 @@ for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *.aac"`) do se
 if not %audio_encoder% == 0 goto end_faw
 if not exist "%aac_fullpath%" goto end_faw
 echo ----------------------------------------------------------------------
-echo  FAW‘OЏ€—ќ
+echo  FAWе‰Ќе‡¦зђ†
 echo ----------------------------------------------------------------------
 if not exist "%source_fullname% PID *_aac.wav" (
   call %fawcl% "%aac_fullpath%"
 ) else (
-  echo ‹^Ћ—wavѓtѓ@ѓCѓ‹‚Є‘¶ЌЭ‚µ‚Д‚ў‚Ь‚·ЃB
+  echo з–‘дјјwavгѓ•г‚Ўг‚¤гѓ«гЃЊе­ењЁгЃ—гЃ¦гЃ„гЃѕгЃ™гЂ‚
 )
 
 :end_audio_split
@@ -274,17 +274,16 @@ echo.
 :end_faw
 
 echo ----------------------------------------------------------------------
-echo avsѓtѓ@ѓCѓ‹ђ¶ђ¬Џ€—ќ
+echo avsгѓ•г‚Ўг‚¤гѓ«з”џж€ђе‡¦зђ†
 echo ----------------------------------------------------------------------
 if exist %avs% (
-  echo avsѓtѓ@ѓCѓ‹‚Є‘¶ЌЭ‚µ‚Д‚ў‚Ь‚·ЃB
+  echo avsгѓ•г‚Ўг‚¤гѓ«гЃЊе­ењЁгЃ—гЃ¦гЃ„гЃѕгЃ™гЂ‚
   goto end_avs
 )
 
 echo SetMemoryMax(1024)>>%avs%
 echo.>>%avs%
 echo SetFilterMTMode("DEFAULT_MT_MODE", MT_MULTI_INSTANCE)>>%avs%
-REM echo SetFilterMTMode("MPEG2Source",        MT_NICE_FILTER)>>%avs%
 echo SetFilterMTMode("LWLibavVideoSource",  MT_SERIALIZED)>>%avs%
 echo SetFilterMTMode("LWLibavAudioSource",  MT_SERIALIZED)>>%avs%
 echo SetFilterMTMode("LSMASHVideoSource",   MT_SERIALIZED)>>%avs%
@@ -294,10 +293,9 @@ echo SetFilterMTMode("TDecimate",           MT_SERIALIZED)>>%avs%
 echo SetFilterMTMode("EraseLOGO",           MT_SERIALIZED)>>%avs%
 echo.>>%avs%
 
-echo ### ѓtѓ@ѓCѓ‹“З‚ЭЌћ‚Э ###>>%avs%
+echo ### гѓ•г‚Ўг‚¤гѓ«иЄ­гЃїиѕјгЃї ###>>%avs%
 if not exist "%source_fullname%.demuxed.m2v" goto lsmashsource
 
-REM echo MPEG2Source("%source_fullname%.d2v")>>%avs%
 echo LWLibavVideoSource("%source_fullname%.demuxed.m2v")>>%avs%
 echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
 goto end_fileread
@@ -322,15 +320,15 @@ if not exist "%wav_fullpath%" echo AudioDub(last, LWLibavAudioSource("%source_fu
 :end_fileread
 echo.>>%avs%
 
-if %assumefps% == 1 echo AssumeFPS(30000, 1001, true)>>%avs% & echo.>>%avs%
+if not %audio_encoder% == 0 if %assumefps% == 1 echo AssumeFPS(30000, 1001, true)>>%avs% & echo.>>%avs%
 
-echo ### ѓtѓBЃ[ѓ‹ѓhѓIЃ[ѓ_Ѓ[ ###>>%avs%
+echo ### гѓ•г‚Јгѓјгѓ«гѓ‰г‚ЄгѓјгѓЂгѓј ###>>%avs%
 if %order_ref% == TOP echo AssumeTFF()>>%avs%
 if %order_ref% == BOTTOM echo AssumeBFF()>>%avs%
 if %order_ref% == PROGRESSIVE echo #Progressive>>%avs%
 echo.>>%avs%
 
-echo ### ѓNѓЌѓbѓv ###>>%avs%
+echo ### г‚Їгѓ­гѓѓгѓ— ###>>%avs%
 echo #Crop(8, 0, -8, 0)>>%avs%
 echo.>>%avs%
 
@@ -338,13 +336,13 @@ if %is_sd% == 1 goto end_cm_cut_logo
 if not "%info_container%" == "MPEG-TS" goto end_cm_cut_logo
 if not "%info_vcodec%" == "MPEG-2 Video" goto end_cm_cut_logo
 
-echo ### ѓTЃ[ѓrѓXЏо•сЋж“ѕ ###>>%avs%
+echo ### г‚µгѓјгѓ“г‚№жѓ…е ±еЏ–еѕ— ###>>%avs%
 for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -c') do set service=%%A
-echo #ѓTЃ[ѓrѓX–јЃF%service%>>%avs%
+echo #г‚µгѓјгѓ“г‚№еђЌпјљ%service%>>%avs%
 echo.>>%avs%
 
 if %cut_cm% == 0 goto end_auto_trim
-echo ### Ћ©“®CMѓJѓbѓg ###>>%avs%
+echo ### и‡Єе‹•CMг‚«гѓѓгѓ€ ###>>%avs%
 set cut_fullpath="%cut_result_path%%cut_dir_name%\obs_cut.avs"
 if exist %cut_fullpath% goto end_cut_cm
 call %join_logo_scp% "%source_fullpath%"
@@ -359,21 +357,21 @@ goto end_trim
 :end_auto_trim
 
 if %cut_cm% == 1 goto end_do_manual_cut
-echo ### Ћи“®Trim ###>>%avs%
+echo ### ж‰‹е‹•Trim ###>>%avs%
 echo #Trim()>>%avs%
 echo.>>%avs%
 
 :end_trim
 
 if %cut_logo% == 0 goto end_cm_cut_logo
-echo ### ѓЌѓSЏњ‹Ћ ###>>%avs%
+echo ### гѓ­г‚ґй™¤еЋ» ###>>%avs%
 echo EraseLOGO("%logo_path%%service%.lgd", pos_x=0, pos_y=0, depth=128, yc_y=0, yc_u=0, yc_v=0, start=0, fadein=0, fadeout=0, end=-1, interlaced=true)>>%avs%
 echo.>>%avs%
 :end_cm_cut_logo
 
 if "%info_scan_type%" == "Progressive" goto end_deint
 if %deint_mode% == 0 goto end_deint
-echo ### ѓCѓ“ѓ^Ѓ[ѓЊЃ[ѓX‰рЏњ / ‹tѓeѓЊѓVѓl ###>>%avs%
+echo ### г‚¤гѓіг‚їгѓјгѓ¬гѓјг‚№и§Јй™¤ / йЂ†гѓ†гѓ¬г‚·гѓЌ ###>>%avs%
 
 if %is_sd% == 0 if "%info_vcodec%" == "MPEG-2 Video" goto is_tv_ts
 if %deint_mode% == 1 goto set_deint
@@ -385,11 +383,11 @@ goto end_deint
 if not "%info_container%" == "MPEG-TS" goto end_get_genre
 
 for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -g') do set genre=%%A
-echo #ѓWѓѓѓ“ѓ‹–јЃF%genre%>>%avs%
+echo #г‚ёгѓЈгѓігѓ«еђЌпјљ%genre%>>%avs%
 if "%info_scan_type%" == "Progressive" goto end_deint
 
 :end_get_genre
-echo %genre% | find " ‚рЉJ‚­‚М‚ЙЋё”s‚µ‚Ь‚µ‚Ѕ." > NUL
+echo %genre% | find " г‚’й–‹гЃЏгЃ®гЃ«е¤±ж•—гЃ—гЃѕгЃ—гЃџ." > NUL
 if not ERRORLEVEL 1 (
   if %deint_mode% == 1 goto set_deint
   if %deint_mode% == 2 goto set_deint_it
@@ -397,9 +395,9 @@ if not ERRORLEVEL 1 (
   goto end_deint
 )
 
-echo %genre% | find "ѓAѓjѓЃ" > NUL
+echo %genre% | find "г‚ўгѓ‹гѓЎ" > NUL
 if not ERRORLEVEL 1 goto set_deint_it
-echo %genre% | find "‰f‰ж" > NUL
+echo %genre% | find "ж з”»" > NUL
 if not ERRORLEVEL 1 goto set_deint_it
 
 :set_deint
@@ -427,7 +425,7 @@ goto end_deint
 
 if %denoize% == 0 goto end_denoize
 
-echo ### ѓmѓCѓYЏњ‹Ћ ###>>%avs%
+echo ### гѓЋг‚¤г‚єй™¤еЋ» ###>>%avs%
 echo hqdn3d(2)>>%avs%
 echo.>>%avs%
 
@@ -437,12 +435,12 @@ if %resize% == 0 goto end_resize
 if %is_sd% == 1 goto end_resize
 if %info_width% leq 1280 goto end_resize
 
-echo ### ѓЉѓTѓCѓY ###>>%avs%
+echo ### гѓЄг‚µг‚¤г‚є ###>>%avs%
 echo Spline36Resize(1280, 720)>>%avs%
 echo.>>%avs%
 :end_resize
 
-echo ### ѓVѓѓЃ[ѓv‰» ###>>%avs%
+echo ### г‚·гѓЈгѓјгѓ—еЊ– ###>>%avs%
 if %sharpen% == 0 goto not_sharpen
 echo Sharpen(0.02)>>%avs%
 goto end_sharpen
@@ -464,27 +462,29 @@ echo clip = clip.TFM(mode=6,order=-1,PP=7,slow=2,mChroma=true,clip2=Deinted)>>%a
 echo clip = clip.TDecimate(mode=1)>>%avs%
 echo return clip>>%avs%
 echo }>>%avs%
+
 :end_tivtc24p2
 
-echo avsѓtѓ@ѓCѓ‹‚рђ¶ђ¬‚µ‚Ь‚µ‚ЅЃB
+echo avsгѓ•г‚Ўг‚¤гѓ«г‚’з”џж€ђгЃ—гЃѕгЃ—гЃџгЂ‚
 echo %avs%
 
 :end_avs
 echo.
 
 if %check_avs% == 1 (
-  echo Ѓ¦avsѓtѓ@ѓCѓ‹Љm”FѓIѓvѓVѓ‡ѓ“‚ЄђЭ’и‚і‚к‚Д‚ў‚Ь‚·ЃB120•bЉФ‘Т‹@‚µ‚Ь‚·ЃB
+  echo вЂ»avsгѓ•г‚Ўг‚¤гѓ«зўєиЄЌг‚Єгѓ—г‚·гѓ§гѓігЃЊиЁ­е®љгЃ•г‚ЊгЃ¦гЃ„гЃѕгЃ™гЂ‚120з§’й–“еѕ…ж©џгЃ—гЃѕгЃ™гЂ‚
   echo.
-  echo Ѓ¦Љm”FЃE•ТЏW‚рЌs‚¤ЏкЌ‡ЃA[Ctrl] + [C]‚ЕѓJѓEѓ“ѓgѓ_ѓEѓ“‚р’†Ћ~‚Е‚«‚Ь‚·ЃB
-  echo Ѓ¦’†Ћ~‚µ‚ЅЏкЌ‡ЃA[Y]‚ЕЏI—№‚·‚й‚©ЃA[N]‚ЕЏ€—ќ‚р‘±Ќs‚µ‚Д‚­‚ѕ‚і‚ўЃB
-  echo Ѓ¦ЏI—№Њг‚ЙЌД“xЋАЌs‚·‚й‚ЖЃAЉщ‚ЙЌs‚Б‚ЅЏ€—ќ‚НѓXѓLѓbѓvЃiЌД——pЃj‚і‚к‚Ь‚·ЃB
+  echo вЂ»зўєиЄЌгѓ»з·Ёй›†г‚’иЎЊгЃ†е ґеђ€гЂЃ[Ctrl] + [C]гЃ§г‚«г‚¦гѓігѓ€гѓЂг‚¦гѓіг‚’дё­ж­ўгЃ§гЃЌгЃѕгЃ™гЂ‚
+  echo вЂ»дё­ж­ўгЃ—гЃџе ґеђ€гЂЃ[Y]гЃ§зµ‚дє†гЃ™г‚‹гЃ‹гЂЃ[N]гЃ§е‡¦зђ†г‚’з¶љиЎЊгЃ—гЃ¦гЃЏгЃ гЃ•гЃ„гЂ‚
+  echo вЂ»зµ‚дє†еѕЊгЃ«е†Ќеє¦е®џиЎЊгЃ™г‚‹гЃЁгЂЃж—ўгЃ«иЎЊгЃЈгЃџе‡¦зђ†гЃЇг‚№г‚­гѓѓгѓ—пј€е†Ќе€©з”Ёпј‰гЃ•г‚ЊгЃѕгЃ™гЂ‚
   echo.
   timeout /T 120
 )
 echo.
 
 echo ----------------------------------------------------------------------
-echo ‰f‘њЏ€—ќ
+echo ж еѓЏе‡¦зђ†
+echo вЂ»е€ќе›ће®џиЎЊж™‚гЃЇг‚¤гѓігѓ‡гѓѓг‚Їг‚№гѓ•г‚Ўг‚¤гѓ«г‚’дЅњж€ђгЃ™г‚‹гЃџг‚ЃгЂЃе‡¦зђ†й–‹е§‹гЃѕгЃ§ж™‚й–“гЃЊгЃ‹гЃ‹г‚ЉгЃѕгЃ™гЂ‚
 echo ----------------------------------------------------------------------
 if not exist %output_enc% (
   if %video_encoder% == 0 (
@@ -497,17 +497,17 @@ if not exist %output_enc% (
     call %nvencc% %nvencc_opt% %sar%%order_tb% -i %avs% -o %output_enc%
   )
 ) else (
-  echo ѓGѓ“ѓRЃ[ѓhЌП‚Э‰f‘њѓtѓ@ѓCѓ‹‚Є‘¶ЌЭ‚µ‚Д‚ў‚Ь‚·ЃB
+  echo г‚Ёгѓіг‚ігѓјгѓ‰жё€гЃїж еѓЏгѓ•г‚Ўг‚¤гѓ«гЃЊе­ењЁгЃ—гЃ¦гЃ„гЃѕгЃ™гЂ‚
 )
 echo.
 
 echo ----------------------------------------------------------------------
-echo ‰№ђєЏ€—ќ
+echo йџіеЈ°е‡¦зђ†
 echo ----------------------------------------------------------------------
 if not exist %output_wav% (
   call %avs2pipemod% -wav %avs% > %output_wav%
 ) else (
-  echo ’†ЉФwavѓtѓ@ѓCѓ‹‚Є‘¶ЌЭ‚µ‚Д‚ў‚Ь‚·ЃB
+  echo дё­й–“wavгѓ•г‚Ўг‚¤гѓ«гЃЊе­ењЁгЃ—гЃ¦гЃ„гЃѕгЃ™гЂ‚
 )
 
 if not %audio_encoder% == 0 goto qaac_encode
@@ -516,7 +516,7 @@ if not exist "%wav_fullpath%" goto qaac_encode
 if not exist %output_aac% (
   call %fawcl% %output_wav% %output_aac%
 ) else (
-  echo ѓGѓ“ѓRЃ[ѓhЌП‚Эaacѓtѓ@ѓCѓ‹‚Є‘¶ЌЭ‚µ‚Д‚ў‚Ь‚·ЃB
+  echo г‚Ёгѓіг‚ігѓјгѓ‰жё€гЃїaacгѓ•г‚Ўг‚¤гѓ«гЃЊе­ењЁгЃ—гЃ¦гЃ„гЃѕгЃ™гЂ‚
 )
 goto end_audio_encode
 
@@ -524,38 +524,38 @@ goto end_audio_encode
 if not exist %output_aac% (
   call %qaac% %output_wav% -o %output_aac%
 ) else (
-  echo ѓGѓ“ѓRЃ[ѓhЌП‚Эaacѓtѓ@ѓCѓ‹‚Є‘¶ЌЭ‚µ‚Д‚ў‚Ь‚·ЃB
+  echo г‚Ёгѓіг‚ігѓјгѓ‰жё€гЃїaacгѓ•г‚Ўг‚¤гѓ«гЃЊе­ењЁгЃ—гЃ¦гЃ„гЃѕгЃ™гЂ‚
 )
 
 :end_audio_encode
 echo.
 
 echo ----------------------------------------------------------------------
-echo muxerЏ€—ќ
+echo muxerе‡¦зђ†
 echo ----------------------------------------------------------------------
 if not exist %output_m4a% (
   call %muxer% -i %output_aac% -o %output_m4a%
 ) else (
-  echo muxerЌП‚Э‚Мm4aѓtѓ@ѓCѓ‹‚Є‘¶ЌЭ‚µ‚Д‚ў‚Ь‚·ЃB
+  echo muxerжё€гЃїгЃ®m4aгѓ•г‚Ўг‚¤гѓ«гЃЊе­ењЁгЃ—гЃ¦гЃ„гЃѕгЃ™гЂ‚
 )
 echo.
 
 echo ----------------------------------------------------------------------
-echo remuxerЏ€—ќ
+echo remuxerе‡¦зђ†
 echo ----------------------------------------------------------------------
 if not exist %output_mp4% (
   call %remuxer% -i %output_enc% -i %output_m4a% -o %output_mp4%
 ) else (
-  echo remuxerЌП‚Э‚Мmp4ѓtѓ@ѓCѓ‹‚Є‘¶ЌЭ‚µ‚Д‚ў‚Ь‚·ЃB
+  echo remuxerжё€гЃїгЃ®mp4гѓ•г‚Ўг‚¤гѓ«гЃЊе­ењЁгЃ—гЃ¦гЃ„гЃѕгЃ™гЂ‚
 )
 echo.
 
 echo ----------------------------------------------------------------------
-echo €кЋћѓtѓ@ѓCѓ‹Џ€—ќ
+echo дёЂж™‚гѓ•г‚Ўг‚¤гѓ«е‡¦зђ†
 echo ----------------------------------------------------------------------
 if %del_temp% == 0 goto no_del_temp
 
-echo €кЋћѓtѓ@ѓCѓ‹‚рЌнЏњ‚µ‚Ь‚·ЃB
+echo дёЂж™‚гѓ•г‚Ўг‚¤гѓ«г‚’е‰Љй™¤гЃ—гЃѕгЃ™гЂ‚
 echo.
 
 set del_hd_file=0
@@ -579,16 +579,16 @@ echo.
 goto end_del_temp
 
 :no_del_temp
-echo €кЋћѓtѓ@ѓCѓ‹ЊQ‚НЋc‚Б‚Д‚Ё‚иЃAЋџ‰сЋАЌsЋћ‚ЙЌД——pЃiЏ€—ќ‚рѓXѓLѓbѓvЃj‚Е‚«‚Ь‚·ЃB
-echo “Б’и‚МЏ€—ќ‚р‚в‚и’ј‚µ‚Ѕ‚ўЏкЌ‡‚НЃAЉY“–ѓtѓ@ѓCѓ‹‚рЌнЏњ‚µ‚ДЌДЋАЌs‚µ‚Д‚­‚ѕ‚і‚ўЃB
-echo •s—v‚Й‚И‚Б‚Ѕ‚зЃA‚·‚Ч‚Д‚М€кЋћѓtѓ@ѓCѓ‹‚рЌнЏњ‚µ‚ДЌ\‚ў‚Ь‚№‚сЃB
+echo дёЂж™‚гѓ•г‚Ўг‚¤гѓ«зѕ¤гЃЇж®‹гЃЈгЃ¦гЃЉг‚ЉгЂЃж¬Ўе›ће®џиЎЊж™‚гЃ«е†Ќе€©з”Ёпј€е‡¦зђ†г‚’г‚№г‚­гѓѓгѓ—пј‰гЃ§гЃЌгЃѕгЃ™гЂ‚
+echo з‰№е®љгЃ®е‡¦зђ†г‚’г‚„г‚Љз›ґгЃ—гЃџгЃ„е ґеђ€гЃЇгЂЃи©ІеЅ“гѓ•г‚Ўг‚¤гѓ«г‚’е‰Љй™¤гЃ—гЃ¦е†Ќе®џиЎЊгЃ—гЃ¦гЃЏгЃ гЃ•гЃ„гЂ‚
+echo дёЌи¦ЃгЃ«гЃЄгЃЈгЃџг‚‰гЂЃгЃ™гЃ№гЃ¦гЃ®дёЂж™‚гѓ•г‚Ўг‚¤гѓ«г‚’е‰Љй™¤гЃ—гЃ¦ж§‹гЃ„гЃѕгЃ›г‚“гЂ‚
 echo.
 :end_del_temp
 
 echo ======================================================================
 echo %output_mp4%
 echo ----------------------------------------------------------------------
-echo Џ€—ќЏI—№: %date% %time%
+echo е‡¦зђ†зµ‚дє†: %date% %time%
 echo ======================================================================
 echo.
 
