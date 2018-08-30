@@ -73,7 +73,7 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 - [NNEDI3](https://github.com/jpsdr/NNEDI3/releases)（`nnedi3.dll`のみ必要です。CPUに合ったフォルダを選択してください）
 - [TDeinterlace](https://www.mediafire.com/download/kmcztm1xzjm/TDeinterlace_3-14-2010.rar)（`TDeinterlace.dll`のみ必要です。32bitは[TDeint](http://web.archive.org/web/20140420182314/http://bengal.missouri.edu/~kes25c/TDeintv11.zip)で、`TDeint.dll`のみ必要です）
 - [TIVTC](https://github.com/pinterf/TIVTC/releases)（`TIVTC.dll`のみ必要です）
-- [Hqdn3dY](https://forum.doom9.org/attachment.php?attachmentid=15589&d=1474456943)（`Hqdn3dY-x64.dll`が64bit版です。ハイフンは非推奨とエラーが出るので`-x64`を消したほうが良いです）
+- [Hqdn3dY](https://forum.doom9.org/attachment.php?attachmentid=15589&d=1474456943)（`Hqdn3dY-x64.dll`が64bit版です。ハイフンは非推奨と警告が出るので`-x64`を消したほうが良いです）
 
 ### 各種ツール
 
@@ -83,12 +83,16 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 
 #### エンコード関連
 
-- [x264 kMod](http://komisar.gin.by/)（avsの入力に対応しているバイナリです。kModのx86_64版が必要です）
-- [QSVEncC](https://onedrive.live.com/?cid=6bdd4375ac8933c6&id=6BDD4375AC8933C6%21482&lor=shortUrl)（`QSVEncC\x86`の中身が必要です）
-- [NVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%212293&cid=6BDD4375AC8933C6)（`NVEncC\x86`の中身が必要です）
+- [x264](https://onedrive.live.com/?authkey=%21ABzai4Ddn6_Xxd0&id=6BDD4375AC8933C6%214477&cid=6BDD4375AC8933C6)（exeファイルのみ必要です。毎回設定変更するのも面倒なので`x264_64.exe`等にリネーム推奨です）
+- [QSVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%21482&cid=6BDD4375AC8933C6)（AviUtl
+用プラグインに同梱されています。`QSVEncC\x86`の中身が必要です）
+- [NVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%212293&cid=6BDD4375AC8933C6)（AviUtl
+用プラグインに同梱されています。`NVEncC\x86`の中身が必要です）
 - [fawcl](http://www2.wazoku.net/2sen/friioup/)（基本的に最新のものです。ページ内検索してください。`fawcl.exe`のみ必要です）
 - [qaac](https://sites.google.com/site/qaacpage/cabinet)（`qaac64.exe`のみ必要です）
-- [L-SMASH](http://pop.4-bit.jp/?page_id=7920)（`muxer.exe`と`remuxer.exe`のみ必要です）
+- [L-SMASH](https://onedrive.live.com/?id=6BDD4375AC8933C6%21404&cid=6BDD4375AC8933C6)（`muxer.exe`と`remuxer.exe`のみ必要です）
+
+rigaya氏ビルドのものは更新多めなので、[同氏のブログ](https://rigaya34589.blog.fc2.com/)でフィードを購読しておくことをおすすめします。
 
 #### 分割ツール
 
@@ -97,7 +101,7 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 
 > `DGDecode.dll`はAviSynth+の32bitプラグイン用フォルダにコピーしてください（移動ではありません）。
 
-> なおDGIndex 1.5.8にはバグがあり、修正・改造した[mod版のソース](https://onedrive.live.com/?id=8658EC275D9699D5%211215&cid=8658EC275D9699D5)が公開されています。ソースのみ配布でバイナリが無いため、VisualStudio 2017やNASMを導入して自分でビルドする必要があります。Windows SDKのバージョンだけ気をつければ特に難しくはありません。なおビルドできるのは32bit版のみです。
+> なおDGIndex 1.5.8にはバグがあり、修正・改造した[mod版のソース](https://onedrive.live.com/?id=8658EC275D9699D5%211215&cid=8658EC275D9699D5)が公開されています。ソースのみ配布でバイナリが無いため、VisualStudio 2017やNASMを導入して自分でビルドする必要があります。手順とWindows SDKのバージョンだけ気をつければ特に難しくはありません。なおビルドできるのは32bit版のみです。
 
 #### 補助ツール
 
@@ -120,22 +124,20 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 
 LSMASHSourceで読めるすべての動画ファイルが対象です（ver.2.00より）。
 
-つまり日常的に扱う動画ファイルはほぼすべてが対象となります。
+つまり日常的に扱う動画ファイルのほぼすべてが対象となります。
 
 音声処理にFAWを使う場合、**元の音声がAAC**である必要があります。
 
-> FAW（FakeAacWav）とは、DGIndexやBonTsDemux等で分離したaacファイルを疑似wavファイルに変換（偽装）して使用するソフトウェアです。編集後に無劣化でaacファイルに戻すことができます。また、音ズレを防止する役目も果たします。
+> FAW（FakeAacWav）とは、DGIndexやBonTsDemux等で分離したaacファイルを疑似wavファイルに変換（偽装）して使用するソフトウェアです。無劣化のままで編集 → aacファイルに戻すことができます。また、音ズレを防止する役目も果たします。
 
-PT3等のTVチューナーで録画したtsファイルはFAWの条件を満たしますので、そのままドラッグすればOKです。
+PT3等のTVチューナーで録画したtsファイルはFAWの条件を満たします。
 
 気をつけるのは、同じtsファイルでもDVDソースからゴニョった場合など自力で作成した場合です。
 
 例えば当サイト管理人オススメの[TMPGEnc MPEG Smart Renderer](https://www.amazon.co.jp/TMPGEnc-MPEG-Smart-Renderer-%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89/dp/B01CZSBBCA/ref=as_li_ss_tl?ie=UTF8&linkCode=ll1&tag=blacknd-22&linkId=018f85d3da64f66563638612dcd1ac37&language=ja_JP)は映像無劣化でtsファイルにできますが、デフォルトのままだと音声は**LPCM**や**AC-3**になると思います。
 
-この場合、出力直前の画面で音声を明示的にAAC（**MPEG2 AAC(LC)**）を指定する必要があります。
+この場合、出力直前の画面で音声をAAC（**MPEG2 AAC(LC)**）に指定する必要があります。
 
 > せっかくFAWを使うのに非可逆圧縮が入るのも気分的にアレですが、ビットレートを256kbpsとか384kbpsにすれば、元との違いを聞き分けられるような人はそうそういないと思います。
-
-条件に合わない場合、合わせたくない場合、よくわからない場合はFAWではなくqaacを使用してください。
 
 なおFAWを使用する設定でも、使用できない場合は自動判別によりqaacを使用します。
