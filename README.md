@@ -92,7 +92,6 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 
 - [TSSplitter](https://www.videohelp.com/software/TSSplitter)（`TsSplitter.exe`のみ必要です）
 - [DGIndex](http://rationalqm.us/dgmpgdec/dgmpgdec.html)（`DGDecode.dll`, `DGIndex.exe`, dllをリネームした`DGVfapi.vfp`が必要です）
-- [MKVToolNix](https://www.fosshub.com/MKVToolNix.html)（portableをツール用フォルダに解凍してください）
 
 > DGIndex 1.5.8にはバグがあり、修正・改造した[mod版のソース](https://onedrive.live.com/?id=8658EC275D9699D5%211215&cid=8658EC275D9699D5)が公開されています。ソースのみ配布でバイナリが無いため、VisualStudio 2017やNASMを導入して自分でビルドする必要があります。Windows SDKのバージョンだけ気をつければ特に難しくはありません。なおビルドできるのは32bit版のみです。
 
