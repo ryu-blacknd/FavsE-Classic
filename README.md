@@ -83,7 +83,7 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 
 #### エンコード関連
 
-- [x264](https://onedrive.live.com/?authkey=%21ABzai4Ddn6_Xxd0&id=6BDD4375AC8933C6%214477&cid=6BDD4375AC8933C6)（exeファイルのみ必要です。毎回設定変更するのも面倒なので`x264_64.exe`等にリネーム推奨です）
+- [x264](https://onedrive.live.com/?authkey=%21ABzai4Ddn6_Xxd0&id=6BDD4375AC8933C6%214477&cid=6BDD4375AC8933C6)（exeファイルのみ必要です。毎回設定変更するのも面倒なので`x264_x64.exe`等にリネーム推奨です）
 - [QSVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%21482&cid=6BDD4375AC8933C6)（AviUtl
 用プラグインに同梱されています。`QSVEncC\x86`の中身が必要です）
 - [NVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%212293&cid=6BDD4375AC8933C6)（AviUtl

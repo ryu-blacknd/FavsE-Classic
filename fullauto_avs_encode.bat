@@ -1,35 +1,40 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 4.01
+echo FavsE (FullAuto AVS Encode) 4.02
 echo.
 REM ----------------------------------------------------------------------
 REM CPU‚ÌƒRƒA”i”’lj
-REM ƒXƒŒƒbƒh”‚Å‚Í‚È‚­ƒRƒA”‚ð”’l‚Å‹L“ü‚µ‚Ä‚­‚¾‚³‚¢B
+REM ƒXƒŒƒbƒh”‚Å‚Í‚È‚­ƒRƒA”‚ð”’l‚Å‹L“ü‚µ‚Ä‚­‚¾‚³‚¢BƒXƒŒƒbƒh”‚Ì”¼•ª‚ª—Ç‚¢‚æ‚¤‚Å‚·B
 REM ----------------------------------------------------------------------
 set cpu_cores=6
 REM ----------------------------------------------------------------------
-REM ‰f‘œƒGƒ“ƒR[ƒ_‚ÌŽw’èi0:x264, 1:QSVEnc, 2:NVEnc_AVC, 3:NVEnc_HEVCj
-REM ³’¼‚»‚ê‚Ù‚Ç‹­—ó‚È‘¬“x·‚Í‚ ‚è‚Ü‚¹‚ñB‰æŽ¿‚Ì·‚Í‚ ‚è‚Ü‚·‚Ì‚Åx264„§‚Å‚·B
+REM ‰f‘œƒGƒ“ƒR[ƒ_i0:x264, 1:QSVEnc, 2:NVEnc_AVC, 3:NVEnc_HEVCj¦„§F0
+REM ³’¼‚»‚ê‚Ù‚Ç‹­—ó‚È‘¬“x·‚Í‚ ‚è‚Ü‚¹‚ñB‰æŽ¿‚Ì·‚Í‚³‚·‚ª‚É‘å‚«‚¢‚½‚ßx264„§‚Å‚·B
 REM ----------------------------------------------------------------------
 set video_encoder=0
 REM ----------------------------------------------------------------------
-REM ‰¹ºƒGƒ“ƒR[ƒ_‚ÌŽw’èi0:FAW, 1:qaacj
-REM ’Êí‚ÍFAW‚ÅOK‚Å‚·BFAW‚ªŽg—p‚Å‚«‚È‚¢ê‡‚ÍŽ©“®“I‚Éqaac‚Åˆ—‚µ‚Ü‚·B
+REM ‰¹ºƒGƒ“ƒR[ƒ_i0:FAW, 1:qaacj¦„§F0
+REM ’Êí‚ÍFAW‚ÅOK‚Å‚·B0‚Å‚ ‚Á‚Ä‚àAFAW‚ªŽg—p‚Å‚«‚È‚¢ê‡‚ÍŽ©“®“I‚Éqaac‚Åˆ—‚µ‚Ü‚·B
 REM ----------------------------------------------------------------------
 set audio_encoder=0
 
 REM ----------------------------------------------------------------------
-REM Ž©“®CMƒJƒbƒg‚Ìˆ—‚ðs‚¤‚©i0:s‚í‚È‚¢, 1:s‚¤j
-REM tsƒtƒ@ƒCƒ‹‚Ì‚Ý—LŒø‚Å‚·B‚¸“x‚Å‚·‚ªŠ®àø‚Å‚Í‚ ‚è‚Ü‚¹‚ñBŽè“®ƒJƒbƒg‚Æ‚Ì•¹—p„§‚Å‚·B
+REM FAW•sŽg—pŽž‚Ì‰¹ƒYƒŒ‘Îôi0:s‚í‚È‚¢, 1:s‚¤j¦‰¹ƒYƒŒ‚ª‘½‚¢‚È‚ç„§F1
+REM ‰¹ƒYƒŒ‘Îô‚ðŽ‚ÂFAW‚ðŽg‚í‚È‚¢/Žg‚¦‚È‚¢ê‡‚ÉAfpsŒÅ’è‚É‚æ‚é‰¹ƒYƒŒ‘Îô‚ðs‚¢‚Ü‚·B
+REM ----------------------------------------------------------------------
+set assumefps=1
+REM ----------------------------------------------------------------------
+REM Ž©“®CMƒJƒbƒgˆ—i0:s‚í‚È‚¢, 1:s‚¤j
+REM ˜^‰ætsƒtƒ@ƒCƒ‹‚Ì‚Ý—LŒø‚Å‚·BŠ®àø‚Å‚Í‚ ‚è‚Ü‚¹‚ñ‚Ì‚ÅAŽè“®ƒJƒbƒg‚Æ‚Ì•¹—p„§‚Å‚·B
 REM ----------------------------------------------------------------------
 set cut_cm=1
 REM ----------------------------------------------------------------------
-REM ƒƒSœ‹Ž‚Ìˆ—‚ðs‚¤‚©i0:s‚í‚È‚¢, 1:s‚¤j
-REM tsƒtƒ@ƒCƒ‹‚Ì‚Ý—LŒø‚Å‚·BŽ–‘O‚ÉAviUtl‚Å.lgdƒtƒ@ƒCƒ‹ŒQ‚ðì¬‚µ‚Ä‚¨‚­•K—v‚ª‚ ‚è‚Ü‚·B
+REM ƒƒSœ‹Žˆ—i0:s‚í‚È‚¢, 1:s‚¤j
+REM ˜^‰ætsƒtƒ@ƒCƒ‹‚Ì‚Ý—LŒø‚Å‚·BAviUtl‚Ålgdƒtƒ@ƒCƒ‹ŒQ‚ðì¬‚µ‚Ä‚¨‚­•K—v‚ª‚ ‚è‚Ü‚·B
 REM ----------------------------------------------------------------------
 set cut_logo=1
 REM ----------------------------------------------------------------------
-REM avs¶¬Œã‚Éˆ—‚ðˆêŽž’âŽ~‚·‚é‚©i0:‚µ‚È‚¢, 1:‚·‚éj
+REM avs¶¬Œã‚Éˆ—‚ðˆêŽž’âŽ~i0:‚µ‚È‚¢, 1:‚·‚éj
 REM ¶¬‚³‚ê‚½ƒXƒNƒŠƒvƒg‚ðŠm”F‚µ‚Ä‚©‚çi‚ß‚ç‚ê‚Ü‚·B‚Ù‚ÚŽè“®CMƒJƒbƒg—p‚Å‚·B
 REM ----------------------------------------------------------------------
 set check_avs=1
@@ -40,7 +45,7 @@ REM PT3“™‚Å˜^‰æ‚µ‚½tsƒtƒ@ƒCƒ‹‚Ìê‡‚ÍŽ©“®”»•Ê‚µ‚Ü‚·‚Ì‚ÅA‚±‚ÌÝ’è‚Í–³Œø‚Æ‚È‚è‚Ü‚
 REM ----------------------------------------------------------------------
 set deint_mode=1
 REM ----------------------------------------------------------------------
-REM ƒmƒCƒYœ‹Ž‚ðs‚¤‚©i0:s‚í‚È‚¢, 1:s‚¤j
+REM ƒmƒCƒYœ‹Ži0:s‚í‚È‚¢, 1:s‚¤j
 REM ‚Žü”gƒmƒCƒYœ‹Ž‚Å‚·BŽã‚ß‚ÉÝ’è‚µ‚Ä‚¢‚Ü‚·B‹­‚ß‚É‚·‚é‚É‚ÍÝ’è’l‚ð•ÏX‚µ‚Ä‚­‚¾‚³‚¢B
 REM ----------------------------------------------------------------------
 set denoize=0
@@ -50,13 +55,13 @@ REM 4K / 2K / Full HD“™‚Ìê‡‚ÉHDƒTƒCƒY‚É‘µ‚¦Aƒtƒ@ƒCƒ‹ƒTƒCƒY‚ðk‚ß‚éˆÓ–¡‚ª‚ ‚è‚
 REM ----------------------------------------------------------------------
 set resize=1
 REM ----------------------------------------------------------------------
-REM ŽáŠ±‚ÌƒVƒƒ[ƒv‰»‚ðs‚¤‚©i0:s‚í‚È‚¢, 1:s‚¤j
+REM ƒVƒƒ[ƒv‰»i0:s‚í‚È‚¢, 1:s‚¤j
 REM ‹CŽ‚¿’ö“x‚ÌƒVƒƒ[ƒv‰»‚Å‚·‚ªA—á‚¦‚ÎƒmƒCƒYœ‹ŽŒã‚âŠg‘åˆ—Œã‚É‚Í‚»‚ê‚È‚è‚É—LŒø‚Å‚·B
 REM ----------------------------------------------------------------------
 set sharpen=0
 
 REM ----------------------------------------------------------------------
-REM I—¹Œã‚ÉˆêŽžƒtƒ@ƒCƒ‹‚ðíœ‚·‚é‚©i0:‚µ‚È‚¢, 1:‚·‚éj
+REM I—¹Œã‚ÉˆêŽžƒtƒ@ƒCƒ‹‚ðíœi0:‚µ‚È‚¢, 1:‚·‚éj
 REM ˆêŽžƒtƒ@ƒCƒ‹ŒQ‚ðˆêŠ‡íœ‚Å‚«‚Ü‚·B0‚¾‚Æ•ú’u‚³‚ê‚Ü‚·‚ªA‚â‚è’¼‚µŽž‚ÉÄ—˜—p‚Å‚«‚Ü‚·B
 REM ----------------------------------------------------------------------
 set del_temp=0
@@ -74,7 +79,7 @@ REM ----------------------------------------------------------------------
 REM ¡Šm”F•K{FŽÀsƒtƒ@ƒCƒ‹–¼
 REM ŠÂ‹«‚É‰ž‚¶‚Äy•K‚¸z‘‚«Š·‚¦‚Ä‚­‚¾‚³‚¢B‚í‚©‚é•û‚Í•K—v‚È‚à‚Ì‚¾‚¯‚ÅŒ‹\‚Å‚·B
 REM ----------------------------------------------------------------------
-set x264=%bin_path%x264_64.exe
+set x264=%bin_path%x264_x64.exe
 set qsvencc=%bin_path%QSVEncC64.exe
 set nvencc=%bin_path%NVEncC64.exe
 
@@ -114,6 +119,8 @@ REM ======================================================================
 :loop
 if "%~1" == "" goto end
 set file_ext=%~x1
+
+if %file_ext% == .avs echo avsƒtƒ@ƒCƒ‹‚Å‚Í‚È‚­“®‰æƒtƒ@ƒCƒ‹‚ðƒhƒ‰ƒbƒO‚µ‚Ä‚­‚¾‚³‚¢B & goto end
 
 echo ======================================================================
 echo %~1
@@ -219,6 +226,8 @@ if "%info_scan_order%" == "Bottom Field First" (
 :end_info_scan_order
 
 if not "%info_container%" == "MPEG-TS" goto end_tssplitter
+for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -b') do set tvname=%%A
+if "%tnvame%" == "" goto end_tssplitter
 if not "%info_vcodec%" == "MPEG-2 Video" goto end_tssplitter
 if not "%info_acodec%" == "AAC LC" goto end_tssplitter
 if %is_sd% == 1 goto end_tssplitter
@@ -234,9 +243,10 @@ echo.
 
 :end_tssplitter
 
-if not %audio_encoder% == 0 goto end_dgindex
-if not "%info_vcodec%" == "MPEG-2 Video" goto end_dgindex
-if not "%info_acodec%" == "AAC LC" goto end_dgindex
+if not %audio_encoder% == 0 goto end_faw
+if not "%info_container%" == "MPEG-TS" goto end_faw
+if not "%info_vcodec%" == "MPEG-2 Video" goto end_faw
+if not "%info_acodec%" == "AAC LC" goto end_faw
 echo ----------------------------------------------------------------------
 echo DGIndexˆ—
 echo ----------------------------------------------------------------------
@@ -248,8 +258,6 @@ if not exist "%source_fullname%.m2v" if not exist "%source_fullname% PID *.aac" 
 echo.
 
 for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *.aac"`) do set aac_fullpath=%file_path%%%A
-
-:end_dgindex
 
 if not %audio_encoder% == 0 goto end_faw
 if not exist "%aac_fullpath%" goto end_faw
@@ -307,7 +315,7 @@ if not exist "%wav_fullpath%" echo AudioDub(last, LSMASHAudioSource("%source_ful
 goto end_lsmash
 
 :lwlibav
-echo LWLibavVideoSource("%source_fullpath%"%lsmash_format%, fpsnum=30000, fpsden=1001)>>%avs%
+echo LWLibavVideoSource("%source_fullpath%"%lsmash_format%)>>%avs%
 if exist "%wav_fullpath%" echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
 if not exist "%wav_fullpath%" echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
 
@@ -316,8 +324,7 @@ if not exist "%wav_fullpath%" echo AudioDub(last, LWLibavAudioSource("%source_fu
 :end_fileread
 echo.>>%avs%
 
-REM echo AssumeFPS(30000, 1001)>>%avs%
-REM echo.>>%avs%
+if %assumefps% == 1 echo AssumeFPS(30000, 1001, true)>>%avs% & echo.>>%avs%
 
 echo ### ƒtƒB[ƒ‹ƒhƒI[ƒ_[ ###>>%avs%
 if %order_ref% == TOP echo AssumeTFF()>>%avs%
