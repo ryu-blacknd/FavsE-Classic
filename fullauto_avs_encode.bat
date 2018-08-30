@@ -1,6 +1,6 @@
-@echo off
+REM @echo off
 
-echo FavsE (FullAuto AVS Encode) 4.02
+echo FavsE (FullAuto AVS Encode) 4.03
 echo.
 REM ----------------------------------------------------------------------
 REM CPU‚ÌƒRƒA”i”’lj
@@ -34,8 +34,8 @@ REM ˜^‰ætsƒtƒ@ƒCƒ‹‚Ì‚Ý—LŒø‚Å‚·BAviUtl‚Ålgdƒtƒ@ƒCƒ‹ŒQ‚ðì¬‚µ‚Ä‚¨‚­•K—v‚ª‚ ‚è‚Ü‚
 REM ----------------------------------------------------------------------
 set cut_logo=1
 REM ----------------------------------------------------------------------
-REM avs¶¬Œã‚Éˆ—‚ðˆêŽž’âŽ~i0:‚µ‚È‚¢, 1:‚·‚éj
-REM ¶¬‚³‚ê‚½ƒXƒNƒŠƒvƒg‚ðŠm”F‚µ‚Ä‚©‚çi‚ß‚ç‚ê‚Ü‚·B‚Ù‚ÚŽè“®CMƒJƒbƒg—p‚Å‚·B
+REM avs¶¬Œã‚Éˆ—‚ðˆêŽž’âŽ~i0:‚µ‚È‚¢, 1:‚·‚éj¦„§F1
+REM ¶¬‚³‚ê‚½ƒXƒNƒŠƒvƒg‚ðŠm”F‚µ‚Ä‚©‚çi‚ß‚ç‚ê‚Ü‚·B100•bŒo‚Â‚Æˆ—‚ð‘±s‚µ‚Ü‚·B
 REM ----------------------------------------------------------------------
 set check_avs=1
 
@@ -478,7 +478,7 @@ if %check_avs% == 1 (
   echo ¦avsƒtƒ@ƒCƒ‹Šm”FƒIƒvƒVƒ‡ƒ“‚ªÝ’è‚³‚ê‚Ä‚¢‚Ü‚·B
   echo ¦Šm”FE•ÒWŠ®—¹Œã‚Í‰½‚©ƒL[‚ð‰Ÿ‚¹‚Îˆ—‚ð‘±s‚Å‚«‚Ü‚·B
   echo.
-  pause
+  timeout /T 100
 )
 echo.
 
