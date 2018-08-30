@@ -27,10 +27,11 @@
 - 若干のシャープ化（しない設定も可能）
 - 処理終了後に、作業ファイル群をすべて削除（しない設定も可能。その場合は再利用可能）
 
-要するに「面倒な知識・判断・作業を排除し、お好きなエンコーダでのエンコード完了までをほぼ全自動化する1本のバッチファイル」です。
+### 要するに
+
+「面倒な知識・判断・作業を排除し、お好きなエンコーダでのエンコード完了までをほぼ全自動化する1本のバッチファイル」です。
 
 あのソフトで読み込んでポチポチ、このソフトで読み込んでポチポチ…と面倒な作業は必要ありません。動画ファイルをドラッグするだけです。
-
 
 ## 使用方法
 
@@ -50,7 +51,7 @@ FavsEの動作に必要なツールは以下の通りで、結構あります。
 
 AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配布サイトが異なる場合があります（例：`DGDecode.dll`）。
 
-> ツール類が動作しない場合は、.NET Frameworkや[Download Visual C\+\+ Redistributable Packages for Visual Studio 2013 from Official Microsoft Download Center](https://www.microsoft.com/en-us/download/details.aspx?id=40784)等の対応バージョンがインストールされていないケースが多いかと思います。この辺りは環境によりますのでググってみてください。
+> ツール類が動作しない場合は、[.NET Framework](https://www.microsoft.com/ja-jp/download/details.aspx?id=21)や[VC\+\+ Redistributable Packages](https://www.microsoft.com/en-us/download/details.aspx?id=40784)等の対応バージョンがインストールされていないケースが多いかと思います。この辺りは環境によりますのでググってみてください。
 
 ### AviSynth+ MT
 
@@ -65,26 +66,26 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 64bit版は`C:¥Program Files (x86)¥AviSynth+`内の`plugins64+`へ、32bit版は`plugins+`へコピーして使用します。
 
 - [DGDecode](https://www.mediafire.com/file/c0wmemj5jam/DGDecode_3-19-2010.rar)（`DGDecode.dll`のみ必要です。32bit版は後述のDGIndexに同梱されています）
-- [L-SMASHSource](https://www.dropbox.com/sh/3i81ttxf028m1eh/AAABkQn4Y5w1k-toVhYLasmwa?dl=0)（2種ありますがLSMASHSourceの方です。`LSMASHSource.dll`のみ必要です）
+- [LSMASHSource](https://www.dropbox.com/sh/3i81ttxf028m1eh/AAABkQn4Y5w1k-toVhYLasmwa?dl=0)（2種ありますがLSMASHSourceの方です。`LSMASHSource.dll`のみ必要です）
 - [delogo](https://www.avisynth.info/?%E3%82%A2%E3%83%BC%E3%82%AB%E3%82%A4%E3%83%96#bbcd6a1e)
 - [NNEDI3](https://github.com/jpsdr/NNEDI3/releases)
 - [TDeint](https://www.mediafire.com/download/kmcztm1xzjm/TDeinterlace_3-14-2010.rar)
 - [TIVTC](https://github.com/pinterf/TIVTC/releases)
-- [Hqdn3dY](https://forum.doom9.org/attachment.php?attachmentid=15589&d=1474456943)（`Hqdn3dY-x64.dll`が64bit版です。ハイフンは非推奨ですし`-x64`を消したほうが良いと思います）
+- [Hqdn3dY](https://forum.doom9.org/attachment.php?attachmentid=15589&d=1474456943)（`Hqdn3dY-x64.dll`が64bit版です。ハイフンは非推奨とエラーが出るので`-x64`を消したほうが良いです）
 
 ### 各種ツール
 
-以下は、フォルダを決めてまとめて置いてください（例：`C:\bin`）。PATHを通しておくと便利です。
+以下はフォルダを決めて、まとめて置いてください（例：`C:\bin`）。PATHを通しておくと便利です。
 
-基本的にexeファイルだけで良いのですが例外もありますので、注意書きに目を通してください。
+基本的にexeファイルだけで良いのですが例外もありますので、注意書きに目を通してください。x64などのフォルダ内に64bit版バイナリが格納されている場合が多いので注意してください。
 
 #### エンコード関連
 
-- [x264 kMod](http://komisar.gin.by/)（AviSynth+スクリプトの入力に対応しているバイナリです）
+- [x264 kMod](http://komisar.gin.by/)（avsの入力に対応しているバイナリです。kModのx86_64版が必要です）
 - [QSVEncC](https://onedrive.live.com/?cid=6bdd4375ac8933c6&id=6BDD4375AC8933C6%21482&lor=shortUrl)（`QSVEncC\x86`の中身が必要です）
 - [NVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%212293&cid=6BDD4375AC8933C6)（`NVEncC\x86`の中身が必要です）
-- [fawcl](http://www2.wazoku.net/2sen/friioup/)（基本的に最新のものです。ページ内検索してください）
-- [qaac](https://sites.google.com/site/qaacpage/cabinet)
+- [fawcl](http://www2.wazoku.net/2sen/friioup/)（基本的に最新のものです。ページ内検索してください。`fawcl.exe`のみ必要です）
+- [qaac](https://sites.google.com/site/qaacpage/cabinet)（`qaac64.exe`のみ必要です）
 - [L-SMASH](http://pop.4-bit.jp/?page_id=7920)（`muxer.exe`と`remuxer.exe`のみ必要です）
 
 #### 分割・結合ツール
@@ -95,20 +96,20 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 
 #### 補助ツール
 
-- [avs2pipemod](https://github.com/chikuzen/avs2pipemod/releases)
+- [avs2pipemod](https://github.com/chikuzen/avs2pipemod/releases)（`avs2pipemod64.exe`のみ必要です）
 - [MediaInfo \- Download MediaInfo for Microsoft Windows](https://mediaarea.net/en/MediaInfo/Download/Windows)（CLI版の`MediaInfo.exe`のみ必要です）
-- [rplsinfo](https://web.archive.org/web/20161126173554/http://saysaysay.net:80/rplstool/rplsinfo)
+- [rplsinfo](https://www.axfc.net/u/3933238.zip)（`rplsinfo.exe`のみ必要です）
 - [sed for Windows](http://gnuwin32.sourceforge.net/packages/sed.htm)（BinariesとDependencies、`bin`の中身が必要です）
 - [Grep for Windows](http://gnuwin32.sourceforge.net/packages/grep.htm)（BinariesとDependencies、`bin`の中身が必要です）
 
 #### 特殊ツール
-- [join_logo_scp](http://www1.axfc.net/u/3506121.zip)（`join_logo_scp試行環境_2.zip`という圧縮ファイルの中身のみ必要です）
+- [join_logo_scp](http://www1.axfc.net/u/3458102.zip)（`join_logo_scp試行環境_2.zip`という圧縮ファイルの中身のみ必要です）
+
+> join_logo_scpは、[CMカットスレ](https://mevius.5ch.net/test/read.cgi/avi/1531949212/)で最新版が公開されています。上書きして使用します。不具合が修正されているようです。
 
 #### その他
 
-- [AvsPmod](https://forum.doom9.org/showpost.php?p=1801766&postcount=1202)（無くても可です。AviUtl + チャプター編集プラグインでも良いです）
-
-join_logo_scpは、[CMカットスレ](https://mevius.5ch.net/test/read.cgi/avi/1531949212/)で最新版が公開されています。精度が上がっているようです。
+- [AvsPmod](https://forum.doom9.org/showpost.php?p=1801766&postcount=1202)（確認やカット編集を行えます。AviUtl + チャプター編集プラグインでも可です）
 
 ## 入力ファイルの仕様
 
