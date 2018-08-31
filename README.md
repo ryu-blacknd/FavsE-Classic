@@ -33,7 +33,7 @@
 
 ## 使用方法
 
-このバッチファイル（もしくはバッチファイルへのショートカット）に、動画ファイル（avsファイルではありません）をドラッグしてください。複数ファイルのドラッグにも対応します。
+バッチファイル（もしくはバッチファイルへのショートカット）に、動画ファイル（avsファイルではありません）をドラッグしてください。複数ファイルのドラッグにも対応します。
 
 すると設定や動画情報に応じた動作を全自動で行います。AvsPmodやAviUtl + カット編集プラグイン等で手動カット編集を行いたい場合もあるかと思いますが、その際はavsファイル書き出し後に一時停止する設定にしてください。
 
@@ -80,9 +80,9 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 
 - [x264](https://onedrive.live.com/?authkey=%21ABzai4Ddn6_Xxd0&id=6BDD4375AC8933C6%214477&cid=6BDD4375AC8933C6)（exeファイルのみ必要です。毎回設定変更するのも面倒なので`x264_x64.exe`等にリネーム推奨です）
 - [QSVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%21482&cid=6BDD4375AC8933C6)（AviUtl
-用プラグインに同梱されています。`QSVEncC\x86`の中身が必要です）
+用プラグインに同梱されています。`QSVEncC\x64`の中身が必要です）
 - [NVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%212293&cid=6BDD4375AC8933C6)（AviUtl
-用プラグインに同梱されています。`NVEncC\x86`の中身が必要です）
+用プラグインに同梱されています。`NVEncC\x64`の中身が必要です）
 - [fawcl](http://www2.wazoku.net/2sen/friioup/)（基本的に最新のものです。ページ内検索してください。`fawcl.exe`のみ必要です）
 - [qaac](https://sites.google.com/site/qaacpage/cabinet)（`qaac64.exe`のみ必要です）
 - [L-SMASH](https://onedrive.live.com/?id=6BDD4375AC8933C6%21404&cid=6BDD4375AC8933C6)（`muxer.exe`と`remuxer.exe`のみ必要です）
