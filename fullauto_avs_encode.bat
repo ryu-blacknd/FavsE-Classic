@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 4.07
+echo FavsE (FullAuto AVS Encode) 4.08
 echo.
 REM ---------------------------------------------------------------------------
 REM CPUのコア数（数値）
@@ -298,6 +298,7 @@ if not exist "%source_fullname%.demuxed.m2v" goto lsmashsource
 
 echo LWLibavVideoSource("%source_fullname%.demuxed.m2v")>>%avs%
 echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
+REM echo AudioDub(last, AACFaw("%aac_fullpath%"))>>%avs%
 goto end_fileread
 
 :lsmashsource
