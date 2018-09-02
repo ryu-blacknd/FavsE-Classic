@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 4.06
+echo FavsE (FullAuto AVS Encode) 4.07
 echo.
 REM ---------------------------------------------------------------------------
 REM CPUのコア数（数値）
@@ -22,7 +22,7 @@ REM ---------------------------------------------------------------------------
 REM 音ズレ対策（0:行わない, 1:行う）※音ズレが発生する場合のみ推奨：1
 REM どうしても音ズレが発生する場合に、fps固定による音ズレ対策を行います。
 REM ---------------------------------------------------------------------------
-set assumefps=1
+set assumefps=0
 REM ---------------------------------------------------------------------------
 REM 自動CMカット処理（0:行わない, 1:行う）
 REM 録画tsファイルのみ有効です。完璧ではないため手動カットとの併用推奨です。
@@ -100,7 +100,7 @@ REM 映像エンコーダのオプション
 REM 設定値の意味がわかる方は自由に改変してください。
 REM ---------------------------------------------------------------------------
 if %video_encoder% == 0 (
-  set x264_opt=--crf 22 --qcomp 0.7 --me umh --subme 9 --direct auto --ref 5 --trellis 2
+  set x264_opt=--crf 20 --qcomp 0.7 --me umh --subme 9 --direct auto --ref 5 --trellis 2
 ) else if %video_encoder% == 1 (
   set qsvencc_opt=-c h264 -u 2 --la-icq 24 --la-quality slow --bframes 3 --weightb --weightp
 ) else if %video_encoder% == 2 (
@@ -484,7 +484,12 @@ echo.
 
 echo ---------------------------------------------------------------------------
 echo 映像処理
-if not exist "%source_fullpath%.lwi" if not exist "%source_fullname%.demuxed.m2v.lwi" echo ※初回のみインデックスファイルを作成するため、開始に時間がかかります。
+if exist "%source_fullname%.demuxed.m2v.lwi" goto end_create_index
+if exist "%source_fullpath%.lwi" goto end_create_index
+ 
+echo ※インデックスファイルが未作成の場合は、作成に時間がかかります。
+
+:end_create_index
 echo ---------------------------------------------------------------------------
 if not exist %output_enc% (
   if %video_encoder% == 0 (
