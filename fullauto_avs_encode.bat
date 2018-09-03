@@ -1,8 +1,8 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 4.10
+echo FavsE (FullAuto AVS Encode) 4.21
 echo.
-REM ======================================================================
+REM ===========================================================================
 REM CPU‚ÌƒRƒA”i”’lj
 REM ƒXƒŒƒbƒh”‚Å‚Í‚È‚­AƒXƒŒƒbƒh”‚Ì”¼•ª’ö“xiàƒRƒA”j‚ª—Ç‚¢‚Æ‚³‚ê‚Ä‚¢‚Ü‚·B
 REM ---------------------------------------------------------------------------
@@ -18,18 +18,18 @@ REM ’Êí‚ÍFAW‚ÅOK‚Å‚·BFAW‚ªŽg—p‚Å‚«‚È‚¢ê‡‚ÍŽ©“®“I‚Éqaac‚Åˆ—‚µ‚Ü‚·B
 REM ---------------------------------------------------------------------------
 set audio_encoder=0
 
-REM ======================================================================
+REM ===========================================================================
 REM ‰¹ƒYƒŒ‘Îôi0:s‚í‚È‚¢, 1:s‚¤j¦‰¹ƒYƒŒ‚ª”­¶‚·‚éê‡‚Ì‚Ý„§F1
 REM ‚Ç‚¤‚µ‚Ä‚à‰¹ƒYƒŒ‚ª”­¶‚·‚éê‡‚ÉAfpsŒÅ’è‚É‚æ‚é‰¹ƒYƒŒ‘Îô‚ðs‚¢‚Ü‚·B
 REM ---------------------------------------------------------------------------
 set assumefps=0
 REM ---------------------------------------------------------------------------
-REM Ž©“®CMƒJƒbƒgˆ—i0:s‚í‚È‚¢, 1:s‚¤j
+REM Ž©“®CMƒJƒbƒgˆ—i0:s‚í‚È‚¢, 1:s‚¤j¦„§F1
 REM ˜^‰ætsƒtƒ@ƒCƒ‹‚Ì‚Ý—LŒø‚Å‚·BŠ®àø‚Å‚Í‚È‚¢‚½‚ßŽè“®ƒJƒbƒg‚Æ‚Ì•¹—p„§‚Å‚·B
 REM ---------------------------------------------------------------------------
 set cut_cm=1
 REM ---------------------------------------------------------------------------
-REM ƒƒSœ‹Žˆ—i0:s‚í‚È‚¢, 1:s‚¤j
+REM ƒƒSœ‹Žˆ—i0:s‚í‚È‚¢, 1:s‚¤j¦„§F1
 REM ˜^‰ætsƒtƒ@ƒCƒ‹‚Ì‚Ý—LŒø‚Å‚·BAviUtl‚Ålgdƒtƒ@ƒCƒ‹‚ðì¬‚µ‚Ä‚¨‚­•K—v‚ª‚ ‚è‚Ü‚·B
 REM ---------------------------------------------------------------------------
 set cut_logo=1
@@ -39,8 +39,8 @@ REM ¶¬‚³‚ê‚½ƒXƒNƒŠƒvƒg‚ðŠm”F‚µ‚Ä‚©‚çi‚ß‚ç‚ê‚Ü‚·B120•bŒo‚Â‚Æˆ—‚ð‘±s‚µ‚Ü‚·
 REM ---------------------------------------------------------------------------
 set check_avs=1
 
-REM ======================================================================
-REM ƒCƒ“ƒ^[ƒŒ[ƒX‰ðœƒ‚[ƒhi0:ƒCƒ“ƒ^[ƒŒ[ƒX•ÛŽ, 1:’Êí, 2:24fps‰», 3:BOB‰»j
+REM ===========================================================================
+REM ƒCƒ“ƒ^[ƒŒ[ƒX‰ðœƒ‚[ƒhi0:•ÛŽ, 1:’Êí‰ðœ, 2:24fps‰», 3:BOB‰»j¦„§F1
 REM ˜^‰ætsƒtƒ@ƒCƒ‹‚Ìê‡‚ÍŽ©“®”»•Ê‚µ‚Ü‚·‚Ì‚ÅA‚±‚ÌÝ’è‚Í–³Œø‚Æ‚È‚è‚Ü‚·B
 REM ---------------------------------------------------------------------------
 set deint_mode=1
@@ -50,8 +50,8 @@ REM ‚Žü”gƒmƒCƒYœ‹Ž‚Å‚·BŽã‚ßÝ’è‚Å‚·B‹­‚ß‚É‚·‚é‚É‚ÍÝ’è’l‚ð•ÏX‚µ‚Ä‚­‚¾‚³‚¢B
 REM ---------------------------------------------------------------------------
 set denoize=0
 REM ---------------------------------------------------------------------------
-REM Width‚ª1280px‚ð’´‚¦‚éê‡‚É1280x720px‚ÉƒŠƒTƒCƒY‚·‚é‚©i0:‚µ‚È‚¢, 1:‚·‚éj
-REM 4K/2K/Full HD“™‚Ìê‡‚ÉHDƒTƒCƒY‚É‘µ‚¦‚Ü‚·B‚»‚Ì•ªƒtƒ@ƒCƒ‹ƒTƒCƒY‚àk‚Ý‚Ü‚·B
+REM ƒŠƒTƒCƒYi0:‚µ‚È‚¢, 1:‚·‚éj
+REM 4K‚â1080p“™AWidth‚ª1,280px‚ð’´‚¦‚éê‡‚É1,280x720px‚ÉƒŠƒTƒCƒY‚·‚é‚©B
 REM ---------------------------------------------------------------------------
 set resize=1
 REM ---------------------------------------------------------------------------
@@ -60,13 +60,13 @@ REM Žã‚ß‚ÌƒVƒƒ[ƒv‰»‚Å‚·B—á‚¦‚ÎƒmƒCƒYœ‹ŽŒã‚âŠg‘åˆ—Œã‚É‚Í‚»‚ê‚È‚è‚É—LŒø‚Å‚·B
 REM ---------------------------------------------------------------------------
 set sharpen=0
 
-REM ======================================================================
+REM ===========================================================================
 REM I—¹Œã‚ÉˆêŽžƒtƒ@ƒCƒ‹‚ðíœi0:‚µ‚È‚¢, 1:‚·‚éj
 REM ˆêŽžƒtƒ@ƒCƒ‹ŒQ‚ðíœ‚Å‚«‚Ü‚·B0‚¾‚Æ•ú’u‚³‚êA‚â‚è’¼‚µŽž‚ÉÄ—˜—p‚Å‚«‚Ü‚·B
 REM ---------------------------------------------------------------------------
 set del_temp=0
 
-REM ======================================================================
+REM ===========================================================================
 REM ¡Šm”F•K{FƒtƒHƒ‹ƒ_–¼
 REM ŠÂ‹«‚É‰ž‚¶‚Äy•K‚¸z‘‚«Š·‚¦‚Ä‚­‚¾‚³‚¢B
 REM ---------------------------------------------------------------------------
@@ -248,10 +248,10 @@ if not "%info_acodec%" == "AAC LC" goto end_faw
 echo ---------------------------------------------------------------------------
 echo DGIndexˆ—
 echo ---------------------------------------------------------------------------
-if not exist "%source_fullname%.m2v" if not exist "%source_fullname% PID *.aac" (
-  call %dgindex% -i "%source_fullpath%" -od "%source_fullname%" -ia 5 -fo 0 -yr 2 -om 2 -hide -exit
+if not exist "%source_fullname%.d2v" if not exist "%source_fullname% PID *.aac" (
+  call %dgindex% -i "%source_fullpath%" -o "%source_fullname%" -ia 5 -fo 0 -yr 2 -om 2 -hide -exit
 ) else (
-  echo •ª—£Ï‚Ý‚Ìm2v / aacƒtƒ@ƒCƒ‹‚ª‘¶Ý‚µ‚Ä‚¢‚Ü‚·B
+  echo •ª—£Ï‚Ý‚Ìd2v / aacƒtƒ@ƒCƒ‹‚ª‘¶Ý‚µ‚Ä‚¢‚Ü‚·B
 )
 echo.
 
@@ -281,8 +281,6 @@ if exist %avs% (
   goto end_avs
 )
 
-echo SetMemoryMax(1024)>>%avs%
-echo.>>%avs%
 echo SetFilterMTMode("DEFAULT_MT_MODE", MT_MULTI_INSTANCE)>>%avs%
 echo SetFilterMTMode("MPEG2Source",        MT_NICE_FILTER)>>%avs%
 echo SetFilterMTMode("LWLibavVideoSource",  MT_SERIALIZED)>>%avs%
@@ -299,7 +297,7 @@ if not exist "%source_fullname%.d2v" goto lsmashsource
 
 echo MPEG2Source("%source_fullname%.d2v")>>%avs%
 echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
-goto end_fileread
+goto end_readfile
 
 :lsmashsource
 set lsmash_format=
@@ -318,7 +316,7 @@ if not exist "%wav_fullpath%" echo AudioDub(last, LWLibavAudioSource("%source_fu
 
 :end_lsmash
 
-:end_fileread
+:end_readfile
 echo.>>%avs%
 
 if %assumefps% == 1 echo AssumeFPS(30000, 1001, true)>>%avs% & echo.>>%avs%
@@ -408,19 +406,18 @@ echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
 goto end_deint
 
-:set_deint_bob
-echo #TIVTC24P2()>>%avs%
-echo #TDeint(edeint=nnedi3)>>%avs%
-echo TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
-echo.>>%avs%
-goto end_deint
-
 :set_deint_it
 echo TIVTC24P2()>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
 goto end_deint
+
+:set_deint_bob
+echo #TIVTC24P2()>>%avs%
+echo #TDeint(edeint=nnedi3)>>%avs%
+echo TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
+echo.>>%avs%
 
 :end_deint
 
@@ -567,8 +564,6 @@ if %del_hd_file% == 1 if exist "%source_fullpath%" del /f /q "%source_fullpath%"
 if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi" & echo %source_fullpath%.lwi
 if exist "%source_fullname%.d2v" del /f /q "%source_fullname%.d2v" & echo %source_fullname%.d2v
 if exist "%source_fullname%.d2v" del /f /q "%source_fullname%.d2v.lwi" & echo %source_fullname%.d2v.lwi
-REM if exist "%source_fullname%.demuxed.m2v" del /f /q "%source_fullname%.demuxed.m2v" & echo %source_fullname%.demuxed.m2v
-REM if exist "%source_fullname%.demuxed.m2v.lwi" del /f /q "%source_fullname%.demuxed.m2v.lwi" & echo %source_fullname%.demuxed.m2v.lwi
 if exist "%aac_fullpath%" del /f /q "%aac_fullpath%" & echo %aac_fullpath%
 if exist "%wav_fullpath%" del /f /q "%wav_fullpath%" & echo %wav_fullpath%
 if exist %avs% del /f /q %avs% & echo %avs%

@@ -2,10 +2,11 @@
 
 読み方は「フェイブス」ですが、別に「ふぁぶせ」でもいいです。
 
-動画ファイル（複数可）をドラッグすると、AVC + AACなMP4動画へのエンコード完了までの様々な工程を全自動で処理するバッチファイルです。
+動画ファイル（複数可）をドラッグすると、AVC + AACなMP4動画へのエンコード完了までの様々な工程を全自動で高速処理するバッチファイルです。
 
 ## 主な特徴
 
+- エンコードが高速（DGDecodeに代わりMPEG2DecPlusを採用。LSMASHSourceはそもそも爆速）
 - 1つのバッチファイルへのドラッグでエンコードまでの処理がすべて完結
 - 複数のファイルをドラッグすれば一括処理が可能
 - ほぼすべての動画ファイル形式に対応（AVC / HEVC + aacなmp4への変換としても機能する）
@@ -19,7 +20,7 @@
 - 自動CMカット（しない設定も可能、tsファイル以外では無効）
 - 自動ロゴ除去（しない設定も可能、tsファイル以外では無効）
 - インターレース保持/解除/BOB化/24fps化の自動/手動選択（プログレッシブな場合は無効）
-  - 上記をGPU処理に置き換えることが可能（高速だが若干低品質）
+  - 上記をGPU処理に置き換えることが可能（高速だが品質は低下）
 - 実写とアニメを自動判別して3Dノイズ除去（しない設定も可能）
 - widthが1280px超になる場合、720pにリサイズ（しない設定も可能）
 - 若干のシャープ化（しない設定も可能）
@@ -47,7 +48,7 @@ FavsEの動作に必要なツールは以下の通りで、結構あります。
 
 以後すべて **64bit（x64版）** で揃えてください。Windowsが32bitの場合、もしくは64bit版が存在しない場合のみ32bitに読み換えてください。
 
-AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配布サイトが異なる場合があります（例：`DGDecode.dll`）。
+AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配布サイトが異なる場合があります。
 
 > ツール類が動作しない場合は、[.NET Framework](https://www.microsoft.com/ja-jp/download/details.aspx?id=21)や[VC\+\+ Redistributable Packages](https://www.microsoft.com/en-us/download/details.aspx?id=40784)等の対応バージョンがインストールされていないケースが多いかと思います。この辺りは環境によりますのでググってみてください。
 
@@ -63,7 +64,7 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 
 64bit版は`C:¥Program Files (x86)¥AviSynth+`内の`plugins64+`へ、32bit版は`plugins+`へコピーして使用します。
 
-- [MPEG2DecPlus](https://kuroko.fushizen.eu/bin/)（AviSynth+対応高速化版です。DGDecode.dllがある場合は差し替えてください）
+- [MPEG2DecPlus](https://kuroko.fushizen.eu/bin/)（AviSynth+対応高速化版です。既にDGDecode.dllがある場合は差し替えてください）
 - [LSMASHSource](https://www.dropbox.com/sh/3i81ttxf028m1eh/AAABkQn4Y5w1k-toVhYLasmwa?dl=0)（2種ありますがLSMASHSourceの方です。`LSMASHSource.dll`のみ必要です）
 - [delogo](https://www.avisynth.info/?%E3%82%A2%E3%83%BC%E3%82%AB%E3%82%A4%E3%83%96#bbcd6a1e)（`delogo.dll`のみ必要です）
 - [NNEDI3](https://github.com/jpsdr/NNEDI3/releases)（`nnedi3.dll`のみ必要です。CPUに合ったフォルダを選択してください）
