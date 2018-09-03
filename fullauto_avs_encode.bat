@@ -1,8 +1,8 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 4.08
+echo FavsE (FullAuto AVS Encode) 4.10
 echo.
-REM ---------------------------------------------------------------------------
+REM ======================================================================
 REM CPU‚ÌƒRƒA”i”’lj
 REM ƒXƒŒƒbƒh”‚Å‚Í‚È‚­AƒXƒŒƒbƒh”‚Ì”¼•ª’ö“xiàƒRƒA”j‚ª—Ç‚¢‚Æ‚³‚ê‚Ä‚¢‚Ü‚·B
 REM ---------------------------------------------------------------------------
@@ -18,7 +18,7 @@ REM ’Êí‚ÍFAW‚ÅOK‚Å‚·BFAW‚ªg—p‚Å‚«‚È‚¢ê‡‚Í©“®“I‚Éqaac‚Åˆ—‚µ‚Ü‚·B
 REM ---------------------------------------------------------------------------
 set audio_encoder=0
 
-REM ---------------------------------------------------------------------------
+REM ======================================================================
 REM ‰¹ƒYƒŒ‘Îôi0:s‚í‚È‚¢, 1:s‚¤j¦‰¹ƒYƒŒ‚ª”­¶‚·‚éê‡‚Ì‚İ„§F1
 REM ‚Ç‚¤‚µ‚Ä‚à‰¹ƒYƒŒ‚ª”­¶‚·‚éê‡‚ÉAfpsŒÅ’è‚É‚æ‚é‰¹ƒYƒŒ‘Îô‚ğs‚¢‚Ü‚·B
 REM ---------------------------------------------------------------------------
@@ -39,7 +39,7 @@ REM ¶¬‚³‚ê‚½ƒXƒNƒŠƒvƒg‚ğŠm”F‚µ‚Ä‚©‚çi‚ß‚ç‚ê‚Ü‚·B120•bŒo‚Â‚Æˆ—‚ğ‘±s‚µ‚Ü‚·
 REM ---------------------------------------------------------------------------
 set check_avs=1
 
-REM ---------------------------------------------------------------------------
+REM ======================================================================
 REM ƒCƒ“ƒ^[ƒŒ[ƒX‰ğœƒ‚[ƒhi0:ƒCƒ“ƒ^[ƒŒ[ƒX•Û, 1:’Êí, 2:24fps‰», 3:BOB‰»j
 REM ˜^‰ætsƒtƒ@ƒCƒ‹‚Ìê‡‚Í©“®”»•Ê‚µ‚Ü‚·‚Ì‚ÅA‚±‚Ìİ’è‚Í–³Œø‚Æ‚È‚è‚Ü‚·B
 REM ---------------------------------------------------------------------------
@@ -60,13 +60,13 @@ REM ã‚ß‚ÌƒVƒƒ[ƒv‰»‚Å‚·B—á‚¦‚ÎƒmƒCƒYœ‹Œã‚âŠg‘åˆ—Œã‚É‚Í‚»‚ê‚È‚è‚É—LŒø‚Å‚·B
 REM ---------------------------------------------------------------------------
 set sharpen=0
 
-REM ---------------------------------------------------------------------------
+REM ======================================================================
 REM I—¹Œã‚Éˆêƒtƒ@ƒCƒ‹‚ğíœi0:‚µ‚È‚¢, 1:‚·‚éj
 REM ˆêƒtƒ@ƒCƒ‹ŒQ‚ğíœ‚Å‚«‚Ü‚·B0‚¾‚Æ•ú’u‚³‚êA‚â‚è’¼‚µ‚ÉÄ—˜—p‚Å‚«‚Ü‚·B
 REM ---------------------------------------------------------------------------
 set del_temp=0
 
-REM ---------------------------------------------------------------------------
+REM ======================================================================
 REM ¡Šm”F•K{FƒtƒHƒ‹ƒ_–¼
 REM ŠÂ‹«‚É‰‚¶‚Äy•K‚¸z‘‚«Š·‚¦‚Ä‚­‚¾‚³‚¢B
 REM ---------------------------------------------------------------------------
@@ -114,7 +114,7 @@ if %video_encoder% == 0 (
 
 REM ---------------------------------------------------------------------------
 REM İ’è‚±‚±‚Ü‚Å
-REM ======================================================================
+REM ===========================================================================
 
 :loop
 if "%~1" == "" goto end
@@ -122,11 +122,11 @@ set file_ext=%~x1
 
 if %file_ext% == .avs echo avsƒtƒ@ƒCƒ‹‚Å‚Í‚È‚­“®‰æƒtƒ@ƒCƒ‹‚ğƒhƒ‰ƒbƒO‚µ‚Ä‚­‚¾‚³‚¢B & goto end
 
-echo ======================================================================
+echo ===========================================================================
 echo %~1
 echo ---------------------------------------------------------------------------
 echo ˆ—ŠJn: %date% %time%
-echo ======================================================================
+echo ===========================================================================
 echo.
 
 REM ---------------------------------------------------------------------------
@@ -284,6 +284,7 @@ if exist %avs% (
 echo SetMemoryMax(1024)>>%avs%
 echo.>>%avs%
 echo SetFilterMTMode("DEFAULT_MT_MODE", MT_MULTI_INSTANCE)>>%avs%
+echo SetFilterMTMode("MPEG2Source",        MT_NICE_FILTER)>>%avs%
 echo SetFilterMTMode("LWLibavVideoSource",  MT_SERIALIZED)>>%avs%
 echo SetFilterMTMode("LWLibavAudioSource",  MT_SERIALIZED)>>%avs%
 echo SetFilterMTMode("LSMASHVideoSource",   MT_SERIALIZED)>>%avs%
@@ -294,11 +295,10 @@ echo SetFilterMTMode("EraseLOGO",           MT_SERIALIZED)>>%avs%
 echo.>>%avs%
 
 echo ### ƒtƒ@ƒCƒ‹“Ç‚İ‚İ ###>>%avs%
-if not exist "%source_fullname%.demuxed.m2v" goto lsmashsource
+if not exist "%source_fullname%.d2v" goto lsmashsource
 
-echo LWLibavVideoSource("%source_fullname%.demuxed.m2v")>>%avs%
+echo MPEG2Source("%source_fullname%.d2v")>>%avs%
 echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
-REM echo AudioDub(last, AACFaw("%aac_fullpath%"))>>%avs%
 goto end_fileread
 
 :lsmashsource
@@ -485,12 +485,7 @@ echo.
 
 echo ---------------------------------------------------------------------------
 echo ‰f‘œˆ—
-if exist "%source_fullname%.demuxed.m2v.lwi" goto end_create_index
-if exist "%source_fullpath%.lwi" goto end_create_index
- 
-echo ¦ƒCƒ“ƒfƒbƒNƒXƒtƒ@ƒCƒ‹‚ª–¢ì¬‚Ìê‡‚ÍAì¬‚ÉŠÔ‚ª‚©‚©‚è‚Ü‚·B
-
-:end_create_index
+echo ¦ƒCƒ“ƒfƒbƒNƒXƒtƒ@ƒCƒ‹‚ª–¢ì¬‚Ìê‡‚ÍAˆ—ŠJn‚Ü‚Å‚ÉŠÔ‚ª‚©‚©‚è‚Ü‚·B
 echo ---------------------------------------------------------------------------
 if not exist %output_enc% (
   if %video_encoder% == 0 (
@@ -572,8 +567,8 @@ if %del_hd_file% == 1 if exist "%source_fullpath%" del /f /q "%source_fullpath%"
 if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi" & echo %source_fullpath%.lwi
 if exist "%source_fullname%.d2v" del /f /q "%source_fullname%.d2v" & echo %source_fullname%.d2v
 if exist "%source_fullname%.d2v" del /f /q "%source_fullname%.d2v.lwi" & echo %source_fullname%.d2v.lwi
-if exist "%source_fullname%.demuxed.m2v" del /f /q "%source_fullname%.demuxed.m2v" & echo %source_fullname%.demuxed.m2v
-if exist "%source_fullname%.demuxed.m2v.lwi" del /f /q "%source_fullname%.demuxed.m2v.lwi" & echo %source_fullname%.demuxed.m2v.lwi
+REM if exist "%source_fullname%.demuxed.m2v" del /f /q "%source_fullname%.demuxed.m2v" & echo %source_fullname%.demuxed.m2v
+REM if exist "%source_fullname%.demuxed.m2v.lwi" del /f /q "%source_fullname%.demuxed.m2v.lwi" & echo %source_fullname%.demuxed.m2v.lwi
 if exist "%aac_fullpath%" del /f /q "%aac_fullpath%" & echo %aac_fullpath%
 if exist "%wav_fullpath%" del /f /q "%wav_fullpath%" & echo %wav_fullpath%
 if exist %avs% del /f /q %avs% & echo %avs%
@@ -591,11 +586,11 @@ echo •s—v‚É‚È‚Á‚½‚çA‚·‚×‚Ä‚Ìˆêƒtƒ@ƒCƒ‹‚ğíœ‚µ‚Ä\‚¢‚Ü‚¹‚ñB
 echo.
 :end_del_temp
 
-echo ======================================================================
+echo ===========================================================================
 echo %output_mp4%
 echo ---------------------------------------------------------------------------
 echo ˆ—I—¹: %date% %time%
-echo ======================================================================
+echo ===========================================================================
 echo.
 
 shift

@@ -1,4 +1,5 @@
 fullauto_avs_encode_vhscap.bat
-chart*
+doc
+doc/*
 .history
 *.history
