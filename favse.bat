@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 4.21
+echo FavsE (FullAuto AVS Encode) 4.30
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
