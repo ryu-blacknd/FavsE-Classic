@@ -105,8 +105,13 @@ rigaya氏ビルドのものは更新多めなので、[同氏のブログ](https
 - [avs2pipemod](https://github.com/chikuzen/avs2pipemod/releases)（`avs2pipemod64.exe`のみ必要です）
 - [MediaInfo](https://mediaarea.net/en/MediaInfo/Download/Windows)（CLI版の`MediaInfo.exe`のみ必要です）
 - [rplsinfo](https://www.axfc.net/u/3933238.zip)（`rplsinfo.exe`のみ必要です）
-- [sed for Windows](http://gnuwin32.sourceforge.net/packages/sed.htm)（BinariesとDependencies、`bin`の中身が必要です）
-- [Grep for Windows](http://gnuwin32.sourceforge.net/packages/grep.htm)（BinariesとDependencies、`bin`の中身が必要です）
+- [Git for Windows](https://gitforwindows.org/)（一部のLinuxコマンドを使用します。基本デフォルトでインストールします）
+
+Git for Windowsに含まれるLinuxコマンドをコマンドプロンプトから使用するため、Windowsのシステム環境変数`PATH`に`C:\Program Files\Git\usr\bin\`を追加して再起動してください。
+
+※LinuxコマンドのWindowsバイナリ単体を使用するのであれば、grep, sed, head、及び依存ライブラリファイルが必要です。
+
+※他にWSL（Windows Subsystem for Linux）や各種仮想Linuxマシンを使用する方法もありますが、Git for Windowsの方が簡単です。
 
 #### 特殊ツール
 - [join_logo_scp](http://www1.axfc.net/u/3458102.zip)（`join_logo_scp試行環境_2.zip`という圧縮ファイルの中身のみ必要です）
