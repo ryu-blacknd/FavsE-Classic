@@ -1,6 +1,6 @@
-@echo off
+REM @echo off
 
-echo FavsE (FullAuto AVS Encode) 4.30
+echo FavsE (FullAuto AVS Encode) 4.31
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
@@ -227,7 +227,7 @@ if "%info_scan_order%" == "Bottom Field First" (
 
 if not "%info_container%" == "MPEG-TS" goto end_tssplitter
 if not "%info_vcodec%" == "MPEG-2 Video" goto end_tssplitter
-if not "%info_acodec%" == "AAC LC" goto end_tssplitter
+if not "%info_acodec%" == "AAC LC" if not "%info_acodec%" == "AAC LC / AAC LC" goto end_tssplitter
 if %is_sd% == 1 goto end_tssplitter
 echo ---------------------------------------------------------------------------
 echo TSSplitter処理
@@ -244,7 +244,7 @@ echo.
 if not %audio_encoder% == 0 goto end_faw
 if not "%info_container%" == "MPEG-TS" goto end_faw
 if not "%info_vcodec%" == "MPEG-2 Video" goto end_faw
-if not "%info_acodec%" == "AAC LC" goto end_faw
+if not "%info_acodec%" == "AAC LC" if not "%info_acodec%" == "AAC LC / AAC LC" goto end_faw
 echo ---------------------------------------------------------------------------
 echo DGIndex処理
 echo ---------------------------------------------------------------------------
