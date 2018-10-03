@@ -86,6 +86,7 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 - [NVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%212293&cid=6BDD4375AC8933C6)（AviUtl
 用プラグインに同梱されています。`NVEncC\x64`の中身が必要です）
 - [fawcl](http://www2.wazoku.net/2sen/friioup/)（基本的に最新のものです。ページ内検索してください。`fawcl.exe`のみ必要です）
+- [aacfaw](http://www.rutice.net/)（`aacfaw.aui`を`aacfaw.dll`に、`aacfaw_x64.aui`を`aacfaw_x64.dll`にリネームして配置）
 - [qaac](https://sites.google.com/site/qaacpage/cabinet)（`qaac64.exe`のみ必要です）
 - [L-SMASH](https://onedrive.live.com/?id=6BDD4375AC8933C6%21404&cid=6BDD4375AC8933C6)（`muxer.exe`と`remuxer.exe`のみ必要です）
 
