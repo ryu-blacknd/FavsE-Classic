@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 4.32
+echo FavsE (FullAuto AVS Encode) 4.50
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
@@ -9,7 +9,7 @@ REM ---------------------------------------------------------------------------
 set cpu_cores=6
 REM ---------------------------------------------------------------------------
 REM 映像エンコーダ（0:x264, 1:QSVEnc, 2:NVEnc_AVC, 3:NVEnc_HEVC）※推奨：0
-REM 正直それほど速度差はありません。画質の差はさすがに大きいためx264推奨です。
+REM 画質の差に見合うほど速度差が大きくないため、最も高画質なx264推奨です。
 REM ---------------------------------------------------------------------------
 set video_encoder=0
 REM ---------------------------------------------------------------------------
@@ -19,6 +19,11 @@ REM ---------------------------------------------------------------------------
 set audio_encoder=0
 
 REM ===========================================================================
+REM LSMASHSource強制使用（0:DGIndex優先, 1:LSMASH強制）※わかる人のみ変更
+REM TSSplitterやDGIndexの処理を行わずLSMASHSourceで読み込む場合に1にします。
+REM ---------------------------------------------------------------------------
+set use_lsmash=0
+REM ---------------------------------------------------------------------------
 REM 音ズレ対策（0:行わない, 1:行う）※音ズレが発生する場合のみ推奨：1
 REM どうしても音ズレが発生する場合に、fps固定による音ズレ対策を行います。
 REM ---------------------------------------------------------------------------
@@ -173,6 +178,7 @@ echo.
 REM ---------------------------------------------------------------------------
 REM 変数セット2
 REM ---------------------------------------------------------------------------
+if %use_lsmash% == 1 goto not_tssplitter_source
 if not "%info_container%" == "MPEG-TS" goto not_tssplitter_source
 if not "%info_vcodec%" == "MPEG-2 Video" goto not_tssplitter_source
 if %is_sd% == 1 goto not_tssplitter_source
@@ -225,6 +231,7 @@ if "%info_scan_order%" == "Bottom Field First" (
 )
 :end_info_scan_order
 
+if %use_lsmash% == 1 goto end_dgindex
 if not "%info_container%" == "MPEG-TS" goto end_tssplitter
 if not "%info_vcodec%" == "MPEG-2 Video" goto end_tssplitter
 if not "%info_acodec%" == "AAC LC" if not "%info_acodec%" == "AAC LC / AAC LC" goto end_tssplitter
@@ -241,10 +248,10 @@ echo.
 
 :end_tssplitter
 
-if not %audio_encoder% == 0 goto end_faw
-if not "%info_container%" == "MPEG-TS" goto end_faw
-if not "%info_vcodec%" == "MPEG-2 Video" goto end_faw
-if not "%info_acodec%" == "AAC LC" if not "%info_acodec%" == "AAC LC / AAC LC" goto end_faw
+if not %audio_encoder% == 0 goto end_dgindex
+if not "%info_container%" == "MPEG-TS" goto end_dgindex
+if not "%info_vcodec%" == "MPEG-2 Video" goto end_dgindex
+if not "%info_acodec%" == "AAC LC" if not "%info_acodec%" == "AAC LC / AAC LC" goto end_dgindex
 echo ---------------------------------------------------------------------------
 echo DGIndex処理
 echo ---------------------------------------------------------------------------
@@ -257,21 +264,23 @@ echo.
 
 for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *.aac"`) do set aac_fullpath=%file_path%%%A
 
-if not %audio_encoder% == 0 goto end_faw
-if not exist "%aac_fullpath%" goto end_faw
-echo ---------------------------------------------------------------------------
-echo  FAW前処理
-echo ---------------------------------------------------------------------------
-if not exist "%source_fullname% PID *_aac.wav" (
-  call %fawcl% "%aac_fullpath%"
-) else (
-  echo 疑似wavファイルが存在しています。
-)
+REM if not %audio_encoder% == 0 goto end_faw
+REM if not exist "%aac_fullpath%" goto end_faw
+REM echo ---------------------------------------------------------------------------
+REM echo  FAW前処理
+REM echo ---------------------------------------------------------------------------
+REM if not exist "%source_fullname% PID *_aac.wav" (
+REM   call %fawcl% "%aac_fullpath%"
+REM ) else (
+REM   echo 疑似wavファイルが存在しています。
+REM )
 
-:end_audio_split
-for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *_aac.wav"`) do set wav_fullpath=%file_path%%%A
-echo.
-:end_faw
+REM :end_audio_split
+REM for /f "usebackq tokens=*" %%A in (`dir /b "%source_fullname% PID *_aac.wav"`) do set wav_fullpath=%file_path%%%A
+REM echo.
+REM :end_faw
+
+:end_dgindex
 
 echo ---------------------------------------------------------------------------
 echo avsファイル生成処理
@@ -296,7 +305,8 @@ echo ### ファイル読み込み ###>>%avs%
 if not exist "%source_fullname%.d2v" goto lsmashsource
 
 echo MPEG2Source("%source_fullname%.d2v")>>%avs%
-echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
+REM echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
+echo AudioDub(last, AACFaw("%aac_fullpath%"))>>%avs%
 goto end_readfile
 
 :lsmashsource
@@ -305,14 +315,16 @@ if not %info_bitdepth% == 8 set lsmash_format=, format="YUV420P8"
 if not "%info_container%" == "MPEG-4" goto lwlibav
 
 echo LSMASHVideoSource("%source_fullpath%"%lsmash_format%)>>%avs%
-if exist "%wav_fullpath%" echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
-if not exist "%wav_fullpath%" echo AudioDub(last, LSMASHAudioSource("%source_fullpath%", layout="stereo"))>>%avs%
+REM if exist "%wav_fullpath%" echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
+REM if not exist "%wav_fullpath%" echo AudioDub(last, LSMASHAudioSource("%source_fullpath%", layout="stereo"))>>%avs%
+echo AudioDub(last, LSMASHAudioSource("%source_fullpath%", layout="stereo"))>>%avs%
 goto end_lsmash
 
 :lwlibav
 echo LWLibavVideoSource("%source_fullpath%"%lsmash_format%)>>%avs%
-if exist "%wav_fullpath%" echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
-if not exist "%wav_fullpath%" echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
+REM if exist "%wav_fullpath%" echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
+REM if not exist "%wav_fullpath%" echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
+echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
 
 :end_lsmash
 
@@ -502,15 +514,14 @@ echo.
 echo ---------------------------------------------------------------------------
 echo 音声処理
 echo ---------------------------------------------------------------------------
+if not %audio_encoder% == 0 goto qaac_encode
+REM if not exist "%wav_fullpath%" goto qaac_encode
+
 if not exist %output_wav% (
-  call %avs2pipemod% -wav %avs% > %output_wav%
+  call %fawcl% "%aac_fullpath%" %output_wav%
 ) else (
   echo 中間wavファイルが存在しています。
 )
-
-if not %audio_encoder% == 0 goto qaac_encode
-if not exist "%wav_fullpath%" goto qaac_encode
-
 if not exist %output_aac% (
   call %fawcl% %output_wav% %output_aac%
 ) else (
@@ -519,6 +530,11 @@ if not exist %output_aac% (
 goto end_audio_encode
 
 :qaac_encode
+if not exist %output_wav% (
+  call %avs2pipemod% -wav %avs% > %output_wav%
+) else (
+  echo 中間wavファイルが存在しています。
+)
 if not exist %output_aac% (
   call %qaac% %output_wav% -o %output_aac%
 ) else (
@@ -565,7 +581,7 @@ if exist "%source_fullpath%.lwi" del /f /q "%source_fullpath%.lwi" & echo %sourc
 if exist "%source_fullname%.d2v" del /f /q "%source_fullname%.d2v" & echo %source_fullname%.d2v
 if exist "%source_fullname%.d2v" del /f /q "%source_fullname%.d2v.lwi" & echo %source_fullname%.d2v.lwi
 if exist "%aac_fullpath%" del /f /q "%aac_fullpath%" & echo %aac_fullpath%
-if exist "%wav_fullpath%" del /f /q "%wav_fullpath%" & echo %wav_fullpath%
+REM if exist "%wav_fullpath%" del /f /q "%wav_fullpath%" & echo %wav_fullpath%
 if exist %avs% del /f /q %avs% & echo %avs%
 if exist %output_enc% del /f /q %output_enc% & echo %output_enc%
 if exist %output_wav% del /f /q %output_wav% & echo %output_wav%
