@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 4.50
+echo FavsE (FullAuto AVS Encode) 4.60
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
@@ -514,14 +514,15 @@ echo.
 echo ---------------------------------------------------------------------------
 echo 音声処理
 echo ---------------------------------------------------------------------------
-if not %audio_encoder% == 0 goto qaac_encode
-REM if not exist "%wav_fullpath%" goto qaac_encode
-
 if not exist %output_wav% (
-  call %fawcl% "%aac_fullpath%" %output_wav%
+  call %avs2pipemod% -wav %avs% > %output_wav%
 ) else (
   echo 中間wavファイルが存在しています。
 )
+
+if not %audio_encoder% == 0 goto qaac_encode
+REM if not exist "%wav_fullpath%" goto qaac_encode
+
 if not exist %output_aac% (
   call %fawcl% %output_wav% %output_aac%
 ) else (
@@ -530,11 +531,6 @@ if not exist %output_aac% (
 goto end_audio_encode
 
 :qaac_encode
-if not exist %output_wav% (
-  call %avs2pipemod% -wav %avs% > %output_wav%
-) else (
-  echo 中間wavファイルが存在しています。
-)
 if not exist %output_aac% (
   call %qaac% %output_wav% -o %output_aac%
 ) else (
