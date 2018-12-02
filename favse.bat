@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 4.60
+echo FavsE (FullAuto AVS Encode) 4.70
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
@@ -189,6 +189,7 @@ goto end_source
 :not_tssplitter_source
 
 set source_fullname=%file_fullname%
+set cut_dir_name=%file_name%
 :end_source
 
 set source_fullpath=%source_fullname%%file_ext%
