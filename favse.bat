@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 4.80
+echo FavsE (FullAuto AVS Encode) 4.81
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
@@ -19,7 +19,7 @@ REM ---------------------------------------------------------------------------
 set audio_encoder=0
 
 REM ===========================================================================
-REM LSMASHSource強制使用（0:DGIndex優先, 1:LSMASH強制）※わかる人のみ変更
+REM LSMASHSource強制使用（0:DGIndex優先, 1:LSMASH強制）※強制的にqaacを使用
 REM TSSplitterやDGIndexの処理を行わずLSMASHSourceで読み込む場合に1にします。
 REM ---------------------------------------------------------------------------
 set use_lsmash=0
