@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 4.81
+echo FavsE (FullAuto AVS Encode) 4.90
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
@@ -48,7 +48,7 @@ REM ===========================================================================
 REM インターレース解除モード（0:保持, 1:通常解除, 2:24fps化, 3:BOB化）※推奨：1
 REM 録画tsファイルの場合は自動判別しますので、この設定は無効となります。
 REM ---------------------------------------------------------------------------
-set deint_mode=1
+set deint_mode=0
 REM ---------------------------------------------------------------------------
 REM ノイズ除去（0:行わない, 1:行う）
 REM 高周波ノイズ除去です。弱め設定です。強めにするには設定値を変更してください。
@@ -225,11 +225,22 @@ if "%info_scan_type%" == "Progressive" (
 )
 if "%info_scan_order%" == "Bottom Field First" (
   set order_ref=BOTTOM
-  if %deint_mode% == 0 set order_tb= --bff
+  if %deint_mode% == 0 set order_tb=bff
 ) else (
   set order_ref=TOP
-  if %deint_mode% == 0 set order_tb= --tff
+  if %deint_mode% == 0 set order_tb=tff
 )
+if not %deint_mode% == 0 goto end_info_scan_order
+if %video_encoder% == 0 (
+  set intopt=--%order_tb%
+) else if %video_encoder% == 1 (
+  set intopt=--%order_tb%
+) else if %video_encoder% == 2 (
+  set intopt=--interlace %order_tb%
+) else if %video_encoder% == 3 (
+  set intopt=--interlace %order_tb%
+)
+
 :end_info_scan_order
 
 if %use_lsmash% == 1 goto end_dgindex
@@ -382,7 +393,6 @@ echo.>>%avs%
 :end_cm_cut_logo
 
 if "%info_scan_type%" == "Progressive" goto end_deint
-if %deint_mode% == 0 goto end_deint
 echo ### インターレース解除 / 逆テレシネ ###>>%avs%
 
 if %is_sd% == 0 if "%info_vcodec%" == "MPEG-2 Video" goto is_tv_ts
@@ -394,6 +404,8 @@ goto end_deint
 :is_tv_ts
 if not "%info_container%" == "MPEG-TS" goto end_get_genre
 
+if %deint_mode% == 3 goto set_deint_bob
+
 for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -g') do set genre=%%A
 echo #ジャンル名：%genre%>>%avs%
 if "%info_scan_type%" == "Progressive" goto end_deint
@@ -403,7 +415,6 @@ echo %genre% | find " を開くのに失敗しました." > NUL
 if not ERRORLEVEL 1 (
   if %deint_mode% == 1 goto set_deint
   if %deint_mode% == 2 goto set_deint_it
-  if %deint_mode% == 3 goto set_deint_bob
   goto end_deint
 )
 
@@ -420,11 +431,21 @@ echo.>>%avs%
 goto end_deint
 
 :set_deint_it
+if %deint_mode% == 0 goto not_deint_it
 echo TIVTC24P2()>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
 goto end_deint
+:not_deint_it
+echo #TIVTC24P2()>>%avs%
+echo TFM(order=-1, mode=6, PP=7)>>%avs%
+echo TDecimate(mode=1)>>%avs%
+echo #TDeint(edeint=nnedi3)>>%avs%
+echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
+echo.>>%avs%
+goto end_deint
+
 
 :set_deint_bob
 echo #TIVTC24P2()>>%avs%
@@ -499,13 +520,13 @@ echo ※インデックスファイルが未作成の場合は、処理開始までに時間がかかります。
 echo ---------------------------------------------------------------------------
 if not exist %output_enc% (
   if %video_encoder% == 0 (
-    call %x264% %x264_opt% %sar%%order_tb% -o %output_enc% %avs%
+    call %x264% %x264_opt% %sar% %intopt% -o %output_enc% %avs%
   ) else if %video_encoder% == 1 (
-    call %qsvencc% %qsvencc_opt% %sar%%order_tb% -i %avs% -o %output_enc%
+    call %qsvencc% %qsvencc_opt% %sar% %intopt% -i %avs% -o %output_enc%
   ) else if %video_encoder% == 2 (
-    call %nvencc% %nvencc_opt% %sar%%order_tb% -i %avs% -o %output_enc%
+    call %nvencc% %nvencc_opt% %sar% %intopt% -i %avs% -o %output_enc%
   ) else if %video_encoder% == 3 (
-    call %nvencc% %nvencc_opt% %sar%%order_tb% -i %avs% -o %output_enc%
+    call %nvencc% %nvencc_opt% %sar% %intopt% -i %avs% -o %output_enc%
   )
 ) else (
   echo エンコード済み映像ファイルが存在しています。
