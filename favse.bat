@@ -1,6 +1,6 @@
-@echo off
+@echo on
 
-echo FavsE (FullAuto AVS Encode) 4.90
+echo FavsE (FullAuto AVS Encode) 5.01
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
@@ -48,7 +48,7 @@ REM ===========================================================================
 REM インターレース解除モード（0:保持, 1:通常解除, 2:24fps化, 3:BOB化）※推奨：1
 REM 録画tsファイルの場合は自動判別しますので、この設定は無効となります。
 REM ---------------------------------------------------------------------------
-set deint_mode=0
+set deint_mode=1
 REM ---------------------------------------------------------------------------
 REM ノイズ除去（0:行わない, 1:行う）
 REM 高周波ノイズ除去です。弱め設定です。強めにするには設定値を変更してください。
@@ -360,7 +360,16 @@ if not "%info_container%" == "MPEG-TS" goto end_cm_cut_logo
 if not "%info_vcodec%" == "MPEG-2 Video" goto end_cm_cut_logo
 
 echo ### サービス情報取得 ###>>%avs%
-for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -c') do set service=%%A
+REM for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -c') do set service=%%A
+set service="..有効な番組情報を検出できませんでした.."
+echo %service% | find "有効な番組情報を検出できませんでした" >NUL
+if not ERRORLEVEL 0 goto end_service
+
+for /f "delims=" %%A in ('echo "%file_name%" ^| sed -r "s/^.* \[(.*)\].*/\1/"') do set service=%%A
+for /f "delims=" %%A in ('echo "%service%" ^| nkf32 -Z') do set service=%%A
+
+:end_service
+
 echo #サービス名：%service%>>%avs%
 echo.>>%avs%
 

@@ -107,6 +107,7 @@ rigaya氏ビルドのものは更新多めなので、[同氏のブログ](https
 - [MediaInfo](https://mediaarea.net/en/MediaInfo/Download/Windows)（CLI版の`MediaInfo.exe`のみ必要です）
 - [rplsinfo](https://www.axfc.net/u/3933238.zip)（`rplsinfo.exe`のみ必要です）
 - [Git for Windows](https://gitforwindows.org/)（一部のLinuxコマンドを使用します。基本デフォルトでインストールします）
+- [nkf](https://www.vector.co.jp/soft/win95/util/se295331.html)（`nkf32.exe`のみ必要です。文字列の全角半角変換を行います。）
 
 Git for Windowsに含まれるLinuxコマンドをコマンドプロンプトから使用するため、Windowsのシステム環境変数`PATH`に`C:\Program Files\Git\usr\bin\`を追加して再起動してください。
 
