@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 5.05
+echo FavsE (FullAuto AVS Encode) 5.06
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
@@ -373,6 +373,8 @@ for /f "delims=" %%A in ('echo %service%^| nkf32 -Z') do set service=%%A
 
 :end_service
 
+echo サービス名：%service%
+echo.
 echo #サービス名：%service%>>%avs%
 echo.>>%avs%
 
@@ -425,6 +427,8 @@ for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -g') do set genre=%%A
 echo %genre% | find "有効な番組情報を検出できませんでした" >NUL
 if not ERRORLEVEL 1 set genre=Unknown
 
+echo ジャンル名：%genre%
+echo.
 echo #ジャンル名：%genre%>>%avs%
 echo.>>%avs%
 
