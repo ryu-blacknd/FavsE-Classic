@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 5.03
+echo FavsE (FullAuto AVS Encode) 5.04
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
@@ -366,7 +366,7 @@ echo %service% | find "有効な番組情報を検出できませんでした" >NUL
 if not ERRORLEVEL 0 goto end_service
 
 for /f "delims=" %%A in ('echo "%file_name%" ^| sed -r "s/^.* \[(.*)\].*/\1/"') do set service=%%A
-for /f "delims=" %%A in ('echo "%service%" ^| nkf32 -Z') do set service=%%A
+for /f "delims=" %%A in ('echo %service% ^| nkf32 -Z') do set service=%%A
 
 :end_service
 
@@ -416,8 +416,12 @@ if not "%info_container%" == "MPEG-TS" goto end_get_genre
 if %deint_mode% == 3 goto set_deint_bob
 
 for /f "delims=" %%A in ('%rplsinfo% "%source_fullpath%" -g') do set genre=%%A
+echo %genre% | find "有効な番組情報を検出できませんでした" >NUL
+if not ERRORLEVEL 1 set genre=Unknown
 
 echo #ジャンル名：%genre%>>%avs%
+echo.>>%avs%
+
 if "%info_scan_type%" == "Progressive" goto end_deint
 
 :end_get_genre
