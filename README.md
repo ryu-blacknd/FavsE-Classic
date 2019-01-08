@@ -67,6 +67,8 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 - [TMM2](https://github.com/chikuzen/TMM2/releases)（`TMM2.dll`またはCPUがAVX2に対応しているのであれば`TMM2_avx2.dll`が必要です）
 - [Hqdn3dY](https://forum.doom9.org/attachment.php?attachmentid=15589&d=1474456943)（`Hqdn3dY-x64.dll`が64bit版です。ハイフンは非推奨と警告が出るので`-x64`を消したほうが良いです）
 
+※「avsファイル作成処理」でエラーが発生する場合、上記プラグインが正しく導入されていない可能性が高いです。
+
 ### 各種ツール
 
 以下はフォルダを決めて、まとめて置いてください（例：`C:\bin`）。PATHを通しておくと便利です。

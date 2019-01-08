@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 5.30
+echo FavsE (FullAuto AVS Encode) 5.31
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
@@ -454,7 +454,7 @@ echo #TDecimate(mode=1)>>%avs%
 echo #QTGMC(Preset="Slower")>>%avs%
 echo TDeint(edeint=nnedi3, emask=TMM2())>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
-echo #TDeint(mode=1, edeint=nnedi3(field=-2), emask=TMM2())>>%avs%
+echo #TDeint(mode=1, edeint=nnedi3(field=-2), emask=TMM2(mode=1))>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
 goto end_deint
@@ -467,7 +467,7 @@ echo #TDecimate(mode=1)>>%avs%
 echo #QTGMC(Preset="Slower")>>%avs%
 echo #TDeint(edeint=nnedi3, emask=TMM2())>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
-echo #TDeint(mode=1, edeint=nnedi3(field=-2), emask=TMM2())>>%avs%
+echo #TDeint(mode=1, edeint=nnedi3(field=-2), emask=TMM2(mode=1))>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
 goto end_deint
@@ -478,7 +478,7 @@ echo TDecimate(mode=1)>>%avs%
 echo #QTGMC(Preset="Slower")>>%avs%
 echo #TDeint(edeint=nnedi3, emask=TMM2())>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
-echo #TDeint(mode=1, edeint=nnedi3(field=-2), emask=TMM2())>>%avs%
+echo #TDeint(mode=1, edeint=nnedi3(field=-2), emask=TMM2(mode=1))>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
 goto end_deint
@@ -490,7 +490,7 @@ echo #TDecimate(mode=1)>>%avs%
 echo #QTGMC(Preset="Slower")>>%avs%
 echo #TDeint(edeint=nnedi3, emask=TMM2())>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
-echo TDeint(mode=1, edeint=nnedi3(field=-2), emask=TMM2())>>%avs%
+echo TDeint(mode=1, edeint=nnedi3(field=-2), emask=TMM2(mode=1))>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
 
