@@ -56,7 +56,7 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 
 #### AviSynth+ プラグイン
 
-64bit版は`C:¥Program Files (x86)¥AviSynth+`内の`plugins64+`へ、32bit版は`plugins+`へコピーして使用します。
+64bit版を`C:¥Program Files (x86)¥AviSynth+`内の`plugins64+`へ、32bit版を`plugins+`へコピーして使用します。
 
 - [MPEG2DecPlus](https://kuroko.fushizen.eu/bin/)（AviSynth+対応高速化版です。既にDGDecode.dllがある場合は差し替えてください）
 - [LSMASHSource](https://www.dropbox.com/sh/3i81ttxf028m1eh/AAABkQn4Y5w1k-toVhYLasmwa?dl=0)（2種ありますがLSMASHSourceの方です。`LSMASHSource.dll`のみ必要です）
@@ -64,6 +64,7 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 - [NNEDI3](https://github.com/jpsdr/NNEDI3/releases)（`nnedi3.dll`のみ必要です。CPUに合ったフォルダを選択してください）
 - [TDeinterlace](https://www.mediafire.com/download/kmcztm1xzjm/TDeinterlace_3-14-2010.rar)（`TDeinterlace.dll`のみ必要です。32bitは[TDeint](http://web.archive.org/web/20140420182314/http://bengal.missouri.edu/~kes25c/TDeintv11.zip)で、`TDeint.dll`のみ必要です）
 - [TIVTC](https://github.com/pinterf/TIVTC/releases)（`TIVTC.dll`のみ必要です）
+- [TMM2](https://github.com/chikuzen/TMM2/releases)（`TMM2.dll`またはCPUがAVX2に対応しているのであれば`TMM2_avx2.dll`が必要です）
 - [Hqdn3dY](https://forum.doom9.org/attachment.php?attachmentid=15589&d=1474456943)（`Hqdn3dY-x64.dll`が64bit版です。ハイフンは非推奨と警告が出るので`-x64`を消したほうが良いです）
 
 ### 各種ツール
