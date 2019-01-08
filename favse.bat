@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 5.10
+echo FavsE (FullAuto AVS Encode) 5.20
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
@@ -303,15 +303,10 @@ if exist %avs% (
   goto end_avs
 )
 
-echo SetFilterMTMode("DEFAULT_MT_MODE", MT_MULTI_INSTANCE)>>%avs%
-echo SetFilterMTMode("MPEG2Source",        MT_NICE_FILTER)>>%avs%
-echo SetFilterMTMode("LWLibavVideoSource",  MT_SERIALIZED)>>%avs%
-echo SetFilterMTMode("LWLibavAudioSource",  MT_SERIALIZED)>>%avs%
-echo SetFilterMTMode("LSMASHVideoSource",   MT_SERIALIZED)>>%avs%
-echo SetFilterMTMode("LSMASHAudioSource",   MT_SERIALIZED)>>%avs%
-echo SetFilterMtMode("AudioDub",            MT_SERIALIZED)>>%avs%
-echo SetFilterMTMode("TDecimate",           MT_SERIALIZED)>>%avs%
-echo SetFilterMTMode("EraseLOGO",           MT_SERIALIZED)>>%avs%
+echo SetFilterMTMode("DEFAULT_MT_MODE", MT_SERIALIZED)>>%avs%
+echo SetFilterMTMode("TDeint",          MT_MULTI_INSTANCE)>>%avs%
+echo SetFilterMTMode("TFM",             MT_MULTI_INSTANCE)>>%avs%
+echo SetFilterMTMode("NNEDI3",          MT_MULTI_INSTANCE)>>%avs%
 echo.>>%avs%
 
 echo ### ファイル読み込み ###>>%avs%
@@ -454,7 +449,12 @@ if not ERRORLEVEL 1 goto set_deint_it
 
 :set_deint
 echo #TIVTC24P2()>>%avs%
+echo #TFM(order=-1, mode=6, PP=7)>>%avs%
+echo #TDecimate(mode=1)>>%avs%
+echo #QTGMC(Preset="Slower")>>%avs%
+echo #TDeint(edeint=nnedi3, emask=TMM2())>>%avs%
 echo TDeint(edeint=nnedi3)>>%avs%
+echo #TDeint(mode=1, edeint=nnedi3(field=-2), emask=TMM2())>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
 goto end_deint
@@ -462,7 +462,12 @@ goto end_deint
 :set_deint_it
 if %deint_mode% == 0 goto not_deint_it
 echo TIVTC24P2()>>%avs%
+echo #TFM(order=-1, mode=6, PP=7)>>%avs%
+echo #TDecimate(mode=1)>>%avs%
+echo #QTGMC(Preset="Slower")>>%avs%
+echo #TDeint(edeint=nnedi3, emask=TMM2())>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
+echo #TDeint(mode=1, edeint=nnedi3(field=-2), emask=TMM2())>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
 goto end_deint
@@ -470,15 +475,22 @@ goto end_deint
 echo #TIVTC24P2()>>%avs%
 echo TFM(order=-1, mode=6, PP=7)>>%avs%
 echo TDecimate(mode=1)>>%avs%
+echo #QTGMC(Preset="Slower")>>%avs%
+echo #TDeint(edeint=nnedi3, emask=TMM2())>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
+echo #TDeint(mode=1, edeint=nnedi3(field=-2), emask=TMM2())>>%avs%
 echo #TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
 goto end_deint
 
-
 :set_deint_bob
 echo #TIVTC24P2()>>%avs%
+echo #TFM(order=-1, mode=6, PP=7)>>%avs%
+echo #TDecimate(mode=1)>>%avs%
+echo #QTGMC(Preset="Slower")>>%avs%
+echo #TDeint(edeint=nnedi3, emask=TMM2())>>%avs%
 echo #TDeint(edeint=nnedi3)>>%avs%
+echo #TDeint(mode=1, edeint=nnedi3(field=-2), emask=TMM2())>>%avs%
 echo TDeint(mode=1, edeint=nnedi3(field=-2))>>%avs%
 echo.>>%avs%
 
