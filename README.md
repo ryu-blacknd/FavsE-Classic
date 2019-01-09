@@ -1,6 +1,6 @@
 # FavsE (FullAuto AVS Encode)
 
-読み方は「フェイブス」ですが、別に「ふぁぶせ」でもいいです。
+読み方は「フェイブス」です（本人は「ふぁぶせ」と呼んでいます）。
 
 動画ファイル（複数可）をドラッグすると、AVC + AACなMP4動画へのエンコード完了までの様々な工程を全自動で高速処理するバッチファイルです。
 
@@ -19,7 +19,7 @@
 - AviSynth+スクリプト作成後に一時停止する機能あり（停止中にスクリプトファイルを編集可能）
 - 自動CMカット（しない設定も可能、tsファイル以外では無効）
 - 自動ロゴ除去（しない設定も可能、tsファイル以外では無効）
-- TMPGEnc MPEG Smart Rendererで番組情報が破壊されてもOK（ファイル名に`[放送局名]`があればそれを使用）
+- TMPGEnc MPEG Smart Rendererで番組情報が破壊されてもOK（ファイル名に` [放送局名]`があればそれを使用）
 - インターレース保持/解除/24fps化/BOB化の自動/手動選択（プログレッシブなソースでは無効）
 - 実写とアニメを自動判別して3Dノイズ除去（しない設定も可能）
 - widthが1280px超になる場合、720pにリサイズ（しない設定も可能）
@@ -30,13 +30,35 @@
 
 バッチファイル（もしくはバッチファイルへのショートカット）に、動画ファイル（avsファイルではありません）をドラッグしてください。複数ファイルのドラッグにも対応します。
 
-すると設定や動画情報に応じた動作を全自動で行います。AvsPmodやAviUtl + カット編集プラグイン等で手動カット編集を行いたい場合もあるかと思いますが、その際はavsファイル書き出し後に一時停止する設定にしてください。
+ドラッグされたファイル群を解析し、設定や動画情報に応じた処理を全自動で行います。
 
 設定項目については、バッチファイルの冒頭部分を参照してください。簡単な説明があります。
 
+## 入力ファイルの仕様
+
+LSMASHSourceで読めるすべての動画ファイルが対象です（ver.2.00より）。
+
+つまり、よほど特殊なものを除きほぼすべての動画ファイルが対象となります。
+
+音声処理にFAWを使う場合、**元の音声がAAC**である必要があります。
+
+> FAW（FakeAacWav）とは、DGIndexやBonTsDemux等で分離したaacファイルを疑似wavファイルに変換（偽装）して使用するソフトウェアです。無劣化のままで編集 → aacファイルに戻すことができます。また、音ズレを防止する役目も果たします。
+
+PT3等のTVチューナーで録画したtsファイルはFAWの条件を満たします。
+
+気をつけるのは、同じtsファイルでもDVDソースからリッピングした場合などです。
+
+例えば管理人オススメの[TMPGEnc MPEG Smart Renderer](https://www.amazon.co.jp/TMPGEnc-MPEG-Smart-Renderer-%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89/dp/B01CZSBBCA/ref=as_li_ss_tl?ie=UTF8&linkCode=ll1&tag=blacknd-22&linkId=018f85d3da64f66563638612dcd1ac37&language=ja_JP)は映像無劣化でtsファイルにできますが、デフォルトのままだと音声は**LPCM**や**AC-3**になると思います。
+
+この場合、出力直前の画面で音声を「**MPEG2 AAC(LC)**」に指定する必要があります。
+
+> せっかくFAWを使うのに非可逆圧縮が入るのも気分的にアレですが、ビットレートを256kbpsとか384kbpsにすれば、元との違いを聞き分けられるような人はそうそういないと思います。
+
+なおFAWを使用する設定でも、使用できない場合は自動判別によりqaacを使用します。
+
 ## 実行に必要なツール
 
-FavsEの動作に必要なツールは以下の通りで、結構あります。それだけ多くのことを面倒みてくれると思ってください。
+FavsEの動作に必要なツールは以下の通りで、結構あります。**それだけ多くのことを面倒みてくれる**と思ってください。
 
 設定内容によっては無くても構わないものがありますが、今後の更新でどうなるかわかりませんので、一応すべて入れておくのが無難です。
 
@@ -48,7 +70,7 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 
 ### AviSynth+ MT
 
-まずは中核となるAviSynth+をインストールしてください。
+まずは中核となるAviSynth+ MTをインストールしてください。
 
 > 4.00よりAviSynth MT 32bitからAviSynth+ MT 64bitに変更しました。
 
@@ -78,12 +100,10 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 #### エンコード関連
 
 - [x264](https://onedrive.live.com/?authkey=%21ABzai4Ddn6_Xxd0&id=6BDD4375AC8933C6%214477&cid=6BDD4375AC8933C6)（exeファイルのみ必要です。毎回設定変更するのも面倒なので`x264_x64.exe`等にリネーム推奨です）
-- [QSVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%21482&cid=6BDD4375AC8933C6)（AviUtl
-用プラグインに同梱されています。`QSVEncC\x64`の中身が必要です）
-- [NVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%212293&cid=6BDD4375AC8933C6)（AviUtl
-用プラグインに同梱されています。`NVEncC\x64`の中身が必要です）
+- [QSVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%21482&cid=6BDD4375AC8933C6)（AviUtl用プラグインに同梱されています。`QSVEncC\x64`の中身が必要です）
+- [NVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%212293&cid=6BDD4375AC8933C6)（AviUtl用プラグインに同梱されています。`NVEncC\x64`の中身が必要です）
 - [fawcl](http://www2.wazoku.net/2sen/friioup/)（基本的に最新のものです。ページ内検索してください。`fawcl.exe`のみ必要です）
-- [aacfaw](http://www.rutice.net/)（`aacfaw.aui`を`aacfaw.dll`に、`aacfaw_x64.aui`を`aacfaw_x64.dll`にリネームして配置）
+- [aacfaw](http://www.rutice.net/)（`aacfaw.aui`を`aacfaw.dll`に、`aacfaw_x64.aui`を`aacfaw_x64.dll`にリネームして配置してください）
 - [qaac](https://sites.google.com/site/qaacpage/cabinet)（`qaac64.exe`のみ必要です）
 - [L-SMASH](https://onedrive.live.com/?id=6BDD4375AC8933C6%21404&cid=6BDD4375AC8933C6)（`muxer.exe`と`remuxer.exe`のみ必要です）
 
@@ -108,9 +128,7 @@ rigaya氏ビルドのものは更新多めなので、[同氏のブログ](https
 
 Git for Windowsに含まれるLinuxコマンドをコマンドプロンプトから使用するため、Windowsのシステム環境変数`PATH`に`C:\Program Files\Git\usr\bin\`を追加して再起動してください。
 
-※LinuxコマンドのWindowsバイナリ単体を使用するのであれば、grep, sed, head、及び依存ライブラリファイルが必要です。
-
-※他にWSL（Windows Subsystem for Linux）や各種仮想Linuxマシンを使用する方法もありますが、Git for Windowsの方が簡単です。
+※他にWSL（Windows Subsystem for Linux）等を使用する方法もありますが、Git for Windowsの方が簡単です。
 
 #### 特殊ツール
 - [join_logo_scp](http://www1.axfc.net/u/3458102.zip)（`join_logo_scp試行環境_2.zip`という圧縮ファイルの中身のみ必要です）
@@ -119,26 +137,16 @@ Git for Windowsに含まれるLinuxコマンドをコマンドプロンプトか
 
 #### その他（任意）
 
-- [AvsPmod](https://forum.doom9.org/showpost.php?p=1801766&postcount=1202)（確認やカット編集を行えます。AviUtl + チャプター編集プラグインでも可です）
+- [AvsPmod](https://forum.doom9.org/showpost.php?p=1801766&postcount=1202)（フィルタ動作の確認やカット編集を行えます）
 
-## 入力ファイルの仕様
+AvsPmodを導入すると、avsファイルを直接編集しながら結果を確認できます。自分でフィルタ設定やカット編集を行わない場合は不要です。
 
-LSMASHSourceで読めるすべての動画ファイルが対象です（ver.2.00より）。
+[AviUtl](http://spring-fragrance.mints.ne.jp/aviutl/) + [AviSynth Script エクスポート](http://www.geocities.jp/aji_0/)のTrim エクスポートプラグインでもカット編集はできます。AviUtl上のカット編集結果からAviSynthのTrim行をエクスポートできますので、これをコピペします。
 
-つまり、よほど特殊なものを除きほぼすべての動画ファイルが対象となります。
+[TMPGEnc MPEG Smart Renderer](https://www.amazon.co.jp/TMPGEnc-MPEG-Smart-Renderer-%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89/dp/B01CZSBBCA/ref=as_li_ss_tl?ie=UTF8&linkCode=ll1&tag=blacknd-22&linkId=018f85d3da64f66563638612dcd1ac37&language=ja_JP)はカット編集、特に自動CMカットには最適ですが、録画ファイルを編集した場合は番組情報が損なわれ、放送局名とジャンル情報を取得できなくなります（以前から要望が出ていますが改善されていません）。  
+ただし先述の通り、ファイル名に` [放送局名]`が含まれる場合はそれを放送局名として使用しますので、CMカットやロゴ除去は問題はありません。
 
-音声処理にFAWを使う場合、**元の音声がAAC**である必要があります。
+ジャンルについてはどうしようもないため、逆テレシネが必要となるアニメや映画の場合、エンコード前に生成されたavsファイルの編集が必要です。  
+具体的にはインターレース解除の部分で、`TIVTC24P2()`（インターレース保持の場合は`TFM`と`TDecimate`の行）のコメントを外し、他をコメントアウトする必要があります。
 
-> FAW（FakeAacWav）とは、DGIndexやBonTsDemux等で分離したaacファイルを疑似wavファイルに変換（偽装）して使用するソフトウェアです。無劣化のままで編集 → aacファイルに戻すことができます。また、音ズレを防止する役目も果たします。
-
-PT3等のTVチューナーで録画したtsファイルはFAWの条件を満たします。
-
-気をつけるのは、同じtsファイルでもDVDソースからリッピングした場合などです。
-
-例えば当サイト管理人オススメの[TMPGEnc MPEG Smart Renderer](https://www.amazon.co.jp/TMPGEnc-MPEG-Smart-Renderer-%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89/dp/B01CZSBBCA/ref=as_li_ss_tl?ie=UTF8&linkCode=ll1&tag=blacknd-22&linkId=018f85d3da64f66563638612dcd1ac37&language=ja_JP)は映像無劣化でtsファイルにできますが、デフォルトのままだと音声は**LPCM**や**AC-3**になると思います。
-
-この場合、出力直前の画面で音声をAAC（**MPEG2 AAC(LC)**）に指定する必要があります。
-
-> せっかくFAWを使うのに非可逆圧縮が入るのも気分的にアレですが、ビットレートを256kbpsとか384kbpsにすれば、元との違いを聞き分けられるような人はそうそういないと思います。
-
-なおFAWを使用する設定でも、使用できない場合は自動判別によりqaacを使用します。
+なおこれらで手動CMカットを行った場合、本スクリプト設定部分の`cut_cm`を`0`にしてください。
