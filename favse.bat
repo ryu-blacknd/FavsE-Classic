@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 5.32
+echo FavsE (FullAuto AVS Encode) 5.33
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
@@ -195,7 +195,7 @@ set cut_dir_name=%file_name%
 set source_fullpath=%source_fullname%%file_ext%
 
 set avs="%source_fullname%.avs"
-set output_enc="%output_path%%file_name%.enc.mp4"
+set output_enc="%output_path%%file_name%.tmp.mp4"
 set output_wav="%output_path%%file_name%.wav"
 set output_aac="%output_path%%file_name%.aac"
 set output_m4a="%output_path%%file_name%.m4a"
