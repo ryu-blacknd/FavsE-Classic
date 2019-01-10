@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 5.33
+echo FavsE (FullAuto AVS Encode) 5.34
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
@@ -255,7 +255,7 @@ echo ---------------------------------------------------------------------------
 if not exist "%source_fullpath%" (
   call %tssplitter% -EIT -ECM -EMM -SD -1SEG "%file_fullpath%"
 ) else (
-  echo 分割済みのファイルが存在しています。
+  echo 分割済みのTSファイルが存在しています。
 )
 echo.
 
@@ -268,10 +268,11 @@ if not "%info_acodec%" == "AAC LC" if not "%info_acodec%" == "AAC LC / AAC LC" g
 echo ---------------------------------------------------------------------------
 echo DGIndex処理
 echo ---------------------------------------------------------------------------
-if not exist "%source_fullname%.d2v" if not exist "%source_fullname% PID *.aac" (
+REM if not exist "%source_fullname%.d2v" if not exist "%source_fullname% PID *.aac" (
+if not exist "%source_fullname%.d2v" (
   call %dgindex% -i "%source_fullpath%" -o "%source_fullname%" -ia 5 -fo 0 -yr 2 -om 2 -hide -exit
 ) else (
-  echo 分離済みのd2v / aacファイルが存在しています。
+  echo 分離済みのd2vファイルが存在しています。
 )
 echo.
 
