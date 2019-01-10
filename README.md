@@ -120,7 +120,7 @@ rigaya氏ビルドのものは更新多めなので、[同氏のブログ](https
 
 #### 補助ツール
 
-- [avs2pipemod](https://github.com/chikuzen/avs2pipemod/releases)（`avs2pipemod64.exe`のみ必要です）
+- [WAVI](https://forum.doom9.org/showthread.php?t=161639)（`wavi.exe`のみ必要です）
 - [MediaInfo](https://mediaarea.net/en/MediaInfo/Download/Windows)（CLI版の`MediaInfo.exe`のみ必要です）
 - [rplsinfo](https://www.axfc.net/u/3933238.zip)（`rplsinfo.exe`のみ必要です）
 - [Git for Windows](https://gitforwindows.org/)（一部のLinuxコマンドを使用します。基本デフォルトでインストールします）

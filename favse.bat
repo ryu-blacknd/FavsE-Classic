@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 5.35
+echo FavsE (FullAuto AVS Encode) 5.36
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
@@ -88,7 +88,7 @@ set x264=%bin_path%x264_x64.exe
 set qsvencc=%bin_path%QSVEncC64.exe
 set nvencc=%bin_path%NVEncC64.exe
 
-set avs2pipemod=%bin_path%avs2pipemod64.exe
+set wavi=%bin_path%wavi.exe
 set fawcl=%bin_path%fawcl.exe
 set qaac=%bin_path%qaac64.exe
 set muxer=%bin_path%muxer.exe
@@ -105,7 +105,7 @@ REM 映像エンコーダのオプション
 REM 設定値の意味がわかる方は自由に改変してください。
 REM ---------------------------------------------------------------------------
 if %video_encoder% == 0 (
-  set x264_opt=--crf 20 --qcomp 0.7 --me umh --subme 9 --direct auto --ref 5 --trellis 2
+  set x264_opt=--crf 24 --qcomp 0.7 --me umh --subme 9 --direct auto --ref 5 --trellis 2
 ) else if %video_encoder% == 1 (
   set qsvencc_opt=-c h264 -u 2 --la-icq 24 --la-quality slow --bframes 3 --weightb --weightp
 ) else if %video_encoder% == 2 (
@@ -324,15 +324,11 @@ if not %info_bitdepth% == 8 set lsmash_format=, format="YUV420P8"
 if not "%info_container%" == "MPEG-4" goto lwlibav
 
 echo LSMASHVideoSource("%source_fullpath%"%lsmash_format%)>>%avs%
-REM if exist "%wav_fullpath%" echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
-REM if not exist "%wav_fullpath%" echo AudioDub(last, LSMASHAudioSource("%source_fullpath%", layout="stereo"))>>%avs%
 echo AudioDub(last, LSMASHAudioSource("%source_fullpath%", layout="stereo"))>>%avs%
 goto end_lsmash
 
 :lwlibav
 echo LWLibavVideoSource("%source_fullpath%"%lsmash_format%)>>%avs%
-REM if exist "%wav_fullpath%" echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
-REM if not exist "%wav_fullpath%" echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
 echo AudioDub(last, LWLibavAudioSource("%source_fullpath%", av_sync=true, layout="stereo"))>>%avs%
 
 :end_lsmash
@@ -580,7 +576,7 @@ echo ---------------------------------------------------------------------------
 echo 音声処理
 echo ---------------------------------------------------------------------------
 if not exist %output_wav% (
-  call %avs2pipemod% -wav %avs% > %output_wav%
+  call %wavi% %avs% %output_wav%
 ) else (
   echo 中間wavファイルが存在しています。
 )
@@ -588,7 +584,6 @@ if not exist %output_wav% (
 if not %audio_encoder% == 0 goto qaac_encode
 if %use_lsmash% == 1 goto qaac_encode
 if not exist "%source_fullname%.d2v" goto qaac_encode
-REM if not exist "%wav_fullpath%" goto qaac_encode
 
 if not exist %output_aac% (
   call %fawcl% %output_wav% %output_aac%
