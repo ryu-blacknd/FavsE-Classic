@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 5.34
+echo FavsE (FullAuto AVS Encode) 5.35
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
@@ -48,7 +48,7 @@ REM ===========================================================================
 REM インターレース解除モード（0:保持, 1:通常解除, 2:24fps化, 3:BOB化）※推奨：1
 REM 録画tsファイルの場合は自動判別しますので、1と2の設定は無効となります。
 REM ---------------------------------------------------------------------------
-set deint_mode=1
+set deint_mode=0
 REM ---------------------------------------------------------------------------
 REM ノイズ除去（0:行わない, 1:行う）
 REM 高周波ノイズ除去です。弱め設定です。強めにするには設定値を変更してください。
@@ -58,7 +58,7 @@ REM ---------------------------------------------------------------------------
 REM リサイズ（0:しない, 1:する）
 REM 4Kや1080p等、Widthが1,280pxを超える場合に1,280x720pxにリサイズするか。
 REM ---------------------------------------------------------------------------
-set resize=1
+set resize=0
 REM ---------------------------------------------------------------------------
 REM シャープ化（0:行わない, 1:行う）
 REM 弱めのシャープ化です。例えばノイズ除去後や拡大処理後にはそれなりに有効です。
@@ -202,7 +202,7 @@ set output_m4a="%output_path%%file_name%.m4a"
 set output_mp4="%output_path%%file_name%.mp4"
 
 REM ---------------------------------------------------------------------------
-REM SD（主にDVDソース）のアスペクト比を設定
+REM アスペクト比を設定
 REM ---------------------------------------------------------------------------
 if %is_sd% == 1 (
   if %info_aspect% == 16:9 (
@@ -411,7 +411,6 @@ if %deint_mode% == 3 goto set_deint_bob
 if %is_sd% == 0 if "%info_vcodec%" == "MPEG-2 Video" goto is_tv_ts
 
 REM DVDソースの場合、またはMPEG2でない場合
-if %deint_mode% == 0 goto end_deint
 if %deint_mode% == 1 goto set_deint
 if %deint_mode% == 2 goto set_deint_it
 goto end_deint
@@ -436,8 +435,8 @@ echo.>>%avs%
 if "%info_scan_type%" == "Progressive" goto end_deint
 
 :end_get_genre
+
 if "%genre%" == "Unknown" (
-  if %deint_mode% == 0 goto end_deint
   if %deint_mode% == 1 goto set_deint
   if %deint_mode% == 2 goto set_deint_it
   goto end_deint
@@ -447,6 +446,8 @@ echo %genre% | find "アニメ" > NUL
 if not ERRORLEVEL 1 goto set_deint_it
 echo %genre% | find "映画" > NUL
 if not ERRORLEVEL 1 goto set_deint_it
+
+if %deint_mode% == 0 goto end_deint
 
 :set_deint
 echo #TIVTC24P2()>>%avs%
