@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 5.36
+echo FavsE (FullAuto AVS Encode) 5.37
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
@@ -105,13 +105,13 @@ REM 映像エンコーダのオプション
 REM 設定値の意味がわかる方は自由に改変してください。
 REM ---------------------------------------------------------------------------
 if %video_encoder% == 0 (
-  set x264_opt=--crf 24 --qcomp 0.7 --me umh --subme 9 --direct auto --ref 5 --trellis 2
+  set x264_opt=--crf 21 --qcomp 0.7 --me umh --subme 9 --direct auto --ref 5 --trellis 2
 ) else if %video_encoder% == 1 (
   set qsvencc_opt=-c h264 -u 2 --la-icq 24 --la-quality slow --bframes 3 --weightb --weightp
 ) else if %video_encoder% == 2 (
-  set nvencc_opt=--avs -c h264 --cqp 20:22:24 --qp-init 20:22:24 --weightp --aq --aq-temporal
+  set nvencc_opt=--avs -c h264 --cqp 21:23:25 --qp-init 21:23:25 --weightp --aq --aq-temporal
 ) else if %video_encoder% == 3 (
-  set nvencc_opt=--avs -c hevc --cqp 21:22:24 --qp-init 21:22:24 --weightp --aq --aq-temporal
+  set nvencc_opt=--avs -c hevc --cqp 22:23:25 --qp-init 22:23:25 --weightp --aq --aq-temporal
 ) else (
   echo [エラー] エンコーダを正しく指定してください。
   goto end
