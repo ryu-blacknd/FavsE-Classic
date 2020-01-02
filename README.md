@@ -1,14 +1,15 @@
-# FavsE (FullAuto AVS Encode)
+## FavsE Classic
 
-読み方は「フェイブス」ですが、本人は「ふぁぶせ」と呼んでいます。
+読み方は「フェイブス」ですが、読みやすければ「ふぁぶせ」でも良いかと思います。
+FavsEは開発当初の名称で、FullAuto AVS Encodeの略です。
 
-# 次世代バージョンを開発中です
+### 2020年01月：このプロジェクトはGUI版に移行しました
 
-FavsE Pro（仮）の開発を始めました。FavsEの上位バージョンとなります。
-GUI化、ツール類のダウンロード自動化等を実装し、また現在入手不可となったツールを含んでいます。
+GUI版の名称をFavsEとし、このバッチファイル版はFavsE Classicと名称を変更しました。
+GUI化だけでなく様々な見直しを行っています。また現在入手不可となったツールを含んでいます。
 旧版となるこちらのバッチファイル版は開発を停止する予定です。
 
-## これは何？
+### これは何？
 
 動画ファイル（複数可）をドラッグすると、AVC + AACなMP4動画にエンコードするバッチファイルです。
 
@@ -16,7 +17,7 @@ GUI化、ツール類のダウンロード自動化等を実装し、また現�
 
 AVC / HEVC + aacなmp4ファイルへの変換ツールとしても機能します。
 
-## 主な特徴
+### 主な特徴
 
 - ほぼすべての動画ファイル形式に対応（LSMASHSourceで読めるすべての動画ファイルが対象）
 - TV番組録画ファイル、DVDソースのTSファイルなどを自動判別（アスペクト比自動セット等、いくつかの挙動が自動変化）
@@ -34,7 +35,7 @@ AVC / HEVC + aacなmp4ファイルへの変換ツールとしても機能しま�
 - 映像のシャープ化（しない設定も可能）
 - 処理終了後に、作業ファイル群をすべて自動削除（しない設定も可能。その場合は作業ファイルを再利用可能）
 
-## インストールと初期設定
+### インストールと初期設定
 
 フォルダ（例：`C:\DTV\bin`）を作成し、ダウンロードしたファイルを置いてください。
 
@@ -45,7 +46,7 @@ AVC / HEVC + aacなmp4ファイルへの変換ツールとしても機能しま�
 
 実際のフォルダ名や実行ファイル名と合致していないと、エラーで実行できません。
 
-## 使用方法
+### 使用方法
 
 `favse.bat`（もしくは本ファイルのショートカット）に、動画ファイルをドラッグしてください（avsファイルではありません）。複数ファイルのドラッグにも対応します。
 
@@ -53,7 +54,7 @@ AVC / HEVC + aacなmp4ファイルへの変換ツールとしても機能しま�
 
 あとはドラッグされたファイル群を解析し、設定や動画情報に応じた処理を全自動で行います。
 
-## 入力ファイルの仕様
+### 入力ファイルの仕様
 
 LSMASHSourceで読めるすべての動画ファイルが対象です（ver.2.00より）。
 
@@ -73,7 +74,7 @@ PT3等のTVチューナーで録画したtsファイルはFAWの条件を満た�
 
 なおFAWを使用する設定でも、使用できない場合は自動判別によりqaacを使用します。
 
-## 実行に必要なツール
+### 実行に必要なツール
 
 FavsEの動作に必要なツールは以下の通りで、結構あります。それだけ多くのことを面倒みてくれると思ってください。
 
@@ -85,7 +86,7 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 
 > ツール類が動作しない場合は、[.NET Framework](https://www.microsoft.com/ja-jp/download/details.aspx?id=21)や[VC\+\+ Redistributable Packages](https://www.microsoft.com/en-us/download/details.aspx?id=40784)等の対応バージョンがインストールされていないケースが多いかと思います。この辺りは環境によりますのでググってみてください。
 
-### AviSynth+ MT
+#### AviSynth+ MT
 
 まずは中核となるAviSynth+ MTをインストールしてください。
 
@@ -93,7 +94,7 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 
 - [AviSynth+ MT](https://github.com/pinterf/AviSynthPlus/releases)（よくわからなければwith-vc-redistで）
 
-#### AviSynth+ プラグイン
+##### AviSynth+ プラグイン
 
 64bit版を`C:¥Program Files (x86)¥AviSynth+`内の`plugins64+`へ、32bit版を`plugins+`へコピーして使用します。
 
@@ -108,14 +109,14 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 
 ※「avsファイル作成処理」でエラーが発生する場合、上記プラグインが正しく導入されていない可能性が高いです。
 
-### 各種ツール
+#### 各種ツール
 
 インストーラが付属するものを除き、フォルダを決めてまとめて置いてください。`favse.bat`と同一フォルダを推奨します。  
 別のフォルダに置いた場合、正しく動作しない可能性があります。その際はWindowsのシステム環境変数`PATH`にフォルダを追加してください。
 
 基本的にexeファイルだけで良いのですが例外もありますので、注意書きに目を通してください。x64などのフォルダ内に64bit版バイナリが格納されている場合が多いので注意してください。
 
-#### エンコード関連
+##### エンコード関連
 
 - [x264](https://onedrive.live.com/?authkey=%21ABzai4Ddn6_Xxd0&id=6BDD4375AC8933C6%214477&cid=6BDD4375AC8933C6)（exeファイルのみ必要です。バージョンアップのたびに設定変更するのも面倒なので`x264_x64.exe`にリネーム推奨です）
 - [QSVEncC](https://onedrive.live.com/?id=6BDD4375AC8933C6%21482&cid=6BDD4375AC8933C6)（AviUtl用プラグインに同梱されています。`QSVEncC\x64`の中身が必要です）
@@ -127,7 +128,7 @@ AviSynth+のプラグインは、64bitと32bitの両方が必要であり、配�
 
 rigaya氏ビルドのものは更新多めなので、[同氏のブログ](https://rigaya34589.blog.fc2.com/)でフィードを購読しておくことをおすすめします。
 
-#### 分割ツール
+##### 分割ツール
 
 - [TSSplitter](https://www.videohelp.com/software/TSSplitter)（`TsSplitter.exe`のみ必要です）
 - [DGIndex](http://rationalqm.us/dgmpgdec/dgmpgdec.html)（`DGDecode.dll`, `DGIndex.exe`, dllをリネームした`DGVfapi.vfp`が必要です）
@@ -136,7 +137,7 @@ rigaya氏ビルドのものは更新多めなので、[同氏のブログ](https
 
 > DGIndex 1.5.8にはバグがあり、修正・改造した[mod版のソース](https://onedrive.live.com/?id=8658EC275D9699D5%211215&cid=8658EC275D9699D5)が公開されています。ソースのみの配布でバイナリが無いため、VisualStudio 2017とNASMを導入して自分でビルドする必要があります。手順とWindows SDKのバージョンだけ気をつければ特に難しくはありません。なおビルドできるのは32bit版のみです。
 
-#### 補助ツール
+##### 補助ツール
 
 - [WAVI](https://forum.doom9.org/showthread.php?t=161639)（`wavi.exe`のみ必要です）
 - [MediaInfo](https://mediaarea.net/en/MediaInfo/Download/Windows)（CLI版の`MediaInfo.exe`のみ必要です）
@@ -150,7 +151,7 @@ rigaya氏ビルドのものは更新多めなので、[同氏のブログ](https
 
 ※他にWSL（Windows Subsystem for Linux）等を使用する方法もありますが、Git for Windowsの方が簡単です。
 
-#### 特殊ツール
+##### 特殊ツール
 - [join_logo_scp](http://www1.axfc.net/u/3458102.zip)（`join_logo_scp試行環境_2.zip`という圧縮ファイルの中身のみ必要です）
 - [ver.3.05差分](https://www.axfc.net/u/3907064.zip)（上記フォルダ内に上書きします）
 
