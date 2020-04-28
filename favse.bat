@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 5.50
+echo FavsE (FullAuto AVS Encode) 5.60
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
@@ -106,7 +106,7 @@ REM 設定値の意味がわかる方は自由に改変してください。
 REM ---------------------------------------------------------------------------
 if %video_encoder% == 0 (
   REM set x264_opt=--crf 20 --qcomp 0.7 --me umh --subme 10 --direct auto --ref 5 --trellis 2
-  set x264_opt=--preset slower --crf 20 --qcomp 0.7 --keyint -1 --min-keyint 4 --partitions p8x8,b8x8,i8x8,i4x4 --subme 10 --ref 5 --no-fast-pskip --no-dct-decimate
+  set x264_opt=--preset slower --crf 20 --qcomp 0.7 --keyint -1 --min-keyint 4 --partitions p8x8,b8x8,i8x8,i4x4 --ref 5 --no-fast-pskip --no-dct-decimate
 ) else if %video_encoder% == 1 (
   set qsvencc_opt=-c h264 -u 2 --la-icq 23 --la-quality slow --bframes 3 --weightb --weightp
 ) else if %video_encoder% == 2 (
@@ -550,6 +550,7 @@ if %check_avs% == 1 (
   echo ※中止した場合、[Y]で終了するか、[N]で処理を続行してください。
   echo ※終了後に再度実行すると、既に行った処理はスキップ（再利用）されます。
   echo.
+  rundll32 user32.dll,MessageBeep
   timeout /T 120
 )
 echo.
