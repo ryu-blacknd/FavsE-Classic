@@ -1,6 +1,6 @@
 @echo off
 
-echo FavsE (FullAuto AVS Encode) 5.60
+echo FavsE (FullAuto AVS Encode) 5.70
 echo.
 REM ===========================================================================
 REM CPUのコア数（数値）
@@ -8,7 +8,7 @@ REM スレッド数ではなく、スレッド数の半分程度（≒コア数）が良いとされています。
 REM ---------------------------------------------------------------------------
 set cpu_cores=6
 REM ---------------------------------------------------------------------------
-REM 映像エンコーダ（0:x264, 1:QSVEnc, 2:NVEnc_AVC, 3:NVEnc_HEVC）※推奨：0
+REM 映像エンコーダ（0:x264, 1:QSV_AVC, 2: QSV_HEVC, 3:NVEnc_AVC, 4:NVEnc_HEVC）
 REM 画質の差に見合うほど速度差が大きくないため、最も高画質なx264推奨です。
 REM ---------------------------------------------------------------------------
 set video_encoder=0
@@ -102,17 +102,19 @@ set join_logo_scp=%bin_path%join_logo_scp\jlse_bat.bat
 
 REM ---------------------------------------------------------------------------
 REM 映像エンコーダのオプション
-REM 設定値の意味がわかる方は自由に改変してください。
+REM 実写向けの設定です。設定値の意味がわかる方は自由に改変してください。
 REM ---------------------------------------------------------------------------
 if %video_encoder% == 0 (
   REM set x264_opt=--crf 20 --qcomp 0.7 --me umh --subme 10 --direct auto --ref 5 --trellis 2
-  set x264_opt=--preset slower --crf 20 --qcomp 0.7 --keyint -1 --min-keyint 4 --partitions p8x8,b8x8,i8x8,i4x4 --ref 5 --no-fast-pskip --no-dct-decimate
+  set x264_opt=--preset veryslow --tune film --crf 21 --qpmin 10 --qcomp 0.8 --rc-lookahead 150 --psy-rd 1.2:0.07 --keyint 300 --bframes 3 --partitions p8x8,b8x8,i8x8,i4x4 --subme 7 --merange 32 --ref 4 --no-fast-pskip --no-dct-decimate --cqm jvt
 ) else if %video_encoder% == 1 (
-  set qsvencc_opt=-c h264 -u 2 --la-icq 23 --la-quality slow --bframes 3 --weightb --weightp
+  set qsvencc_opt=--la-icq 21 --la-depth 60 -u 1
 ) else if %video_encoder% == 2 (
-  set nvencc_opt=--avs -c h264 --cqp 20:22:24 --qp-init 20:22:24 --weightp --aq --aq-temporal
+  set qsvencc_opt=-c hevc --icq 21 -u 1
 ) else if %video_encoder% == 3 (
-  set nvencc_opt=--avs -c hevc --cqp 21:22:24 --qp-init 21:22:24 --weightp --aq --aq-temporal
+  set nvencc_opt=--avs --vbrhq 0 --vbr-quality 21 --preset quality --weightp --bref-mode each --lookahead 32 --level 5.2 -b 3
+) else if %video_encoder% == 4 (
+  set nvencc_opt=--avs -c hevc --vbrhq 0 --vbr-quality 21 --preset quality --weightp --bref-mode each --lookahead 32 --level 6 -b 3
 ) else (
   echo [エラー] エンコーダを正しく指定してください。
   goto end
