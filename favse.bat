@@ -105,16 +105,15 @@ REM 映像エンコーダのオプション
 REM 実写向けの設定です。設定値の意味がわかる方は自由に改変してください。
 REM ---------------------------------------------------------------------------
 if %video_encoder% == 0 (
-  REM set x264_opt=--crf 20 --qcomp 0.7 --me umh --subme 10 --direct auto --ref 5 --trellis 2
-  set x264_opt=--preset veryslow --tune film --crf 21 --qpmin 10 --qcomp 0.8 --rc-lookahead 150 --psy-rd 1.2:0.07 --keyint 300 --bframes 3 --partitions p8x8,b8x8,i8x8,i4x4 --subme 7 --merange 32 --ref 4 --no-fast-pskip --no-dct-decimate --cqm jvt
+  set x264_opt=--preset veryslow --crf 20 --qpmin 10 --qcomp 0.8 --rc-lookahead 150 --psy-rd 1.2:0.07 --keyint 300 --bframes 3 --partitions p8x8,b8x8,i8x8,i4x4 --subme 7 --merange 32 --ref 4 --no-fast-pskip --no-dct-decimate
 ) else if %video_encoder% == 1 (
-  set qsvencc_opt=--la-icq 21 --la-depth 60 -u 1
+  set qsvencc_opt=--la-icq 20 --la-depth 60 -u 1
 ) else if %video_encoder% == 2 (
-  set qsvencc_opt=-c hevc --icq 21 -u 1
+  set qsvencc_opt=-c hevc --icq 20 -u 1
 ) else if %video_encoder% == 3 (
-  set nvencc_opt=--avs --vbrhq 0 --vbr-quality 21 --preset quality --weightp --bref-mode each --lookahead 32 --level 5.2 -b 3
+  set nvencc_opt=--avs --vbrhq 0 --vbr-quality 20 --preset quality --weightp --bref-mode each --lookahead 32 --level 5.2 -b 3
 ) else if %video_encoder% == 4 (
-  set nvencc_opt=--avs -c hevc --vbrhq 0 --vbr-quality 21 --preset quality --weightp --bref-mode each --lookahead 32 --level 6 -b 3
+  set nvencc_opt=--avs -c hevc --vbrhq 0 --vbr-quality 20 --preset quality --weightp --bref-mode each --lookahead 32 --level 6 -b 3
 ) else (
   echo [エラー] エンコーダを正しく指定してください。
   goto end
