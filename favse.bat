@@ -316,8 +316,8 @@ echo ### ƒtƒ@ƒCƒ‹“Ç‚Ýž‚Ý ###>>%avs%
 if not exist "%source_fullname%.d2v" goto lsmashsource
 
 echo MPEG2Source("%source_fullname%.d2v")>>%avs%
-REM echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
 echo AudioDub(last, AACFaw("%aac_fullpath%"))>>%avs%
+REM echo AudioDub(last, WAVSource("%wav_fullpath%"))>>%avs%
 goto end_readfile
 
 :lsmashsource
